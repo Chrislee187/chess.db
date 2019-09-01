@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "chess.games.db": {
+      "commandName": "Project",
+      "commandLineArgs": " 'D:\\PGN Uploads'"
+    }
+  }
+}

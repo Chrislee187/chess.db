@@ -1,0 +1,40 @@
+﻿@page "/"
+@inherits chess.db.admin.spa.Pages.DashboardComponent
+@using System.Linq
+@if (Loading)
+{
+    <div>Loading...</div>
+}
+else
+{
+
+    <div class="dash games">
+        <h3>Games # @GameCount</h3>
+    </div>
+
+    <div class="dash sites">
+        <h3>Total Sites # @SiteCount</h3>
+        @if (SiteCount > 0)
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <td>Top @TopXCount sites</td>
+                    </tr>
+                </thead>
+
+                @foreach (var site in Sites)
+                {
+                    <tr>
+                        <td>@site.Name</td>
+                        <td>@site.Count</td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <div>No sites found.</div>
+        }
+    </div>
+}

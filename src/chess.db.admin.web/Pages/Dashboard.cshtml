@@ -1,0 +1,11 @@
+﻿@page
+@model DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+    <div class="text-center">
+        <h1 class="display-4">Games</h1>
+        <label>Total Games1:</label> <span id="totalGames">@Model.GameCount</span>
+        <GameCount></GameCount>
+    </div>

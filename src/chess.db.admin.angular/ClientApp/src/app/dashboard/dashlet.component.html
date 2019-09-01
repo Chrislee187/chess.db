@@ -1,0 +1,21 @@
+<div class="dashlet {{name.toLowerCase()}}-dashlet">
+  <div>
+    <span class="title">{{ name }}: </span>
+    <span *ngIf="!totalCount" class="value" >Counting...</span>
+    <span *ngIf="totalCount" class="value" >{{ totalCount }}</span>
+  </div>
+  <!-- <div *ngIf="items"> -->
+  <!--   <table> -->
+  <!--     <tbody class="top-x"> -->
+  <!--     <tr><td colspan="2">Top {{topXCount}} {{name}}</td></tr> -->
+  <!--     <tr *ngFor="let item of items"> -->
+  <!--       <td>{{item.name}}</td> -->
+  <!--       <td class="value">{{item.count}}</td> -->
+  <!--     </tr> -->
+  <!--     </tbody> -->
+  <!--   </table> -->
+  <!-- </div> --> 
+  <div *ngIf="error">
+    {{ error }}
+  </div>
+</div>
