@@ -12,7 +12,7 @@ namespace chess.games.db.pgnimporter
 {
     class Program
     {
-        private static readonly ChessGamesDbContext DbContext = new ChessGamesDbContext();
+        private static readonly ChessGamesDbContext DbContext = new ChessGamesDbContext(@"Server=.\Dev;Database=ChessGames;Trusted_Connection=True;");
         private static readonly PgnFileArchiver Archiver = new PgnFileArchiver();
         private static readonly PgnFileFinder Finder = new PgnFileFinder();
 

@@ -2,20 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace chess.games.db.Entities
 {
     public class ChessGamesDbContext : DbContext
     {
-        private readonly string _dataSource =
-            @"Server=.\Dev;Database=ChessGames;Trusted_Connection=True;"; 
+
         public DbSet<Event> Events { get; set; }
         public DbSet<Site> Sites { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<GameImport> GameImports { get; set; }
 
-        public ChessGamesDbContext()
+        public ChessGamesDbContext(DbContextOptions options) : base(options)
+        {
+            // NOTE: Used by .NET Core IoC/MVC Startup
+        }
+
+        public ChessGamesDbContext(string connectionString)
+            : base(new DbContextOptionsBuilder().UseSqlServer(connectionString).Options)
         {
         }
 
@@ -29,23 +35,6 @@ namespace chess.games.db.Entities
             Database.SetCommandTimeout(oldTimeOut);
         }
 
-        public ChessGamesDbContext(string connectionString)
-        {
-            _dataSource = connectionString;
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (_dataSource.Contains("Data Source"))
-            {
-                optionsBuilder.UseSqlite(_dataSource);
-            }
-            else
-            {
-                optionsBuilder.UseSqlServer(_dataSource);
-            }
-        }
-
         public IEnumerable<Game> GamesWithIncludes()
         {
             return Games
@@ -54,15 +43,6 @@ namespace chess.games.db.Entities
                 .Include(i => i.Event)
                 .Include(i => i.Site);
         }
-
-        public TEntity GetOrCreate<TEntity>(
-            Func<TEntity, bool> matcher,
-            Func<TEntity> builder
-        ) where TEntity : class
-            => Set<TEntity>().Any(matcher)
-                ? Set<TEntity>().Single(matcher)
-                : builder();
-
 
         public void UpdateDatabase()
         {

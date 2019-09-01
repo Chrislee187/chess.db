@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,7 +31,9 @@ namespace chess.db.admin.angular
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddSingleton<ChessGamesDbContext>();
+            services.AddDbContext<ChessGamesDbContext>(
+                    opts => opts.UseSqlServer(@"Server=.\Dev;Database=ChessGames;Trusted_Connection=True;")
+                );
             services.AddScoped<IDashboardService, DashboardService>();
         }
 
