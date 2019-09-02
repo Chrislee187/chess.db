@@ -1,9 +1,11 @@
 <div class="dashlet {{name.toLowerCase()}}-dashlet">
-  <span class="title">{{ name }}: </span>
-  <div *ngIf="!error">
-    <span *ngIf="!totalCount" class="value" >Counting...</span>
-    <span *ngIf="totalCount" class="value" >{{ totalCount }}</span>
-  </div>
+  <span class="title"><a [routerLink]='["/dashboards/player"]'>{{ name }}</a>: </span>
+  <span *ngIf="!totalCount && !error" class="value">
+    Counting...
+  </span>
+  <span *ngIf="totalCount && !error" class="value">
+    {{ totalCount }}
+  </span>
   <div *ngIf="error" class="error">
     {{ error }}
   </div>

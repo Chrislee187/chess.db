@@ -6,21 +6,17 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardComponent } from './dashboards/dashboard.component';
 import { DashletComponent } from "./dashlet/dashlet.component";
+import { PlayerDashboardComponent } from "./dashboards/player/player-dashboard.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
-    HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
     DashboardComponent,
-    DashletComponent
+    DashletComponent,
+    PlayerDashboardComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -30,6 +26,7 @@ import { DashletComponent } from "./dashlet/dashlet.component";
     RouterModule.forRoot([
       { path: '', component: DashboardComponent, pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'dashboards/player', component: PlayerDashboardComponent },
     ]),
     CommonModule
   ],

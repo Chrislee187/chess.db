@@ -1,11 +1,13 @@
 import { Component, Inject, Input } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { IDashletData } from './IDashletData'
+
 
 @Component({
   selector: 'dashlet',
   inputs: ['name', 'data'],
   templateUrl: './dashlet.component.html',
-  styleUrls: ['../dashboard/dashboard.component.css']
+  styleUrls: ['../dashboards/dashboard.component.css']
 })
 
 export class DashletComponent {
@@ -22,7 +24,7 @@ export class DashletComponent {
   }
 
   ngOnInit() {
-    this.http.get<DashletData>(this.baseUrl + this.endpoint).subscribe(
+    this.http.get<IDashletData>(this.baseUrl + this.endpoint).subscribe(
       result => {
         this.totalCount = result.totalCount;
       },
@@ -32,8 +34,3 @@ export class DashletComponent {
       });
   }
 }
-
-interface DashletData {
-  totalCount: number
-}
-
