@@ -1,3 +1,5 @@
+using System;
+using AutoMapper;
 using chess.games.db.api;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +29,8 @@ namespace chess.db.webapi
                     cfg.ReturnHttpNotAcceptable = true; // NOTE: Configures to return 406 for unsupported "Accept" header content-types
                 })
                 .AddXmlDataContractSerializerFormatters(); // NOTE: Add "application/xml" content-type support
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<IPlayersRepository, PlayersRepository>();
 

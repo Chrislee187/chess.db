@@ -19,14 +19,8 @@ namespace chess.games.db.api
             _chessGamesDbContext = chessGamesDbContext;
         }
 
-        public IQueryable<Player> GetPlayers()
-        {
-            return _chessGamesDbContext.Players;
-        }
-        public Player GetPlayer(Guid id)
-        {
-            return _chessGamesDbContext.Players.Find(id);
-        }
+        public IQueryable<Player> GetPlayers() => _chessGamesDbContext.Players;
 
+        public Player GetPlayer(Guid id) => _chessGamesDbContext.Players.Find(id);
     }
 }
