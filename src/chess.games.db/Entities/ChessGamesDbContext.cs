@@ -18,6 +18,7 @@ namespace chess.games.db.Entities
         public ChessGamesDbContext(DbContextOptions options) : base(options)
         {
             // NOTE: Used by .NET Core IoC/MVC Startup
+
         }
 
         public ChessGamesDbContext(string connectionString)

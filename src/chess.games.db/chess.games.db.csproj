@@ -14,6 +14,8 @@
     <Compile Remove="Migrations\20190817114616_create-GameImports-table.Designer.cs" />
     <Compile Remove="Migrations\20190825160457_game-table-add-eco-field.cs" />
     <Compile Remove="Migrations\20190825160457_game-table-add-eco-field.Designer.cs" />
+    <Compile Remove="Migrations\20191025193422_Game-AddPgnPlayerBlackAndWhiteColumns.cs" />
+    <Compile Remove="Migrations\20191025193422_Game-AddPgnPlayerBlackAndWhiteColumns.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

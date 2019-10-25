@@ -5,7 +5,6 @@ using chess.games.db.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,9 +33,7 @@ namespace chess.db.webapi
 
             services.AddScoped<IPlayersRepository, PlayersRepository>();
 
-            services.AddDbContext<ChessGamesDbContext>(opts =>
-                opts.UseSqlServer(@"Server=.\Dev;Database=ChessGames;Trusted_Connection=True;")
-                );
+            services.AddDbContext<ChessGamesDbContext>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
