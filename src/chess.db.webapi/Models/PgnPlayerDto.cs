@@ -2,7 +2,7 @@
 
 namespace chess.db.webapi.Models
 {
-    public class PlayerDto
+    public class PgnPlayerDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

@@ -13,16 +13,16 @@ namespace chess.games.db.api.Players
             _chessGamesDbContext = chessGamesDbContext;
         }
 
-        public IQueryable<PgnPlayer> GetPlayers() 
+        public IQueryable<PgnPlayer> GetPgnPlayers() 
             => _chessGamesDbContext.PgnPlayers;
 
-        public IQueryable<PgnPlayer> GetPlayers(
+        public IQueryable<PgnPlayer> GetPgnPlayers(
             PgnPlayersFilterParams filters, 
             PgnPlayersSearchQuery query)
         {
             if (string.IsNullOrEmpty(filters.Name) && string.IsNullOrEmpty(query.QueryText))
             {
-                return GetPlayers();
+                return GetPgnPlayers();
             }
 
             var set = _chessGamesDbContext.PgnPlayers as IQueryable<PgnPlayer>;

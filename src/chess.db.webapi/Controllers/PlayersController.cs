@@ -31,24 +31,30 @@ namespace chess.db.webapi.Controllers
             _logger = logger ?? NullLogger<PlayersController>.Instance;
         }
 
+        /// <summary>
+        /// PgnPlayers are created by the import mechanism and are not creatable, editable or deletable, by the API
+        /// They represent the original data from the original source before attempting to dedupe the entry
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         [HttpGet]
         [HttpHead]
-        public ActionResult<IEnumerable<PlayerDto>> GetPlayers(
-            [FromQuery] PlayerResourceParameters parameters
+        public ActionResult<IEnumerable<PgnPlayerDto>> GetPgnPlayers(
+            [FromQuery] PgnPlayerResourceParameters parameters
             )
         {
             var filters = _mapper.Map<PgnPlayersFilterParams>(parameters);
             var query = _mapper.Map<PgnPlayersSearchQuery>(parameters);
 
             var players = _playersRepository
-                .GetPlayers(filters, query)
+                .GetPgnPlayers(filters, query)
                 .Take(1000); // TODO: Temp restriction until paging is implemented
 
-            return Ok(_mapper.Map<IEnumerable<PlayerDto>>(players));
+            return Ok(_mapper.Map<IEnumerable<PgnPlayerDto>>(players));
         }
 
         [HttpGet("{playerId}")]
-        public ActionResult<PlayerDto> GetPlayer(Guid playerId)
+        public ActionResult<PgnPlayerDto> GetPgnPlayer(Guid playerId)
         {
             var player = _playersRepository.GetPlayer(playerId);
 
@@ -57,7 +63,7 @@ namespace chess.db.webapi.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<PlayerDto>(player));
+            return Ok(_mapper.Map<PgnPlayerDto>(player));
         }
     }
 }
