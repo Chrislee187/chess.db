@@ -1,10 +1,10 @@
 using System;
 using AutoMapper;
-using chess.games.db.api;
+using chess.games.db.api.Players;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,10 +41,7 @@ namespace chess.db.webapi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            ConfigureExceptionHandling(app, env);
 
             // NOTE: Order is SPECIFIC!
             // i.e. Authorisation comes after a Route endpoint is chosen (UseRouting) but before
@@ -58,6 +55,25 @@ namespace chess.db.webapi
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private static void ConfigureExceptionHandling(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler(cfg =>
+                {
+                    cfg.Run(async context =>
+                    {
+                        context.Response.StatusCode = 500;
+                        await context.Response.WriteAsync("An unexpected fault happened. Please try again.");
+                    });
+                });
+            }
         }
     }
 }

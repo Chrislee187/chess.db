@@ -7,12 +7,6 @@ using PgnReader;
 
 namespace chess.games.db.api
 {
-    public interface IGamesRepository
-    {
-        long TotalGames { get; }
-        int AddImportBatch(PgnGame[] games);
-    }
-
     public class GamesRepository : IGamesRepository
     {
         private readonly ChessGamesDbContext _chessGamesDbContext;
