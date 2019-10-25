@@ -36,15 +36,6 @@ namespace chess.games.db.Entities
             Database.SetCommandTimeout(oldTimeOut);
         }
 
-        public IEnumerable<Game> GamesWithIncludes()
-        {
-            return Games
-                .Include(i => i.Black)
-                .Include(i => i.White)
-                .Include(i => i.Event)
-                .Include(i => i.Site);
-        }
-
         public void UpdateDatabase()
         {
             var migs = Database.GetPendingMigrations().ToList();
@@ -63,5 +54,12 @@ namespace chess.games.db.Entities
                 Console.WriteLine("DB Migrated");
             }
         }
+
+//        protected override void OnModelCreating(ModelBuilder modelBuilder)
+//        {
+//            modelBuilder.Entity<PgnPlayer>()
+//                .HasAlternateKey(c => c.Name)
+//                .HasName("AK_PgnPlayer_Name");
+//        }
     }
 }

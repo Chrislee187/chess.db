@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using chess.games.db.Entities;
 
 namespace chess.games.db.Migrations
 {
     [DbContext(typeof(ChessGamesDbContext))]
-    partial class ChessGamesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191025205246_Games-RemoveGuidPgnPlayerReferences")]
+    partial class GamesRemoveGuidPgnPlayerReferences
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,8 +84,8 @@ namespace chess.games.db.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BlackName")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid?>("BlackId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Date")
                         .HasColumnType("nvarchar(30)")
@@ -107,31 +109,35 @@ namespace chess.games.db.Migrations
                     b.Property<Guid?>("SiteId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("WhiteName")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid?>("WhiteId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BlackName");
+                    b.HasIndex("BlackId");
 
                     b.HasIndex("EventId");
 
                     b.HasIndex("SiteId");
 
-                    b.HasIndex("WhiteName");
+                    b.HasIndex("WhiteId");
 
                     b.ToTable("GameImports");
                 });
 
             modelBuilder.Entity("chess.games.db.Entities.PgnPlayer", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("PlayerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Name");
+                    b.HasKey("Id");
 
                     b.HasIndex("PlayerId");
 
@@ -187,7 +193,7 @@ namespace chess.games.db.Migrations
                 {
                     b.HasOne("chess.games.db.Entities.PgnPlayer", "Black")
                         .WithMany()
-                        .HasForeignKey("BlackName");
+                        .HasForeignKey("BlackId");
 
                     b.HasOne("chess.games.db.Entities.Event", "Event")
                         .WithMany()
@@ -199,7 +205,7 @@ namespace chess.games.db.Migrations
 
                     b.HasOne("chess.games.db.Entities.PgnPlayer", "White")
                         .WithMany()
-                        .HasForeignKey("WhiteName");
+                        .HasForeignKey("WhiteId");
                 });
 
             modelBuilder.Entity("chess.games.db.Entities.PgnPlayer", b =>

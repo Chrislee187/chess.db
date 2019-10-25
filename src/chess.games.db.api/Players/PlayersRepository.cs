@@ -36,8 +36,7 @@ namespace chess.games.db.api.Players
             {
                 // Search all fields
                 set = set.Where(p => 
-                    p.Id.ToString().Contains(query.QueryText) 
-                    || p.Name.Contains(query.QueryText));
+                    p.Name.Contains(query.QueryText));
             }
 
             return set;

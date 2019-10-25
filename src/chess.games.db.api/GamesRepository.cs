@@ -48,6 +48,7 @@ namespace chess.games.db.api
 
         public int AddImportBatch(PgnGame[] games)
         {
+            throw new NotImplementedException("Not implemented for new table schemas");
             int created = 0;
             _chessGamesDbContext.RunWithExtendedTimeout(() =>
             {

@@ -8,9 +8,7 @@ namespace chess.games.db.Entities
         public Event Event { get; set; }
         public Site Site { get; set; }
         public string PgnPlayerWhite { get; set; }
-        public PgnPlayer White { get; set; }
         public string PgnPlayerBlack { get; set; }
-        public PgnPlayer Black { get; set; }
 
         [MaxLength(30)]
         public string Date { get; set; }
@@ -28,8 +26,8 @@ namespace chess.games.db.Entities
 
         public bool ContainsPlayer(string name)
         {
-            if (Black == null || White == null) return false;
-            return Black.Name.Contains(name) || White.Name.Contains(name);
+            return !string.IsNullOrEmpty(PgnPlayerBlack) && PgnPlayerBlack.Contains(name) 
+                || !string.IsNullOrEmpty(PgnPlayerWhite) && PgnPlayerWhite.Contains(name);
         }
     }
 }

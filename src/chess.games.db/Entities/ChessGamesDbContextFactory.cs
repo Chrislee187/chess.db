@@ -1,16 +1,20 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace chess.games.db.Entities
 {
-    // NOTE: This is only used at design time when using update-database
-    // used for long running migrations
+    // NOTE: This is only used at design time when using update-database.
+    // used for migrations that take longer than the default 30 sec timeout
     public class ChessGamesDbContextFactory : IDesignTimeDbContextFactory<ChessGamesDbContext>
     {
         public ChessGamesDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ChessGamesDbContext>();
+            
+            
+            // TODO: This should be a key in the appSettings.dev.json
             optionsBuilder.UseSqlServer(@"Server=.\Dev;Database=ChessGames;Trusted_Connection=True;",
                 opts => opts.CommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds));
 
