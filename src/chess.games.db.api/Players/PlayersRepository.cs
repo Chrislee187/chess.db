@@ -29,7 +29,7 @@ namespace chess.games.db.api.Players
 
             if (!string.IsNullOrEmpty(filters.Name))
             {
-                set = set.Where(p => p.Name.Contains(filters.Name));
+                set = set.Where(p => p.Name.ToLower().Contains(filters.Name.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(query.QueryText))
