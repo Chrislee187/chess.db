@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace chess.games.db.Entities
 {
@@ -12,7 +11,7 @@ namespace chess.games.db.Entities
         public DbSet<Event> Events { get; set; }
         public DbSet<Site> Sites { get; set; }
         public DbSet<PgnPlayer> PgnPlayers { get; set; }
-//        public DbSet<PgnPlayer> PgnPlayers { get; set; }
+        public DbSet<Player> Players { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<GameImport> GameImports { get; set; }
 

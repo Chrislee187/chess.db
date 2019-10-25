@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using chess.games.db.api;
 using chess.games.db.Entities;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using PgnReader;
 
 namespace chess.games.db.pgnimporter
