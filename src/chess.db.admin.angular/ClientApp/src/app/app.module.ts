@@ -10,6 +10,10 @@ import { DashboardComponent } from './dashboards/dashboard.component';
 import { DashletComponent } from "./dashlet/dashlet.component";
 import { PlayerDashboardComponent } from "./dashboards/player/player-dashboard.component";
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatTableModule } from '@angular/material/table';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,9 +30,11 @@ import { PlayerDashboardComponent } from "./dashboards/player/player-dashboard.c
     RouterModule.forRoot([
       { path: '', component: DashboardComponent, pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'dashboards/player', component: PlayerDashboardComponent },
+      { path: 'dashboards/players', component: PlayerDashboardComponent },
     ]),
-    CommonModule
+    CommonModule,
+    BrowserAnimationsModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

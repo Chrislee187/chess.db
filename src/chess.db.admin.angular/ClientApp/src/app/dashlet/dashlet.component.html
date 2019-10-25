@@ -1,5 +1,5 @@
 <div class="dashlet {{name.toLowerCase()}}-dashlet">
-  <span class="title"><a [routerLink]='["/dashboards/player"]'>{{ name }}</a>: </span>
+  <span class="title"><a routerLink="/dashboards/{{name.toLowerCase()}}">{{ name }}</a>: </span>
   <span *ngIf="!totalCount && !error" class="value">
     Counting...
   </span>

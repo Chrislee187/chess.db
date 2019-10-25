@@ -1,5 +1,39 @@
-<div>
+<div id="player-dashboard-container">
   <h1>Players Dashboard</h1>
 
   Total Players: {{ total }}
+
+  <table mat-table [dataSource]="uncheckedPlayers">
+    <ng-container matColumnDef="pgnName">
+      <th mat-header-cell *matHeaderCellDef> pgnName </th>
+    </ng-container>
+  </table>
+
+
+  <!-- <div *ngIf="uncheckedPlayers" id="unchecked-players"> -->
+  <!--   <div id="check-some-names"> -->
+  <!--     Below you will find the next (up-to 10) Players names that were imported from PGN files and have not been parsed or validated. Use the table below to confirm the parse results. -->
+  <!--   </div> -->
+  <!-- -->
+  <!--   <table> -->
+  <!--     <thead> -->
+  <!--       <tr> -->
+  <!--         <th></th> -->
+  <!--         <th>PGN name</th> -->
+  <!--         <th>First name</th> -->
+  <!--         <th>Middle name(s)</th> -->
+  <!--         <th>Surname</th> -->
+  <!--       </tr> -->
+  <!--     </thead> -->
+  <!--     <tbody> -->
+  <!--       <tr *ngFor="let player of uncheckedPlayers"> -->
+  <!--         <td>x</td> -->
+  <!--         <td>{{ player.pgnName }}</td> -->
+  <!--         <td>{{ player.firstName }}</td> -->
+  <!--         <td>{{ player.middleName }}</td> -->
+  <!--         <td>{{ player.lastName }}</td> -->
+  <!--       </tr> -->
+  <!--     </tbody> -->
+  <!--   </table> -->
+  <!-- </div> -->
 </div>

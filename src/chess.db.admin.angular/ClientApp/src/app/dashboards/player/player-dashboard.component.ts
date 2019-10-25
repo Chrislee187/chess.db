@@ -11,6 +11,7 @@ export class PlayerDashboardComponent {
   private baseUrl: string;
 
   public total: number;
+  public uncheckedPlayers: IUncheckedPlayer[];
 
   constructor(http: HttpClient,
     @Inject('BASE_URL') baseUrl: string) {
@@ -19,17 +20,36 @@ export class PlayerDashboardComponent {
   }
 
   ngOnInit() {
+    this.getPlayerCount();
+    this.getUncheckedPlayers();
+  }
+
+  getPlayerCount() {
     this.http.get<IDashletData>(this.baseUrl + 'api/dashboard/playersdata').subscribe(
       result => {
         this.total = result.totalCount;
       },
       error => {
-//        this.error = error;
+        //        this.error = error;
         console.log(error.error);
       });
   }
+
+  getUncheckedPlayers() {
+    this.uncheckedPlayers = <IUncheckedPlayer[]>[
+      { pgnName: 'Short, N' },
+      { pgnName: 'Short, Nigel' },
+      { pgnName: 'N Short' },
+      { pgnName: 'N. Short' },
+      { pgnName: 'Nigel Short' }
+    ];
+  }
 }
 
-interface IPlayerDashboard {
-  total: number;
+
+interface IUncheckedPlayer {
+  pgnName: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
 }

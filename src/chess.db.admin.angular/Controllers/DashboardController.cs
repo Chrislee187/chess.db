@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using chess.db.admin.angular.Services;
-using chess.games.db.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -25,28 +20,28 @@ namespace chess.db.admin.angular.Controllers
         }
 
         [HttpGet("playersdata")]
-        public async Task<DashletData> GetPlayersCountAsync() =>
+        public async Task<DashletData> GetPlayersDataAsync() =>
             new DashletData
             {
                 TotalCount = await _dashboardService.GetPlayersCountAsync()
             };
 
         [HttpGet("eventsdata")]
-        public async Task<DashletData> GetEventsCountAsync() =>
+        public async Task<DashletData> GetEventsDataAsync() =>
             new DashletData
             {
                 TotalCount = await _dashboardService.GetEventsCountAsync()
             };
 
         [HttpGet("sitesdata")]
-        public async Task<DashletData> GetSitesCountAsync() =>
+        public async Task<DashletData> GetSitesDataAsync() =>
             new DashletData
             {
                 TotalCount = await _dashboardService.GetSitesCountAsync()
             };
 
         [HttpGet("gamesdata")]
-        public async Task<DashletData> GetGamesCountAsync() =>
+        public async Task<DashletData> GetGamesDataAsync() =>
             new DashletData
             {
                 TotalCount = await _dashboardService.GetGamesCountAsync()

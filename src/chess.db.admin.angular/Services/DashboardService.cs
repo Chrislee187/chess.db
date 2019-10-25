@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using chess.games.db.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -19,20 +16,6 @@ namespace chess.db.admin.angular.Services
             _logger = logger;
         }
 
-        public async Task<DashboardModel> GetAsync()
-        {
-            var db = new DashboardModel
-            {
-                TotalGames = await _chessDb.Games.CountAsync(),
-                TotalSites = await _chessDb.Sites.CountAsync(),
-                TotalEvents = await _chessDb.Events.CountAsync(),
-                TotalPlayers = await _chessDb.Players.CountAsync(),
-                TopPlayers = MostFrequentPlayers()
-            };
-
-            return db;
-        }
-
         public async Task<int> GetPlayersCountAsync()
             => await _chessDb.Players.CountAsync();
 
@@ -45,27 +28,5 @@ namespace chess.db.admin.angular.Services
         public async Task<int> GetSitesCountAsync()
             => await _chessDb.Sites.CountAsync();
 
-        public IEnumerable<TopXItem> MostFrequent(IEnumerable<string> dupeList)
-        {
-            return dupeList
-                .GroupBy(s => s)
-                .Where(g => g.Count() > 1)
-                .OrderByDescending(g => g.Count()).ToList()
-                .Select(i => new TopXItem {Name = i.Key, Count = i.Count()});
-
-
-        }
-        public IEnumerable<TopXItem> MostFrequentPlayers()
-        {
-            return MostFrequent(
-                    _chessDb.Games
-                        .Include(g => g.White)
-                        .Select(g => g.White.Name).ToList()
-                    .Concat(
-                            _chessDb.Games
-                                .Include(g => g.Black)
-                                .Select(g => g.Black.Name).ToList())
-                );
-        }
     }
 }
