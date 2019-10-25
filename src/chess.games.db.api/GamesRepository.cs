@@ -35,7 +35,7 @@ namespace chess.games.db.api
                             .ToDictionary(k => NormaliseName(k.Name), v => (object) v)
                     },
                     {
-                        typeof(Player), _chessGamesDbContext.Players.ToList()
+                        typeof(PgnPlayer), _chessGamesDbContext.PgnPlayers.ToList()
                             .GroupBy(k => NormaliseName(k.Name), (k, g) => g.First())
                             .ToDictionary(k => NormaliseName(k.Name), v => (object) v)
                     },
@@ -56,8 +56,8 @@ namespace chess.games.db.api
                 games.ToList().ForEach(pgnGame =>
                 {
                     var site = GetOrCreateCachedEntity<Site>(pgnGame.Site);
-                    var whitePlayer = GetOrCreateCachedEntity<Player>(pgnGame.White);
-                    var blackPlayer = GetOrCreateCachedEntity<Player>(pgnGame.Black);
+                    var whitePlayer = GetOrCreateCachedEntity<PgnPlayer>(pgnGame.White);
+                    var blackPlayer = GetOrCreateCachedEntity<PgnPlayer>(pgnGame.Black);
                     var @event = GetOrCreateCachedEntity<Event>(pgnGame.Event);
 
                     var game = new GameImport

@@ -37,8 +37,8 @@ namespace chess.db.webapi.Controllers
             [FromQuery] PlayerResourceParameters parameters
             )
         {
-            var filters = _mapper.Map<PlayersFilterParams>(parameters);
-            var query = _mapper.Map<PlayersSearchQuery>(parameters);
+            var filters = _mapper.Map<PgnPlayersFilterParams>(parameters);
+            var query = _mapper.Map<PgnPlayersSearchQuery>(parameters);
 
             var players = _playersRepository
                 .GetPlayers(filters, query)

@@ -7,8 +7,8 @@ namespace chess.games.db.Entities
     {
         public Event Event { get; set; }
         public Site Site { get; set; }
-        public Player White { get; set; }
-        public Player Black { get; set; }
+        public PgnPlayer White { get; set; }
+        public PgnPlayer Black { get; set; }
 
         [MaxLength(30)]
         public string Date { get; set; }

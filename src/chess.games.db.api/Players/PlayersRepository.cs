@@ -13,19 +13,19 @@ namespace chess.games.db.api.Players
             _chessGamesDbContext = chessGamesDbContext;
         }
 
-        public IQueryable<Player> GetPlayers() 
-            => _chessGamesDbContext.Players;
+        public IQueryable<PgnPlayer> GetPlayers() 
+            => _chessGamesDbContext.PgnPlayers;
 
-        public IQueryable<Player> GetPlayers(
-            PlayersFilterParams filters, 
-            PlayersSearchQuery query)
+        public IQueryable<PgnPlayer> GetPlayers(
+            PgnPlayersFilterParams filters, 
+            PgnPlayersSearchQuery query)
         {
             if (string.IsNullOrEmpty(filters.Name) && string.IsNullOrEmpty(query.QueryText))
             {
                 return GetPlayers();
             }
 
-            var set = _chessGamesDbContext.Players as IQueryable<Player>;
+            var set = _chessGamesDbContext.PgnPlayers as IQueryable<PgnPlayer>;
 
             if (!string.IsNullOrEmpty(filters.Name))
             {
@@ -43,6 +43,6 @@ namespace chess.games.db.api.Players
             return set;
         }
 
-        public Player GetPlayer(Guid id) => _chessGamesDbContext.Players.Find(id);
+        public PgnPlayer GetPlayer(Guid id) => _chessGamesDbContext.PgnPlayers.Find(id);
     }
 }

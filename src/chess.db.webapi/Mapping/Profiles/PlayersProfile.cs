@@ -12,13 +12,13 @@ namespace chess.db.webapi.Mapping.Profiles
     {
         public PlayersProfile()
         {
-            CreateMap<Player, PlayerDto>();
+            CreateMap<PgnPlayer, PlayerDto>();
 
-            CreateMap<PlayerResourceParameters, PlayersFilterParams>()
+            CreateMap<PlayerResourceParameters, PgnPlayersFilterParams>()
                 .ForMember(m => m.Name,
                     o => o.MapFrom(i => i.NameFilter));
 
-            CreateMap<PlayerResourceParameters, PlayersSearchQuery>()
+            CreateMap<PlayerResourceParameters, PgnPlayersSearchQuery>()
                 .ForMember(m => m.QueryText,
                     o => o.MapFrom(i => i.SearchQuery));
         }

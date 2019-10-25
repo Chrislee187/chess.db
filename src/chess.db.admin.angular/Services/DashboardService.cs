@@ -17,7 +17,7 @@ namespace chess.db.admin.angular.Services
         }
 
         public async Task<int> GetPlayersCountAsync()
-            => await _chessDb.Players.CountAsync();
+            => await _chessDb.PgnPlayers.CountAsync();
 
         public async Task<int> GetGamesCountAsync()
             => await _chessDb.Games.CountAsync();
