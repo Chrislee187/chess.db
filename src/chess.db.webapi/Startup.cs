@@ -29,7 +29,7 @@ namespace chess.db.webapi
                 {
                     cfg.ReturnHttpNotAcceptable = true; // NOTE: Configures to return 406 for unsupported "Accept" header content-types
                 })
-                .AddXmlDataContractSerializerFormatters(); // NOTE: Add "application/xml" content-type support
+                .AddXmlDataContractSerializerFormatters(); // NOTE: Adds "application/xml" content-type support
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

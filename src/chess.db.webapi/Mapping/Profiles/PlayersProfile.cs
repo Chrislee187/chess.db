@@ -14,7 +14,7 @@ namespace chess.db.webapi.Mapping.Profiles
         {
             CreateMap<PgnPlayer, PgnPlayerDto>();
 
-            CreateMap<PgnPlayerResourceParameters, PgnPlayersFilterParams>()
+            CreateMap<PgnPlayerResourceParameters, PgnPlayersFilters>()
                 .ForMember(m => m.Name,
                     o => o.MapFrom(i => i.NameFilter));
 

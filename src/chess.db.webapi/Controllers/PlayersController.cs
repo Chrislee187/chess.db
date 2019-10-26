@@ -4,7 +4,6 @@ using System.Linq;
 using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
-
 using chess.games.db.api.Players;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -32,8 +31,8 @@ namespace chess.db.webapi.Controllers
         }
 
         /// <summary>
-        /// PgnPlayers are created by the import mechanism and are not creatable, editable or deletable, by the API
-        /// They represent the original data from the original source before attempting to dedupe the entry
+        /// PgnPlayers are created by the import mechanism and are not creatable, editable or deletable, by the API.
+        /// They represent the original data from the original source before attempting to dedupe the data
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
@@ -43,7 +42,7 @@ namespace chess.db.webapi.Controllers
             [FromQuery] PgnPlayerResourceParameters parameters
             )
         {
-            var filters = _mapper.Map<PgnPlayersFilterParams>(parameters);
+            var filters = _mapper.Map<PgnPlayersFilters>(parameters);
             var query = _mapper.Map<PgnPlayersSearchQuery>(parameters);
 
             var players = _playersRepository

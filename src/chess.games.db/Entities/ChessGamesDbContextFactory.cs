@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 
 namespace chess.games.db.Entities
 {
@@ -13,8 +12,6 @@ namespace chess.games.db.Entities
         {
             var optionsBuilder = new DbContextOptionsBuilder<ChessGamesDbContext>();
             
-            
-            // TODO: This should be a key in the appSettings.dev.json
             optionsBuilder.UseSqlServer(@"Server=.\Dev;Database=ChessGames;Trusted_Connection=True;",
                 opts => opts.CommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds));
 

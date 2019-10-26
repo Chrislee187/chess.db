@@ -54,12 +54,5 @@ namespace chess.games.db.Entities
                 Console.WriteLine("DB Migrated");
             }
         }
-
-//        protected override void OnModelCreating(ModelBuilder modelBuilder)
-//        {
-//            modelBuilder.Entity<PgnPlayer>()
-//                .HasAlternateKey(c => c.Name)
-//                .HasName("AK_PgnPlayer_Name");
-//        }
     }
 }

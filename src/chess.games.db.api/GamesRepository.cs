@@ -49,42 +49,42 @@ namespace chess.games.db.api
         public int AddImportBatch(PgnGame[] games)
         {
             throw new NotImplementedException("Not implemented for new table schemas");
-            int created = 0;
-            _chessGamesDbContext.RunWithExtendedTimeout(() =>
-            {
-                _chessGamesDbContext.Database.ExecuteSqlCommand("TRUNCATE TABLE [GameImports]");
-
-                games.ToList().ForEach(pgnGame =>
-                {
-                    var site = GetOrCreateCachedEntity<Site>(pgnGame.Site);
-                    var whitePlayer = GetOrCreateCachedEntity<PgnPlayer>(pgnGame.White);
-                    var blackPlayer = GetOrCreateCachedEntity<PgnPlayer>(pgnGame.Black);
-                    var @event = GetOrCreateCachedEntity<Event>(pgnGame.Event);
-
-                    var game = new GameImport
-                    {
-                        Event = @event,
-                        Black = blackPlayer,
-                        Site = site,
-                        White = whitePlayer,
-                        Round = pgnGame.Round,
-                        MoveText = NormaliseMoveText(pgnGame),
-                        Date = pgnGame.Date.ToString(),
-                        Result = ConvertPGNResult(pgnGame.Result)
-                    };
-                    var pairs = pgnGame.TagPairs.ToDictionary(k => k.Name, v=> v.Value);
-                    if (pairs.ContainsKey("ECO"))
-                    {
-                        game.ECO = pairs["ECO"];
-                    }
-                    _chessGamesDbContext.GameImports.Attach(game);
-                });
-                _chessGamesDbContext.SaveChanges();
-
-                var sql = MergeNewGamesSql;
-                created = _chessGamesDbContext.Database.ExecuteSqlCommand(sql);
-            }, TimeSpan.FromMinutes(15));
-            return created;
+//            int created = 0;
+//            _chessGamesDbContext.RunWithExtendedTimeout(() =>
+//            {
+//                _chessGamesDbContext.Database.ExecuteSqlCommand("TRUNCATE TABLE [GameImports]");
+//
+//                games.ToList().ForEach(pgnGame =>
+//                {
+//                    var site = GetOrCreateCachedEntity<Site>(pgnGame.Site);
+//                    var whitePlayer = GetOrCreateCachedEntity<PgnPlayer>(pgnGame.White);
+//                    var blackPlayer = GetOrCreateCachedEntity<PgnPlayer>(pgnGame.Black);
+//                    var @event = GetOrCreateCachedEntity<Event>(pgnGame.Event);
+//
+//                    var game = new GameImport
+//                    {
+//                        Event = @event,
+//                        Black = blackPlayer,
+//                        Site = site,
+//                        White = whitePlayer,
+//                        Round = pgnGame.Round,
+//                        MoveText = NormaliseMoveText(pgnGame),
+//                        Date = pgnGame.Date.ToString(),
+//                        Result = ConvertPGNResult(pgnGame.Result)
+//                    };
+//                    var pairs = pgnGame.TagPairs.ToDictionary(k => k.Name, v=> v.Value);
+//                    if (pairs.ContainsKey("ECO"))
+//                    {
+//                        game.ECO = pairs["ECO"];
+//                    }
+//                    _chessGamesDbContext.GameImports.Attach(game);
+//                });
+//                _chessGamesDbContext.SaveChanges();
+//
+//                var sql = MergeNewGamesSql;
+//                created = _chessGamesDbContext.Database.ExecuteSqlCommand(sql);
+//            }, TimeSpan.FromMinutes(15));
+//            return created;
         }
 
         public GameResult ConvertPGNResult(PgnGameResult pgnR)

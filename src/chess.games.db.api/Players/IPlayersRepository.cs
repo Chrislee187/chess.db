@@ -8,7 +8,7 @@ namespace chess.games.db.api.Players
     {
         IQueryable<PgnPlayer> GetPgnPlayers();
 
-        IQueryable<PgnPlayer> GetPgnPlayers(PgnPlayersFilterParams filters, PgnPlayersSearchQuery searchQuery);
+        IQueryable<PgnPlayer> GetPgnPlayers(PgnPlayersFilters filters, PgnPlayersSearchQuery searchQuery);
         PgnPlayer GetPlayer(Guid id);
     }
 }
