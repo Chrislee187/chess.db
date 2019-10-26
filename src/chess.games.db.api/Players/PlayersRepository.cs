@@ -20,15 +20,15 @@ namespace chess.games.db.api.Players
             PgnPlayersFilters filters, 
             PgnPlayersSearchQuery query)
         {
-            if (filters.IsEmpty && query.IsEmpty)
+            if (filters.Empty && query.Empty)
             {
                 return GetPgnPlayers();
             }
 
             var set = _chessGamesDbContext.PgnPlayers as IQueryable<PgnPlayer>;
 
-            set = set.ApplyFilters(filters)
-                .ApplyQuery(query);
+            set = filters.Apply(set);
+            set = query.Apply(set);
 
             return set;
         }
@@ -36,29 +36,4 @@ namespace chess.games.db.api.Players
         public PgnPlayer GetPlayer(Guid id) => _chessGamesDbContext.PgnPlayers.Find(id);
     }
 
-    public static class IQueryablePgnPlayerExtensions
-    {
-        public static IQueryable<PgnPlayer> ApplyQuery(this IQueryable<PgnPlayer> set, PgnPlayersSearchQuery query)
-        {
-            if (!query.IsEmpty)
-            {
-                // Search all fields
-                set = set.Where(p =>
-                    p.Name.Contains(query.QueryText));
-            }
-
-            return set;
-        }
-
-        public static IQueryable<PgnPlayer> ApplyFilters(this IQueryable<PgnPlayer> set, PgnPlayersFilters filters)
-        {
-            if (!filters.IsEmpty)
-            {
-                set = set.Where(p =>
-                    p.Name.ToLower().Contains(filters.Name.ToLower()));
-            }
-
-            return set;
-        }
-    }
 }
