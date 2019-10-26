@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\chess.games.db\chess.games.db.csproj" />
+    <ProjectReference Include="..\chess.games.db.api\chess.games.db.api.csproj" />
   </ItemGroup>
 
 </Project>

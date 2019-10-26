@@ -4,36 +4,24 @@ using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players
 {
-    public class PlayersRepository : IPlayersRepository
+    public class PlayersRepository : RepositoryBase, IPlayersRepository
     {
         private readonly ChessGamesDbContext _chessGamesDbContext;
 
-        public PlayersRepository(ChessGamesDbContext chessGamesDbContext)
-        {
-            _chessGamesDbContext = chessGamesDbContext;
-        }
+        public PlayersRepository(ChessGamesDbContext chessGamesDbContext) 
+            => _chessGamesDbContext = chessGamesDbContext;
 
-        public IQueryable<PgnPlayer> GetPgnPlayers() 
-            => _chessGamesDbContext.PgnPlayers;
+        public IQueryable<Player> GetPlayers()
+            => _chessGamesDbContext.Players;
 
-        public IQueryable<PgnPlayer> GetPgnPlayers(
-            PgnPlayersFilters filters, 
-            PgnPlayersSearchQuery query)
-        {
-            if (filters.Empty && query.Empty)
-            {
-                return GetPgnPlayers();
-            }
+        public IQueryable<Player> GetPlayers(
+            PlayersFilters filters,
+            PlayersSearchQuery query) 
+            => Reduce(GetPlayers(), filters, query);
 
-            var set = _chessGamesDbContext.PgnPlayers as IQueryable<PgnPlayer>;
+        public Player GetPlayer(Guid id)
+            => _chessGamesDbContext.Players.Find(id);
 
-            set = filters.Apply(set);
-            set = query.Apply(set);
 
-            return set;
-        }
-
-        public PgnPlayer GetPlayer(Guid id) => _chessGamesDbContext.PgnPlayers.Find(id);
     }
-
 }

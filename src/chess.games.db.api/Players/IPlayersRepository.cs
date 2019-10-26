@@ -6,9 +6,12 @@ namespace chess.games.db.api.Players
 {
     public interface IPlayersRepository
     {
-        IQueryable<PgnPlayer> GetPgnPlayers();
+        IQueryable<Player> GetPlayers();
 
-        IQueryable<PgnPlayer> GetPgnPlayers(PgnPlayersFilters filters, PgnPlayersSearchQuery searchQuery);
-        PgnPlayer GetPlayer(Guid id);
+        IQueryable<Player> GetPlayers(
+            PlayersFilters filters,
+            PlayersSearchQuery query);
+
+        Player GetPlayer(Guid id);
     }
 }

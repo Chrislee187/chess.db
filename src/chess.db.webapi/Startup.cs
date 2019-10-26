@@ -1,5 +1,7 @@
 using System;
 using AutoMapper;
+using chess.games.db;
+using chess.games.db.api;
 using chess.games.db.api.Players;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Builder;
@@ -27,28 +29,25 @@ namespace chess.db.webapi
             services
                 .AddControllers(cfg =>
                 {
-                    cfg.ReturnHttpNotAcceptable = true; // NOTE: Configures to return 406 for unsupported "Accept" header content-types
+                    cfg.ReturnHttpNotAcceptable = true; // Configures to return 406 for unsupported "Accept" header content-types
                 })
-                .AddXmlDataContractSerializerFormatters(); // NOTE: Adds "application/xml" content-type support
+                .AddXmlDataContractSerializerFormatters(); // Adds "application/xml" content-type support
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // Registers Mapping "Profiles"
 
-            services.AddScoped<IPlayersRepository, PlayersRepository>();
+            services.AddChessDatabaseContext(Configuration["ChessDB"]);
 
-            var connectionString = Configuration["ChessDB"];
-
-            services.AddDbContext<ChessGamesDbContext>(
-                opts => opts.UseSqlServer(connectionString)
-                );
+            services.AddChessRepositories();
         }
+
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             ConfigureExceptionHandling(app, env);
 
             // NOTE: Order is SPECIFIC!
-            // i.e. Authorisation comes after a Route endpoint is chosen (UseRouting) but before
-            // the endpoint is actually executed (UseEndPoints)
+            // i.e. Authorisation `UseAuthorization()` comes after a Route endpoint is chosen `UseRouting()` but before
+            // the endpoint is actually executed `UseEndPoints()`
 
             app.UseRouting();
 
@@ -72,6 +71,7 @@ namespace chess.db.webapi
                 {
                     cfg.Run(async context =>
                     {
+                        // TODO: Better exception handling and logging
                         context.Response.StatusCode = 500;
                         await context.Response.WriteAsync("An unexpected fault happened. Please try again.");
                     });

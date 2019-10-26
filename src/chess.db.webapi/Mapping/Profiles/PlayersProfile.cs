@@ -21,6 +21,17 @@ namespace chess.db.webapi.Mapping.Profiles
             CreateMap<PgnPlayerResourceParameters, PgnPlayersSearchQuery>()
                 .ForMember(m => m.QueryText,
                     o => o.MapFrom(i => i.SearchQuery));
+
+            CreateMap<PlayerResourceParameters, PlayersFilters>()
+                .ForMember(m => m.Firstname, o => o.MapFrom(i => i.FirstnameFilter))
+                .ForMember(m => m.Middlename, o => o.MapFrom(i => i.MiddlenameFilter))
+                .ForMember(m => m.Lastname, o => o.MapFrom(i => i.LastnameFilter))
+                ;
+
+            CreateMap<PlayerResourceParameters, PlayersSearchQuery>()
+                .ForMember(m => m.QueryText,
+                    o => o.MapFrom(i => i.SearchQuery));
+
         }
     }
 }

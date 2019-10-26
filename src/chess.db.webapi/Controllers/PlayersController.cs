@@ -30,39 +30,34 @@ namespace chess.db.webapi.Controllers
             _logger = logger ?? NullLogger<PlayersController>.Instance;
         }
 
-        /// <summary>
-        /// PgnPlayers are created by the import mechanism and are not creatable, editable or deletable, by the API.
-        /// They represent the original data from the original source before attempting to dedupe the data
-        /// </summary>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
         [HttpGet]
         [HttpHead]
-        public ActionResult<IEnumerable<PgnPlayerDto>> GetPgnPlayers(
-            [FromQuery] PgnPlayerResourceParameters parameters
-            )
+        public ActionResult<IEnumerable<PlayerDto>> GetPlayers(
+            [FromQuery] PlayerResourceParameters parameters
+        )
         {
-            var filters = _mapper.Map<PgnPlayersFilters>(parameters);
-            var query = _mapper.Map<PgnPlayersSearchQuery>(parameters);
+            var filters = _mapper.Map<PlayersFilters>(parameters);
+            var query = _mapper.Map<PlayersSearchQuery>(parameters);
 
             var players = _playersRepository
-                .GetPgnPlayers(filters, query)
+                .GetPlayers(filters, query)
                 .Take(1000); // TODO: Temp restriction until paging is implemented
 
-            return Ok(_mapper.Map<IEnumerable<PgnPlayerDto>>(players));
+            return Ok(_mapper.Map<IEnumerable<PlayerDto>>(players));
         }
 
-        [HttpGet("{playerId}")]
-        public ActionResult<PgnPlayerDto> GetPgnPlayer(Guid playerId)
+        [HttpGet("{id}")]
+        public ActionResult<PlayerDto> GetPlayer(Guid id)
         {
-            var player = _playersRepository.GetPlayer(playerId);
+            var player = _playersRepository.GetPlayer(id);
 
             if (player == null)
             {
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<PgnPlayerDto>(player));
+            return Ok(_mapper.Map<PlayerDto>(player));
         }
+
     }
 }
