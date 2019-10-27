@@ -2,13 +2,9 @@ using System;
 using AutoMapper;
 using chess.games.db;
 using chess.games.db.api;
-using chess.games.db.api.Players;
-using chess.games.db.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,6 +26,10 @@ namespace chess.db.webapi
                 .AddControllers(cfg =>
                 {
                     cfg.ReturnHttpNotAcceptable = true; // Configures to return 406 for unsupported "Accept" header content-types
+                })
+                .AddJsonOptions(cfg =>
+                {
+                    cfg.JsonSerializerOptions.IgnoreNullValues = true;
                 })
                 .AddXmlDataContractSerializerFormatters(); // Adds "application/xml" content-type support
 

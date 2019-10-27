@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace chess.db.webapi.Controllers
 {
     /// <summary>
-    /// PgnPlayers are created by the import mechanism and are not creatable or deletable, by the API.
+    /// PgnPlayers are created by the import mechanism and are not creatable or deletable by the API.
     /// They represent the original data from the original source before attempting to dedupe the data
     /// </summary>
     /// <param name="parameters"></param>
@@ -37,8 +37,8 @@ namespace chess.db.webapi.Controllers
         }
 
 
-        [HttpGet()]
-
+        [HttpGet]
+        [HttpHead]
         public ActionResult<IEnumerable<PgnPlayerDto>> GetPgnPlayers(
             [FromQuery] PgnPlayerResourceParameters parameters
             )

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
 using chess.games.db.api.Players;
@@ -12,7 +13,10 @@ namespace chess.db.webapi.Mapping.Profiles
     {
         public PlayersProfile()
         {
-            CreateMap<PgnPlayer, PgnPlayerDto>();
+            CreateMap<PgnPlayer, PgnPlayerDto>()
+                .ForMember( p => p.PlayerId,
+                    o => o.MapFrom( i => i.Player.Id == Guid.Empty ? (Guid?) null : i.Player.Id))
+                ;
 
             CreateMap<PgnPlayerResourceParameters, PgnPlayersFilters>()
                 .ForMember(m => m.Name,
