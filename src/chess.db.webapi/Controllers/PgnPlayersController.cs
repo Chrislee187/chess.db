@@ -65,5 +65,12 @@ namespace chess.db.webapi.Controllers
 
             return Ok(_mapper.Map<PgnPlayerDto>(player));
         }
+
+        [HttpOptions]
+        public IActionResult GetOptions()
+        {
+            Response.Headers.Add("Allow", "GET,OPTIONS,POST");
+            return Ok();
+        }
     }
 }

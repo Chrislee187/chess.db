@@ -6,11 +6,15 @@ namespace chess.games.db
 {
     public static class ConfigurationExtensions
     {
-        public static void AddChessDatabaseContext(this IServiceCollection services, string connectionString)
-        {
-            services.AddDbContext<ChessGamesDbContext>(
+        /// <summary>
+        /// Add a SQL based ChessGamesDbContext to the container
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddChessDatabaseContext(this IServiceCollection services, string connectionString) 
+            => services.AddDbContext<ChessGamesDbContext>(
                 opts => opts.UseSqlServer(connectionString)
             );
-        }
     }
 }

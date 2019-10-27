@@ -3,7 +3,7 @@ using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players
 {
-    public interface IPgnPlayersRepository
+    public interface IPgnPlayersRepository : IRepositoryBase
     {
         IQueryable<PgnPlayer> GetPgnPlayers();
 

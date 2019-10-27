@@ -5,6 +5,7 @@ using chess.games.db.api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,19 +26,41 @@ namespace chess.db.webapi
             services
                 .AddControllers(cfg =>
                 {
-                    cfg.ReturnHttpNotAcceptable = true; // Configures to return 406 for unsupported "Accept" header content-types
+                    // Configures to return 406 for unsupported "Accept" header content-types
+                    cfg.ReturnHttpNotAcceptable = true; 
                 })
                 .AddJsonOptions(cfg =>
                 {
                     cfg.JsonSerializerOptions.IgnoreNullValues = true;
                 })
-                .AddXmlDataContractSerializerFormatters(); // Adds "application/xml" content-type support
+                .AddXmlDataContractSerializerFormatters() // Add "application/xml" content-type support
+                .ConfigureApiBehaviorOptions(setupAction =>
+                    {
+                        // Make invalid model state errors a bit better
+                        setupAction.InvalidModelStateResponseFactory = context =>
+                        {
+                            var problemDetails = new ValidationProblemDetails(context.ModelState)
+                            {
+                                Title = "One or more model validation errors occurred.",
+                                Status = StatusCodes.Status422UnprocessableEntity,
+                                Detail = "See the errors property for details.",
+                                Instance = context.HttpContext.Request.Path
+                            };
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // Registers Mapping "Profiles"
+                            problemDetails.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
 
-            services.AddChessDatabaseContext(Configuration["ChessDB"]);
+                            return new UnprocessableEntityObjectResult(problemDetails)
+                            {
+                                ContentTypes = { "application/problem+json" }
+                            };
+                        };
+                    }
+                );
 
-            services.AddChessRepositories();
+            services
+                    .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()) // Registers Mapping "Profiles"
+                    .AddChessDatabaseContext(Configuration["ChessDB"])
+                    .AddChessRepositories();
         }
 
 

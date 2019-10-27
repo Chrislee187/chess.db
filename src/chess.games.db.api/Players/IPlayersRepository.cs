@@ -4,7 +4,7 @@ using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players
 {
-    public interface IPlayersRepository
+    public interface IPlayersRepository : IRepositoryBase
     {
         IQueryable<Player> GetPlayers();
 
@@ -13,5 +13,6 @@ namespace chess.games.db.api.Players
             PlayersSearchQuery query);
 
         Player GetPlayer(Guid id);
+        void Add(Player entity);
     }
 }

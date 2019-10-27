@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace chess.games.db.Entities
+﻿namespace chess.games.db.Entities
 {
     public enum GameResult
     {

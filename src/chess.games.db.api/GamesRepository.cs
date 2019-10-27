@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using chess.games.db.Entities;
-using Microsoft.EntityFrameworkCore;
 using PgnReader;
 
 namespace chess.games.db.api

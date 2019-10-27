@@ -5,13 +5,11 @@ namespace chess.games.db.api.Players
 {
     public class PgnPlayersRepository : RepositoryBase, IPgnPlayersRepository
     {
-        private readonly ChessGamesDbContext _chessGamesDbContext;
-
-        public PgnPlayersRepository(ChessGamesDbContext chessGamesDbContext)
-            => _chessGamesDbContext = chessGamesDbContext;
+        public PgnPlayersRepository(ChessGamesDbContext dbContext)
+        : base(dbContext) { }
 
         public IQueryable<PgnPlayer> GetPgnPlayers()
-            => _chessGamesDbContext.PgnPlayers;
+            => DbContext.PgnPlayers;
 
         public IQueryable<PgnPlayer> GetPgnPlayers(
             PgnPlayersFilters filters,
@@ -19,6 +17,6 @@ namespace chess.games.db.api.Players
             => Reduce(GetPgnPlayers(), filters, query);
 
         public PgnPlayer GetPgnPlayer(string name)
-            => _chessGamesDbContext.PgnPlayers.Find(name);
+            => DbContext.PgnPlayers.Find(name);
     }
 }

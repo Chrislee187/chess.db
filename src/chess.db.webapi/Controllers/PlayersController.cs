@@ -5,6 +5,7 @@ using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
 using chess.games.db.api.Players;
+using chess.games.db.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -18,6 +19,8 @@ namespace chess.db.webapi.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<PlayersController> _logger;
         private readonly IPlayersRepository _playersRepository;
+
+        private const string GetPlayerRouteName = "GetPlayer";
 
         public PlayersController(
             IMapper mapper,
@@ -46,7 +49,7 @@ namespace chess.db.webapi.Controllers
             return Ok(_mapper.Map<IEnumerable<PlayerDto>>(players));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = GetPlayerRouteName)]
         public ActionResult<PlayerDto> GetPlayer(Guid id)
         {
             var player = _playersRepository.GetPlayer(id);
@@ -59,5 +62,22 @@ namespace chess.db.webapi.Controllers
             return Ok(_mapper.Map<PlayerDto>(player));
         }
 
+        [HttpPost]
+        public ActionResult<PlayerDto> CreatePlayer(PlayerCreationDto model)
+        {
+            var entity = _mapper.Map<Player>(model);
+
+            _playersRepository.Add(entity);
+            _playersRepository.Save();
+
+            var createdPlayer = _mapper.Map<PlayerDto>(entity);
+            
+            // NOTE: CreatedAtRoute places a 'Location' entry in the response header
+            // containing the uri to retrieve the newly added resource
+            return CreatedAtRoute(
+                GetPlayerRouteName,
+                new {createdPlayer.Id},
+                createdPlayer);
+        }
     }
 }

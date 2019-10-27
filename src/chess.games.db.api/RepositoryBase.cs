@@ -1,10 +1,22 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using chess.games.db.Entities;
 
 namespace chess.games.db.api
 {
-    public abstract class RepositoryBase
+    public interface IRepositoryBase
     {
+        bool Save();
+    }
+
+    public abstract class RepositoryBase : IRepositoryBase
+    {
+        protected readonly ChessGamesDbContext DbContext;
+
+        protected RepositoryBase(ChessGamesDbContext dbContext)
+        {
+            DbContext = dbContext;
+        }
+
         protected IQueryable<T> Reduce<T>(IQueryable<T> source, Query<T> filters, Query<T> query)
         {
             if (filters.Empty && query.Empty)
@@ -25,6 +37,11 @@ namespace chess.games.db.api
             }
 
             return set;
+        }
+
+        public bool Save()
+        {
+            return (DbContext.SaveChanges() >= 0);
         }
     }
 }

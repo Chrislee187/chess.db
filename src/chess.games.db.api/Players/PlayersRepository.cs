@@ -6,13 +6,11 @@ namespace chess.games.db.api.Players
 {
     public class PlayersRepository : RepositoryBase, IPlayersRepository
     {
-        private readonly ChessGamesDbContext _chessGamesDbContext;
-
-        public PlayersRepository(ChessGamesDbContext chessGamesDbContext) 
-            => _chessGamesDbContext = chessGamesDbContext;
+        public PlayersRepository(ChessGamesDbContext dbContext)
+            : base(dbContext) { }
 
         public IQueryable<Player> GetPlayers()
-            => _chessGamesDbContext.Players;
+            => DbContext.Players;
 
         public IQueryable<Player> GetPlayers(
             PlayersFilters filters,
@@ -20,8 +18,10 @@ namespace chess.games.db.api.Players
             => Reduce(GetPlayers(), filters, query);
 
         public Player GetPlayer(Guid id)
-            => _chessGamesDbContext.Players.Find(id);
+            => DbContext.Players.Find(id);
 
+        public void Add(Player entity) 
+            => DbContext.Players.Add(entity);
 
     }
 }
