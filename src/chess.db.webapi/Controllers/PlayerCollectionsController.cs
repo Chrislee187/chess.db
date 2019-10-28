@@ -13,7 +13,7 @@ namespace chess.db.webapi.Controllers
 {
     [ApiController]
     [Route("api/playercollections")]
-    public class PlayerCollectionsController : ControllerBase
+    public class PlayerCollectionsController : ApiControllerBase
     {
         private readonly IMapper _mapper;
         private readonly ILogger<PlayersController> _logger;

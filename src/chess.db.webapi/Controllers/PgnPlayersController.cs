@@ -17,7 +17,7 @@ namespace chess.db.webapi.Controllers
     /// </summary>
     [ApiController]
     [Route("api/pgnplayers")]
-    public class PgnPlayersController : ControllerBase
+    public class PgnPlayersController : ApiControllerBase
     {
         private readonly IMapper _mapper;
         private readonly ILogger<PgnPlayersController> _logger;
@@ -82,7 +82,7 @@ namespace chess.db.webapi.Controllers
         [HttpOptions]
         public IActionResult GetOptions()
         {
-            Response.Headers.Add("Allow", "GET,OPTIONS,POST");
+            Response.Headers.Add("Allow", "GET,OPTIONS");
             return Ok();
         }
     }

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Newtonsoft.Json;
 namespace chess.db.webapi
 {
     public class Startup
@@ -26,34 +26,17 @@ namespace chess.db.webapi
             services
                 .AddControllers(cfg =>
                 {
-                    // Configures to return 406 for unsupported "Accept" header content-types
-                    cfg.ReturnHttpNotAcceptable = true; 
+                    cfg.ReturnHttpNotAcceptable = true;     // NOTE: Configures to return 406 for unsupported "Accept" header content-types
                 })
                 .AddJsonOptions(cfg =>
                 {
                     cfg.JsonSerializerOptions.IgnoreNullValues = true;
                 })
-                .AddXmlDataContractSerializerFormatters() // Add "application/xml" content-type support
+                .AddNewtonsoftJson()                        // NOTE: Needed for JsonPatchDocument support
+                .AddXmlDataContractSerializerFormatters()   // NOTE: Add "application/xml" content-type support
                 .ConfigureApiBehaviorOptions(setupAction =>
                     {
-                        // Make invalid model state errors a bit better
-                        setupAction.InvalidModelStateResponseFactory = context =>
-                        {
-                            var problemDetails = new ValidationProblemDetails(context.ModelState)
-                            {
-                                Title = "One or more model validation errors occurred.",
-                                Status = StatusCodes.Status422UnprocessableEntity,
-                                Detail = "See the errors property for details.",
-                                Instance = context.HttpContext.Request.Path
-                            };
-
-                            problemDetails.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
-
-                            return new UnprocessableEntityObjectResult(problemDetails)
-                            {
-                                ContentTypes = { "application/problem+json" }
-                            };
-                        };
+                        setupAction.InvalidModelStateResponseFactory = SetupInvalidModelStateResponse;
                     }
                 );
 
@@ -61,6 +44,24 @@ namespace chess.db.webapi
                     .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()) // Registers Mapping "Profiles"
                     .AddChessDatabaseContext(Configuration["ChessDB"])
                     .AddChessRepositories();
+        }
+
+        private IActionResult SetupInvalidModelStateResponse(ActionContext context)
+        {
+            // NOTE: Give invalid model errors correct status and better details
+            var problemDetails = new ValidationProblemDetails(context.ModelState)
+            {
+                Title = "One or more model validation errors occurred.",
+                Status = StatusCodes.Status422UnprocessableEntity, Detail = "See the errors property for details.",
+                Instance = context.HttpContext.Request.Path
+            };
+
+            problemDetails.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
+
+            return new UnprocessableEntityObjectResult(problemDetails)
+            {
+                ContentTypes = {"application/problem+json"}
+            };
         }
 
 

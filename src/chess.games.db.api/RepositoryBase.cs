@@ -16,9 +16,10 @@ namespace chess.games.db.api
 
         public void Add(T entity) => DbContext.Set<T>().Add(entity);
         public bool Exists(Guid id) => Get(id) != null;
-        public void Update(T player) { } // NOTE: No code needed EF tracking handles it. 
+        public void Update(T player) { } // NOTE: No code needed, EF tracking handles it, here for testing/completeness
         public IEnumerable<T> Get() => DbContext.Set<T>();
         public T Get(Guid id) => DbContext.Set<T>().Find(id);
+        public void Delete(T entity) => DbContext.Set<T>().Remove(entity);
         public bool Save() => (DbContext.SaveChanges() >= 0);
 
 

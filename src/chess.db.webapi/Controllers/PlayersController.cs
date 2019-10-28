@@ -6,6 +6,8 @@ using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
 using chess.games.db.api.Players;
 using chess.games.db.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -14,7 +16,7 @@ namespace chess.db.webapi.Controllers
 {
     [ApiController]
     [Route("api/players")]
-    public class PlayersController : ControllerBase
+    public class PlayersController : ApiControllerBase
     {
         private readonly IMapper _mapper;
         private readonly ILogger<PlayersController> _logger;
@@ -118,11 +120,63 @@ namespace chess.db.webapi.Controllers
             return result;
         }
 
+        [HttpPatch("{id}")]
+        public ActionResult PatchPlayer(Guid id,
+            JsonPatchDocument<PlayerUpdateDto> patchDocument)
+        {
+            if (id.Equals(Guid.Empty))
+            {
+                return NotFound();
+            }
+
+            var player = _playersRepository.Get(id);
+            if (player == null)
+            {
+                return NotFound();
+            }
+
+            var patchedPlayer = _mapper.Map<PlayerUpdateDto>(player);
+            patchDocument.ApplyTo(patchedPlayer, ModelState);
+
+            if (!TryValidateModel(patchedPlayer))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            _mapper.Map(patchedPlayer, player);
+            _playersRepository.Update(player);
+            _playersRepository.Save();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult DeletePlayer(Guid id)
+        {
+            if (id.Equals(Guid.Empty))
+            {
+                return NotFound();
+            }
+
+            var player = _playersRepository.Get(id);
+
+            if (player == null)
+            {
+                return NotFound();
+            }
+
+            _playersRepository.Delete(player);
+            _playersRepository.Save();
+
+            return NoContent();
+        }
+
         [HttpOptions]
         public IActionResult GetOptions()
         {
-            Response.Headers.Add("Allow", "GET,OPTIONS,POST,PUT");
+            Response.Headers.Add("Allow", "HEAD,OPTIONS,GET,POST,PUT,PATCH,DELETE");
             return Ok();
         }
+
     }
 }

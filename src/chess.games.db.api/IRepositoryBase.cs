@@ -11,5 +11,6 @@ namespace chess.games.db.api
         IEnumerable<T> Get();
         T Get(Guid id);
         bool Save();
+        void Delete(T entity);
     }
 }

@@ -26,11 +26,16 @@ namespace chess.db.webapi.Mapping.Profiles
             CreateMap<Player, PlayerDto>()
                 .ForMember(m => m.Lastname, o =>o.MapFrom(i => i.Surname))
                 ;
+
             CreateMap<PlayerCreationDto, Player>()
                 .ForMember(m => m.Surname, o => o.MapFrom(i => i.Lastname))
                 ;
+            
             CreateMap<PlayerUpdateDto, Player>()
                 .ForMember(m => m.Surname, o => o.MapFrom(i => i.Lastname))
+                ;
+            CreateMap<Player, PlayerUpdateDto>()
+                .ForMember(m => m.Lastname, o => o.MapFrom(i => i.Surname))
                 ;
         }
 
