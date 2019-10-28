@@ -29,7 +29,9 @@ namespace chess.db.webapi.Mapping.Profiles
             CreateMap<PlayerCreationDto, Player>()
                 .ForMember(m => m.Surname, o => o.MapFrom(i => i.Lastname))
                 ;
-
+            CreateMap<PlayerUpdateDto, Player>()
+                .ForMember(m => m.Surname, o => o.MapFrom(i => i.Lastname))
+                ;
         }
 
         private void MapPlayerParameters()

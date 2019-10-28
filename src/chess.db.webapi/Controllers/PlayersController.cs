@@ -20,7 +20,8 @@ namespace chess.db.webapi.Controllers
         private readonly ILogger<PlayersController> _logger;
         private readonly IPlayersRepository _playersRepository;
 
-        private const string GetPlayerRouteName = "GetPlayer";
+        private const string GetPlayerRouteName = "Get";
+        private const string UpsertPlayerRouteName = "UpsertPlayer";
 
         public PlayersController(
             IMapper mapper,
@@ -43,7 +44,7 @@ namespace chess.db.webapi.Controllers
             var query = _mapper.Map<PlayersSearchQuery>(parameters);
 
             var players = _playersRepository
-                .GetPlayers(filters, query)
+                .Get(filters, query)
                 .Take(1000); // TODO: Temp restriction until paging is implemented
 
             return Ok(_mapper.Map<IEnumerable<PlayerDto>>(players));
@@ -52,7 +53,7 @@ namespace chess.db.webapi.Controllers
         [HttpGet("{id}", Name = GetPlayerRouteName)]
         public ActionResult<PlayerDto> GetPlayer(Guid id)
         {
-            var player = _playersRepository.GetPlayer(id);
+            var player = _playersRepository.Get(id);
 
             if (player == null)
             {
@@ -77,7 +78,51 @@ namespace chess.db.webapi.Controllers
             return CreatedAtRoute(
                 GetPlayerRouteName,
                 new {createdPlayer.Id},
-                createdPlayer);
+                createdPlayer
+                );
+        }
+
+        [HttpPut("{id}", Name = UpsertPlayerRouteName)]
+        public ActionResult UpsertPlayer(Guid id, PlayerUpdateDto model)
+        {
+            if (id.Equals(Guid.Empty))
+            {
+                return NotFound();
+            }
+
+            var player = _playersRepository.Get(id);
+            
+            ActionResult result;
+            if (player == null)
+            {
+                var addedPlayer = _mapper.Map<Player>(model);
+                addedPlayer.Id = id;
+                _playersRepository.Add(addedPlayer);
+
+                var playerResult = _mapper.Map<PlayerDto>(addedPlayer);
+
+                result = CreatedAtRoute(
+                    GetPlayerRouteName,
+                    new { id },
+                    playerResult
+                    );
+            }
+            else
+            {
+                _mapper.Map(model, player);
+                _playersRepository.Update(player);
+                result = NoContent();
+            }
+            _playersRepository.Save();
+
+            return result;
+        }
+
+        [HttpOptions]
+        public IActionResult GetOptions()
+        {
+            Response.Headers.Add("Allow", "GET,OPTIONS,POST,PUT");
+            return Ok();
         }
     }
 }

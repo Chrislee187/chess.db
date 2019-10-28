@@ -46,7 +46,7 @@ namespace chess.db.webapi.Controllers
                 return Ok(new List<PlayerDto>());
             }
 
-            var entities = _playersRepository.GetPlayers(idList);
+            var entities = _playersRepository.Get(idList);
 
             if (idList.Count() != entities.Count())
             {
@@ -57,7 +57,7 @@ namespace chess.db.webapi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<IEnumerable<PlayerDto>> CreatePlayerCollection(IEnumerable<PlayerCreationDto> playerCollection)
+        public ActionResult<IEnumerable<PlayerCreationDto>> CreatePlayerCollection(IEnumerable<PlayerCreationDto> playerCollection)
         {
             var entities = _mapper.Map<IEnumerable<Player>>(playerCollection);
             foreach (var player in entities)

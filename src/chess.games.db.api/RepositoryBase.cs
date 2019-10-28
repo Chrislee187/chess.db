@@ -1,14 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using chess.games.db.Entities;
 
 namespace chess.games.db.api
 {
-    public interface IRepositoryBase
-    {
-        bool Save();
-    }
-
-    public abstract class RepositoryBase : IRepositoryBase
+    public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
         protected readonly ChessGamesDbContext DbContext;
 
@@ -17,7 +14,16 @@ namespace chess.games.db.api
             DbContext = dbContext;
         }
 
-        protected IQueryable<T> Reduce<T>(IQueryable<T> source, Query<T> filters, Query<T> query)
+        public void Add(T entity) => DbContext.Set<T>().Add(entity);
+        public bool Exists(Guid id) => Get(id) != null;
+        public void Update(T player) { } // NOTE: No code needed EF tracking handles it. 
+        public IEnumerable<T> Get() => DbContext.Set<T>();
+        public T Get(Guid id) => DbContext.Set<T>().Find(id);
+        public bool Save() => (DbContext.SaveChanges() >= 0);
+
+
+        // NOTE: This is only using <T> and query should it be here? on Query?
+        protected IQueryable<T> Reduce(IQueryable<T> source, Query<T> filters, Query<T> query)
         {
             if (filters.Empty && query.Empty)
             {
@@ -37,11 +43,6 @@ namespace chess.games.db.api
             }
 
             return set;
-        }
-
-        public bool Save()
-        {
-            return (DbContext.SaveChanges() >= 0);
         }
     }
 }

@@ -45,16 +45,31 @@ namespace chess.db.webapi.Controllers
             var query = _mapper.Map<PgnPlayersSearchQuery>(parameters);
 
             var players = _pgnPlayersRepository
-                .GetPgnPlayers(filters, query)
+                .Get(filters, query)
                 .Take(1000); // TODO: Temp restriction until paging is implemented
 
             return Ok(_mapper.Map<IEnumerable<PgnPlayerDto>>(players));
         }
 
+        [HttpGet("{id:Guid}")]
+        public ActionResult<PgnPlayerDto> GetPgnPlayer(Guid id)
+        {
+            // NOTE: We know this will throw, let it all happen in a consistent
+            // manner though in case we change it to a more generic approach later
+            var player = _pgnPlayersRepository.Get(id);
+
+            if (player == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<PgnPlayerDto>(player));
+        }
+
         [HttpGet("{name}")]
         public ActionResult<PgnPlayerDto> GetPgnPlayer(string name)
         {
-            var player = _pgnPlayersRepository.GetPgnPlayer(name);
+            var player = _pgnPlayersRepository.Get(name);
 
             if (player == null)
             {

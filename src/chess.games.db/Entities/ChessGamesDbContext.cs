@@ -6,7 +6,6 @@ namespace chess.games.db.Entities
 {
     public class ChessGamesDbContext : DbContext
     {
-
         public DbSet<Event> Events { get; set; }
         public DbSet<Site> Sites { get; set; }
         public DbSet<PgnPlayer> PgnPlayers { get; set; }
