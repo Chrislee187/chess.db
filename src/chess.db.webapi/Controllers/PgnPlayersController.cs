@@ -15,10 +15,8 @@ namespace chess.db.webapi.Controllers
     /// PgnPlayers are created by the import mechanism and are not creatable or deletable by the API.
     /// They represent the original data from the original source before attempting to dedupe the data
     /// </summary>
-    /// <param name="parameters"></param>
-    /// <returns></returns>
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/pgnplayers")]
     public class PgnPlayersController : ControllerBase
     {
         private readonly IMapper _mapper;

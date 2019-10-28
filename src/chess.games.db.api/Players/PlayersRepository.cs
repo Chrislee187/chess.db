@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using chess.games.db.Entities;
 
@@ -11,6 +12,9 @@ namespace chess.games.db.api.Players
 
         public IQueryable<Player> GetPlayers()
             => DbContext.Players;
+
+        public IQueryable<Player> GetPlayers(IEnumerable<Guid> ids)
+            => DbContext.Players.Where(p => ids.Contains(p.Id));
 
         public IQueryable<Player> GetPlayers(
             PlayersFilters filters,

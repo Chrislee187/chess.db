@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace chess.db.webapi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/players")]
     public class PlayersController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -72,8 +72,8 @@ namespace chess.db.webapi.Controllers
 
             var createdPlayer = _mapper.Map<PlayerDto>(entity);
             
-            // NOTE: CreatedAtRoute places a 'Location' entry in the response header
-            // containing the uri to retrieve the newly added resource
+            // NOTE: CreatedAtRoute returns 201 (Created) and places a 'Location' entry in
+            // the response header containing the uri to retrieve the newly added resource
             return CreatedAtRoute(
                 GetPlayerRouteName,
                 new {createdPlayer.Id},
