@@ -1,41 +1,16 @@
-# chess.db.admin
+# chess.db
 
-## Admin Dashboard Page (home page)
+Multiple projects spanning
 
-* Basic status
-	* Top 10 Events, Sites, Players (total counts as well)
-	* each section acts as link to individual admin page
+* NETCore 3.0/EntityFramework, Code-first DB creation for a large Chess Game database
+* NETCore 3.0/ASP.NET MVC RESTful API for DB interaction, with mature HTTP verb support. Intended as a template/reference for RESTful API's.
+* NETCore 3.0 Class library containings repositories for lower level DB acceess
+* Hiperformance console tool for batch imports
+	* NB. This is currently out of date with latest design changes as I've been working by adapting my existing test DB without destroying it's 2M+ games
+
+Individual project folders may contain more README.MD's with more specific details.
 
 
-### Player admin pages
-
-* Simple multi-column table with search and edit functionality
-
-Analysis option to attempt to find duplicate names represented using different naming conventions.
-
-* Analysis Strategies
-	* Split names into firstname, middle, surname
-		* Find matching surnames, check firstnames/initials etc.
-	* some games seem to have two names in the single player field
-		* check whats happening and fix
-
-### Event/Site admin pages
-
-* Simple multi-column table with search and edit functionality
-
-Analyse names try to find to duplicates then merge them
-
-* Analysis Strategies
-* 
-
-### Game admin pages
-
-* Simple multi-column table with search and edit functionality
-
-Analyse names try to find to duplicates then merge them
-
-* Analysis Strategies
-	* Check for duplicate MoveTexts, show game info, offer resolution
 
 
 
