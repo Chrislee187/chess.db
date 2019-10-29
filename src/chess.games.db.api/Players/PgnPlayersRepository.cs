@@ -12,12 +12,12 @@ namespace chess.games.db.api.Players
         public IEnumerable<PgnPlayer> Get(
             PgnPlayersFilters filters,
             PgnPlayersSearchQuery query)
-            => Reduce(DbContext.PgnPlayers, filters, query);
+            => Reduce(Resource, filters, query);
 
         public new PgnPlayer Get(Guid id)
             => throw new NotSupportedException($"PgnPlayers do not have GUID primary key, use the Name instead.");
 
         public PgnPlayer Get(string name)
-            => DbContext.PgnPlayers.Find(name);
+            => Resource.Find(name);
     }
 }

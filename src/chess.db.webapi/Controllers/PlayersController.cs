@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using AutoMapper;
 using chess.db.webapi.Helpers;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
+using chess.db.webapi.Services;
 using chess.games.db.api;
 using chess.games.db.api.Players;
 using chess.games.db.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,6 +22,7 @@ namespace chess.db.webapi.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<PlayersController> _logger;
         private readonly IPlayersRepository _playersRepository;
+        private readonly IOrderByPropertyMappingService _orderByPropertyMappingService;
 
         private const string GetPlayerRouteName = "Get";
         private const string GetPlayersRouteName = "GetPlayers";
@@ -32,9 +31,11 @@ namespace chess.db.webapi.Controllers
         public PlayersController(
             IMapper mapper,
             IPlayersRepository playersRepository,
+            IOrderByPropertyMappingService orderByPropertyMappingService,
             ILogger<PlayersController> logger
         )
         {
+            _orderByPropertyMappingService = orderByPropertyMappingService;
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _playersRepository = playersRepository ?? throw new ArgumentNullException(nameof(playersRepository));
             _logger = logger ?? NullLogger<PlayersController>.Instance;
@@ -48,13 +49,28 @@ namespace chess.db.webapi.Controllers
         {
             var filters = _mapper.Map<PlayersFilters>(parameters);
             var query = _mapper.Map<PlayersSearchQuery>(parameters);
-            var pages = _mapper.Map<PaginationParameters>(parameters);
+            var pagination = _mapper.Map<PaginationParameters>(parameters);
 
-            var players = _playersRepository
-                .Get(filters, query, pages);
+            if (!_orderByPropertyMappingService.ClauseIsValid<PlayerDto, Player>(parameters.OrderBy))
+            {
+                return BadRequest(new ProblemDetails()
+                {
+                    Detail = "orderby clause contain unknown fields",
+                    Instance = Url.Link(GetPlayersRouteName, null),
+                    Title = "Invalid orderby clause"
+                });
+            }
+            
+            var orderBy = new OrderByParameters
+            {
+                Clause = parameters.OrderBy,
+                Mappings = _orderByPropertyMappingService.GetPropertyMapping<PlayerDto, Player>()
+            };
+            
+            var players = _playersRepository.Get(filters, query, pagination, orderBy);
 
-            var urls = CreatePrevNextUris(players, filters, query, pages);
-            AddPaginationHeader(players, urls.previous, urls.next);
+            var urls = new PlayersResourceUris(Url, players, filters, query, pagination, orderBy.Clause);
+            AddMetadataHeader(players, urls);
 
             return Ok(_mapper.Map<IEnumerable<PlayerDto>>(players));
         }
@@ -186,47 +202,57 @@ namespace chess.db.webapi.Controllers
             return Ok();
         }
 
-        private (string previous, string next) CreatePrevNextUris(PagedList<Player> players, PlayersFilters filters, PlayersSearchQuery query, PaginationParameters pages)
+        private class PlayersResourceUris : IResourceUris
         {
-            var previous = players.HasPrevious
-                ? CreatePlayersResourceUri(filters, query, pages, ResourceUriType.PreviousPage)
-                : null;
-            var next = players.HasNext
-                ? CreatePlayersResourceUri(filters, query, pages, ResourceUriType.NextPage)
-                : null;
-
-            return (previous, next);
-        }
-
-        private string CreatePlayersResourceUri(
-                        PlayersFilters filter,
-                        PlayersSearchQuery query,
-                        PaginationParameters pages,
-                        ResourceUriType type)
-        {
-
-            var uriParams = new PlayerResourceParameters
+            private readonly IUrlHelper _url;
+            public string Previous { get; }
+            public string Next { get; }
+            public PlayersResourceUris(IUrlHelper url, PagedList<Player> players,
+                PlayersFilters filters,
+                PlayersSearchQuery query,
+                PaginationParameters pages,
+                string orderBy)
             {
-                PageSize = pages.PageSize,
-                FirstnameFilter = filter.Firstname,
-                MiddlenameFilter = filter.Middlename,
-                LastnameFilter = filter.Lastname,
-                SearchQuery = query.QueryText
-            };
-            switch (type)
-            {
-                case ResourceUriType.PreviousPage:
-                    uriParams.PageNumber -= 1;
-                    break;
-                case ResourceUriType.NextPage:
-                    uriParams.PageNumber += 1;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                _url = url;
+                Previous = players.HasPrevious
+                    ? CreatePlayersResourceUri(filters, query, pages, orderBy, ResourceUriType.PreviousPage)
+                    : null;
+                Next = players.HasNext
+                    ? CreatePlayersResourceUri(filters, query, pages, orderBy, ResourceUriType.NextPage)
+                    : null;
             }
-            return Url.Link(GetPlayersRouteName,uriParams);
 
+            private string CreatePlayersResourceUri(
+                PlayersFilters filter,
+                PlayersSearchQuery query,
+                PaginationParameters pages,
+                string orderBy,
+                ResourceUriType type)
+            {
+
+                var uriParams = new PlayerResourceParameters
+                {
+                    PageSize = pages.PageSize,
+                    FirstnameFilter = filter.Firstname,
+                    MiddlenameFilter = filter.Middlename,
+                    LastnameFilter = filter.Lastname,
+                    SearchQuery = query.QueryText,
+                    OrderBy = orderBy
+                };
+                switch (type)
+                {
+                    case ResourceUriType.PreviousPage:
+                        uriParams.PageNumber -= 1;
+                        break;
+                    case ResourceUriType.NextPage:
+                        uriParams.PageNumber += 1;
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                }
+                return _url.Link(GetPlayersRouteName, uriParams);
+            }
         }
     }
 }

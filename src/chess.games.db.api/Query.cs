@@ -5,7 +5,7 @@ namespace chess.games.db.api
 {
     public abstract class Query<T>
     {
-        public static Query<T> Null = new NullQuery();
+        public static readonly Query<T> Default = new EmptyQuery();
         public abstract bool Empty { get; }
         public abstract IQueryable<T> ApplyQuery(IQueryable<T> set);
 
@@ -19,13 +19,10 @@ namespace chess.games.db.api
             return set;
         }
 
-        private class NullQuery : Query<T>
+        private class EmptyQuery : Query<T>
         {
             public override bool Empty { get; } = true;
-            public override IQueryable<T> ApplyQuery(IQueryable<T> set)
-            {
-                throw new System.NotImplementedException();
-            }
+            public override IQueryable<T> ApplyQuery(IQueryable<T> set) => set;
         }    
     }
 }

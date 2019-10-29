@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
 using chess.games.db.api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -18,8 +19,7 @@ namespace chess.db.webapi.Controllers
             return (ActionResult)options.Value.InvalidModelStateResponseFactory(ControllerContext);
         }
 
-        public void AddPaginationHeader<T>(PagedList<T> data
-        , string previous, string next)
+        public void AddMetadataHeader<T>(PagedList<T> data, IResourceUris urls)
         {
             var paginationMetadata = new
             {
@@ -27,11 +27,15 @@ namespace chess.db.webapi.Controllers
                 pageSize = data.PageSize,
                 currentPage = data.CurrentPage,
                 totalPages = data.TotalPages,
-                previousPageLink = previous,
-                nextPageLink = next
+                previousPageLink = urls.Previous,
+                nextPageLink = urls.Next
             };
 
-            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata, new JsonSerializerOptions()
+            {
+                // NOTE: Stops the '?' & '&' chars in the links being escaped
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            }));
 
         }
     }

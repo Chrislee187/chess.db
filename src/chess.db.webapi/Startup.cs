@@ -1,5 +1,6 @@
 using System;
 using AutoMapper;
+using chess.db.webapi.Services;
 using chess.games.db;
 using chess.games.db.api;
 using Microsoft.AspNetCore.Builder;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
+
 namespace chess.db.webapi
 {
     public class Startup
@@ -43,7 +44,9 @@ namespace chess.db.webapi
             services
                     .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()) // Registers Mapping "Profiles"
                     .AddChessDatabaseContext(Configuration["ChessDB"])
-                    .AddChessRepositories();
+                    .AddChessRepositories()
+                    .AddTransient<IOrderByPropertyMappingService, OrderByOrderByPropertyMappingService>()
+                    ;
         }
 
         private IActionResult SetupInvalidModelStateResponse(ActionContext context)

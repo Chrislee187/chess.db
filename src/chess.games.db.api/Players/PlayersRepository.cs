@@ -1,28 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using chess.games.db.api.Helpers;
 using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players
 {
     public class PlayersRepository : RepositoryBase<Player>, IPlayersRepository
     {
+
         public PlayersRepository(ChessGamesDbContext dbContext)
             : base(dbContext) { }
 
         public IEnumerable<Player> Get(IEnumerable<Guid> ids)
-            => DbContext.Players.Where(p => ids.Contains(p.Id));
+            => Resource.Where(p => ids.Contains(p.Id));
 
         public PagedList<Player> Get(
             PlayersFilters filters = null,
             PlayersSearchQuery query = null, 
-            PaginationParameters pages = null)
+            PaginationParameters pagination = null,
+            OrderByParameters orderByParameters = null)
         {
-            var f = filters ?? Query<Player>.Null;
-            var q = query ?? Query<Player>.Null;
-            var p = pages ?? PaginationParameters.Default;
+            var f = filters ?? Query<Player>.Default;
+            var q = query ?? Query<Player>.Default;
+            var p = pagination ?? PaginationParameters.Default;
+            var orderBy = orderByParameters ?? OrderByParameters.Default;
 
-            var filtered = Reduce(DbContext.Players, f, q);
+            var filtered = Reduce(Resource, f, q);
+            filtered = filtered.ApplySort(orderBy.Clause, orderBy.Mappings);
 
             return PagedList<Player>.Create(filtered, p.Page, p.PageSize);
         }
