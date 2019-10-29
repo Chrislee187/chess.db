@@ -1,9 +1,11 @@
 ﻿using System.Linq;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace chess.games.db.api
 {
     public abstract class Query<T>
     {
+        public static Query<T> Null = new NullQuery();
         public abstract bool Empty { get; }
         public abstract IQueryable<T> ApplyQuery(IQueryable<T> set);
 
@@ -16,5 +18,14 @@ namespace chess.games.db.api
 
             return set;
         }
+
+        private class NullQuery : Query<T>
+        {
+            public override bool Empty { get; } = true;
+            public override IQueryable<T> ApplyQuery(IQueryable<T> set)
+            {
+                throw new System.NotImplementedException();
+            }
+        }    
     }
 }

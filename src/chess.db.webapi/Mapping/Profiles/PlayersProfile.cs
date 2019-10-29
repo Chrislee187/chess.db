@@ -50,6 +50,9 @@ namespace chess.db.webapi.Mapping.Profiles
             CreateMap<PlayerResourceParameters, PlayersSearchQuery>()
                 .ForMember(m => m.QueryText,
                     o => o.MapFrom(i => i.SearchQuery));
+
+            CreateMap<PlayerResourceParameters, PaginationParameters>()
+                .ForMember(m => m.Page, o => o.MapFrom(i => i.PageNumber));
         }
 
         private void MapPgnPlayers()

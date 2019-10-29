@@ -6,9 +6,8 @@ namespace chess.games.db.api.Players
 {
     public interface IPlayersRepository : IRepositoryBase<Player>
     {
-        IEnumerable<Player> Get(
-            PlayersFilters filters,
-            PlayersSearchQuery query);
+        PagedList<Player> Get(PlayersFilters filters,
+            PlayersSearchQuery query, PaginationParameters pages);
 
         IEnumerable<Player> Get(IEnumerable<Guid> ids);
 

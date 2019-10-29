@@ -26,6 +26,7 @@ namespace chess.games.db.api
         // NOTE: This is only using <T> and query should it be here? on Query?
         protected IQueryable<T> Reduce(IQueryable<T> source, Query<T> filters, Query<T> query)
         {
+
             if (filters.Empty && query.Empty)
             {
                 return source;

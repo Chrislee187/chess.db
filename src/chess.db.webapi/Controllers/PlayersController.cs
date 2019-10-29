@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using AutoMapper;
+using chess.db.webapi.Helpers;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
+using chess.games.db.api;
 using chess.games.db.api.Players;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Http;
@@ -23,6 +26,7 @@ namespace chess.db.webapi.Controllers
         private readonly IPlayersRepository _playersRepository;
 
         private const string GetPlayerRouteName = "Get";
+        private const string GetPlayersRouteName = "GetPlayers";
         private const string UpsertPlayerRouteName = "UpsertPlayer";
 
         public PlayersController(
@@ -36,7 +40,7 @@ namespace chess.db.webapi.Controllers
             _logger = logger ?? NullLogger<PlayersController>.Instance;
         }
 
-        [HttpGet]
+        [HttpGet(Name = GetPlayersRouteName)]
         [HttpHead]
         public ActionResult<IEnumerable<PlayerDto>> GetPlayers(
             [FromQuery] PlayerResourceParameters parameters
@@ -44,13 +48,17 @@ namespace chess.db.webapi.Controllers
         {
             var filters = _mapper.Map<PlayersFilters>(parameters);
             var query = _mapper.Map<PlayersSearchQuery>(parameters);
+            var pages = _mapper.Map<PaginationParameters>(parameters);
 
             var players = _playersRepository
-                .Get(filters, query)
-                .Take(1000); // TODO: Temp restriction until paging is implemented
+                .Get(filters, query, pages);
+
+            var urls = CreatePrevNextUris(players, filters, query, pages);
+            AddPaginationHeader(players, urls.previous, urls.next);
 
             return Ok(_mapper.Map<IEnumerable<PlayerDto>>(players));
         }
+
 
         [HttpGet("{id}", Name = GetPlayerRouteName)]
         public ActionResult<PlayerDto> GetPlayer(Guid id)
@@ -178,5 +186,47 @@ namespace chess.db.webapi.Controllers
             return Ok();
         }
 
+        private (string previous, string next) CreatePrevNextUris(PagedList<Player> players, PlayersFilters filters, PlayersSearchQuery query, PaginationParameters pages)
+        {
+            var previous = players.HasPrevious
+                ? CreatePlayersResourceUri(filters, query, pages, ResourceUriType.PreviousPage)
+                : null;
+            var next = players.HasNext
+                ? CreatePlayersResourceUri(filters, query, pages, ResourceUriType.NextPage)
+                : null;
+
+            return (previous, next);
+        }
+
+        private string CreatePlayersResourceUri(
+                        PlayersFilters filter,
+                        PlayersSearchQuery query,
+                        PaginationParameters pages,
+                        ResourceUriType type)
+        {
+
+            var uriParams = new PlayerResourceParameters
+            {
+                PageSize = pages.PageSize,
+                FirstnameFilter = filter.Firstname,
+                MiddlenameFilter = filter.Middlename,
+                LastnameFilter = filter.Lastname,
+                SearchQuery = query.QueryText
+            };
+            switch (type)
+            {
+                case ResourceUriType.PreviousPage:
+                    uriParams.PageNumber -= 1;
+                    break;
+                case ResourceUriType.NextPage:
+                    uriParams.PageNumber += 1;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+            return Url.Link(GetPlayersRouteName,uriParams);
+
+        }
     }
 }
