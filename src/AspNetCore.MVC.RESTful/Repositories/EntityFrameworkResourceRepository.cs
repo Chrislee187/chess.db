@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using chess.games.db.api.Helpers;
-using chess.games.db.Entities;
+using AspNetCore.MVC.RESTful.Helpers;
+using AspNetCore.MVC.RESTful.Parameters;
 using Microsoft.EntityFrameworkCore;
 
-namespace chess.games.db.api
+namespace AspNetCore.MVC.RESTful.Repositories
 {
-    public abstract class ResourceRepositoryBase<TEntity> : IResourceRepositoryBase<TEntity> where TEntity : class
+    public abstract class EntityFrameworkResourceRepository<TEntity> : IResourceRepository<TEntity> where TEntity : class
     {
-        private readonly ChessGamesDbContext _dbContext;
+        private readonly DbContext _dbContext;
 
         protected  DbSet<TEntity> Resource => _dbContext.Set<TEntity>();
 
-        protected ResourceRepositoryBase(ChessGamesDbContext dbContext)
+        protected EntityFrameworkResourceRepository(DbContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -1,7 +1,6 @@
 ﻿using System.Linq;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 
-namespace chess.games.db.api
+namespace AspNetCore.MVC.RESTful.Parameters
 {
     public abstract class Query<T>
     {

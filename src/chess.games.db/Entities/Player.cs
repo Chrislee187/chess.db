@@ -1,6 +1,8 @@
-﻿namespace chess.games.db.Entities
+﻿using AspNetCore.MVC.RESTful.Controllers;
+
+namespace chess.games.db.Entities
 {
-    public class Player : DbEntity
+    public class Player : DbEntity, IResourceEntity
     {
         public string Firstname { get; set; }
         public string Surname { get; set; }

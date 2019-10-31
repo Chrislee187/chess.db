@@ -1,4 +1,4 @@
-﻿namespace chess.games.db.api
+﻿namespace AspNetCore.MVC.RESTful.Parameters
 {
     public class PaginationParameters
     {

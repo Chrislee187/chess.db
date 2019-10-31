@@ -1,4 +1,4 @@
-﻿namespace chess.db.webapi.Helpers
+﻿namespace AspNetCore.MVC.RESTful.Helpers
 {
     public enum ResourceUriType
     {

@@ -1,15 +1,19 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using AspNetCore.MVC.RESTful;
+using AspNetCore.MVC.RESTful.AutoMapper;
+using AspNetCore.MVC.RESTful.Configuration;
+using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
-using chess.db.webapi.Services;
+using chess.db.webapi.Models;
 using chess.games.db;
 using chess.games.db.api;
+using chess.games.db.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace chess.db.webapi
 {
@@ -25,52 +29,27 @@ namespace chess.db.webapi
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddControllers(cfg =>
-                {
-                    cfg.ReturnHttpNotAcceptable = true;     // NOTE: Configures to return 406 for unsupported "Accept" header content-types
-                })
-                .AddJsonOptions(cfg =>
-                {
-                    cfg.JsonSerializerOptions.IgnoreNullValues = true;
-                })
-                .AddNewtonsoftJson()                        // NOTE: Needed for JsonPatchDocument support
-                .AddXmlDataContractSerializerFormatters()   // NOTE: Add "application/xml" content-type support
-                .ConfigureApiBehaviorOptions(setupAction =>
-                    {
-                        setupAction.InvalidModelStateResponseFactory = SetupInvalidModelStateResponse;
-                    }
-                );
+                .RestConfig();
 
             services
                     .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()) // Registers Mapping "Profiles"
                     .AddChessDatabaseContext(Configuration["ChessDB"])
                     .AddChessRepositories()
-                    .AddTransient<IOrderByPropertyMappingService, OrderByPropertyMappingService>()
-                    ;
-        }
-
-        private IActionResult SetupInvalidModelStateResponse(ActionContext context)
-        {
-            // NOTE: Give invalid model errors correct status and better details
-            var problemDetails = new ValidationProblemDetails(context.ModelState)
-            {
-                Title = "One or more model validation errors occurred.",
-                Status = StatusCodes.Status422UnprocessableEntity, Detail = "See the errors property for details.",
-                Instance = context.HttpContext.Request.Path
-            };
-
-            problemDetails.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
-
-            return new UnprocessableEntityObjectResult(problemDetails)
-            {
-                ContentTypes = {"application/problem+json"}
-            };
-        }
-
+                    .AddTransient<IOrderByPropertyMappingService<PlayerDto, Player>>(s =>
+                        new OrderByPropertyMappingService<PlayerDto, Player>(
+                            new Dictionary<string, OrderByPropertyMappingValue>(StringComparer.OrdinalIgnoreCase)
+                            {
+                                { "Lastname", new OrderByPropertyMappingValue(new List<string>() { "Surname" } ) }
+                            })
+                    )
+                    .AddTransient<IOrderByPropertyMappingService<PgnPlayerDto, PgnPlayer>>(s =>
+                        new OrderByPropertyMappingService<PgnPlayerDto,PgnPlayer>()
+                    );
+       }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            ConfigureExceptionHandling(app, env);
+            app.ConfigureExceptionHandling(env);
 
             // NOTE: Order is SPECIFIC!
             // i.e. Authorisation `UseAuthorization()` comes after a Route endpoint is chosen `UseRouting()` but before
@@ -84,26 +63,15 @@ namespace chess.db.webapi
             {
                 endpoints.MapControllers();
             });
+
+            CheckAutoMapperConventionsForRESTful(app);
         }
 
-        private static void ConfigureExceptionHandling(IApplicationBuilder app, IWebHostEnvironment env)
+        private static void CheckAutoMapperConventionsForRESTful(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler(cfg =>
-                {
-                    cfg.Run(async context =>
-                    {
-                        // TODO: Better exception handling and logging
-                        context.Response.StatusCode = 500;
-                        await context.Response.WriteAsync("An unexpected fault happened. Please try again.");
-                    });
-                });
-            }
+            var mapper = app.ApplicationServices.GetService<IMapper>();
+            new AutoMapperConventionsChecker(mapper).Check<Player>();
+            new AutoMapperConventionsChecker(mapper).CheckReadonly<PgnPlayer>();
         }
     }
 }

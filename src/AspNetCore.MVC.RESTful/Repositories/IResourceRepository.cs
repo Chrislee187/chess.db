@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using chess.games.db.api.Helpers;
+using AspNetCore.MVC.RESTful.Helpers;
+using AspNetCore.MVC.RESTful.Parameters;
 
-namespace chess.games.db.api
+namespace AspNetCore.MVC.RESTful.Repositories
 {
-    public interface IResourceRepositoryBase<T> where T : class
+    public interface IResourceRepository<T> where T : class
     {
         void Add(T entity);
         

@@ -1,20 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace chess.db.webapi.ResourceParameters
+namespace AspNetCore.MVC.RESTful.Parameters
 {
-    public class PgnPlayerResourceParameters : CommonResourceParameters
-    {
-        public string NameFilter { get; set; }
-    }
-
-    public class GetPlayersParameters : CommonResourceParameters
-    {
-        public string FirstnameFilter { get; set; }
-        public string MiddlenameFilter { get; set; }
-        public string LastnameFilter { get; set; }
-
-    }
-
     public abstract class CommonResourceParameters {
         protected const int MaxPageSize = 100;
         protected const int DefaultPageSize = 20;

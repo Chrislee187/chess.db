@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using AspNetCore.MVC.RESTful.Controllers;
+using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
-using chess.db.webapi.Services;
 using chess.games.db.api.Players;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -29,8 +30,8 @@ namespace chess.db.webapi.Controllers
         private const string GetPgnPlayerRouteName = "GetPgnPlayer";
         private const string GetPgnPlayerByIdRouteName = "GetPgnPlayerById";
         public PgnPlayersController(IMapper mapper,
-            IOrderByPropertyMappingService orderByPropertyMappingService,
             IPgnPlayersRepository pgnPlayersRepository,
+            IOrderByPropertyMappingService<PgnPlayerDto, PgnPlayer> orderByPropertyMappingService,
             ILogger<PgnPlayersController> logger)
                 : base(mapper, pgnPlayersRepository, orderByPropertyMappingService)
         {
@@ -42,11 +43,11 @@ namespace chess.db.webapi.Controllers
         [HttpGet(Name = GetPgnPlayersRouteName)]
         [HttpHead]
         public ActionResult<IEnumerable<PgnPlayerDto>> GetPgnPlayers(
-            [FromQuery] PgnPlayerResourceParameters parameters
+            [FromQuery] GetPgnPlayersParameters parameters
             )
         {
-            var filters = Mapper.Map<PgnPlayersFilters>(parameters);
-            var query = Mapper.Map<PgnPlayersSearchQuery>(parameters);
+            var filters = Mapper.Map<GetPgnPlayersFilters>(parameters);
+            var query = Mapper.Map<GetPgnPlayersSearchQuery>(parameters);
 
             return ResourcesGet(
                 parameters,

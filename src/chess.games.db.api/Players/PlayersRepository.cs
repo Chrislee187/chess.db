@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using chess.games.db.api.Helpers;
+using AspNetCore.MVC.RESTful;
+using AspNetCore.MVC.RESTful.Repositories;
 using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players
 {
-    public class PlayersRepository : ResourceRepositoryBase<Player>, IPlayersRepository
+    public class PlayersRepository : EntityFrameworkResourceRepository<Player>, IPlayersRepository
     {
         public PlayersRepository(
             ChessGamesDbContext dbContext

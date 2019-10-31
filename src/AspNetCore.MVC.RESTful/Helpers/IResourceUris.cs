@@ -1,4 +1,4 @@
-﻿namespace chess.db.webapi.Controllers
+﻿namespace AspNetCore.MVC.RESTful.Helpers
 {
     public interface IResourceUris
     {

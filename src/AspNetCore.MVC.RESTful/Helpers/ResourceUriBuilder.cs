@@ -1,9 +1,7 @@
 ﻿using System;
-using chess.db.webapi.Helpers;
-using chess.db.webapi.ResourceParameters;
-using chess.games.db.api;
+using AspNetCore.MVC.RESTful.Parameters;
 
-namespace chess.db.webapi.Controllers
+namespace AspNetCore.MVC.RESTful.Helpers
 {
     public class ResourceUriBuilder : IResourceUris
     {

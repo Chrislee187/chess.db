@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using AspNetCore.MVC.RESTful.Controllers;
+using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
-using chess.db.webapi.Services;
 using chess.games.db.api.Players;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.JsonPatch;
@@ -24,7 +25,7 @@ namespace chess.db.webapi.Controllers
 
         public PlayersController(IMapper mapper,
             IPlayersRepository playersRepository,
-            IOrderByPropertyMappingService orderByPropertyMappingService,
+            IOrderByPropertyMappingService<PlayerDto, Player> orderByPropertyMappingService,
             ILogger<PlayersController> logger) 
             : base(mapper, playersRepository, orderByPropertyMappingService)
         {
@@ -39,8 +40,8 @@ namespace chess.db.webapi.Controllers
             [FromQuery] GetPlayersParameters parameters
         )
         {
-            var filters = Mapper.Map<PlayersFilters>(parameters);
-            var query = Mapper.Map<PlayersSearchQuery>(parameters);
+            var filters = Mapper.Map<GetPlayersFilters>(parameters);
+            var query = Mapper.Map<GetPlayersSearchQuery>(parameters);
 
             return ResourcesGet(
                 parameters, 

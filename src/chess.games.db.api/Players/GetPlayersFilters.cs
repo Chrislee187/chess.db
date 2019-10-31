@@ -1,9 +1,11 @@
 ﻿using System.Linq;
+using AspNetCore.MVC.RESTful;
+using AspNetCore.MVC.RESTful.Parameters;
 using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players
 {
-    public class PlayersFilters : Query<Player>
+    public class GetPlayersFilters : Query<Player>
     {
         public string Firstname { get; set; }
         public string Middlename { get; set; }

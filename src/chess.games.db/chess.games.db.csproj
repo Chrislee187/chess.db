@@ -30,4 +30,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AspNetCore.MVC.RESTful\AspNetCore.MVC.RESTful.csproj" />
+  </ItemGroup>
+
 </Project>

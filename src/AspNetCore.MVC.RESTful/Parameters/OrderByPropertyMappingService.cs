@@ -1,0 +1,68 @@
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+
+namespace AspNetCore.MVC.RESTful.Parameters
+{
+    /// <summary>
+    /// Simple service that maps property names to field names
+    /// </summary>
+    public class OrderByPropertyMappingService<TDto, TEntity> 
+        : IOrderByPropertyMappingService<TDto, TEntity>
+    {
+
+        private readonly PropertyMapping<TDto, TEntity> _propertyMapping;
+        
+        public OrderByPropertyMappingService()
+        {
+            _propertyMapping = new PropertyMapping<TDto, TEntity>(new Dictionary<string, OrderByPropertyMappingValue>());
+        }
+        public OrderByPropertyMappingService(IDictionary<string, OrderByPropertyMappingValue> mappings)
+        {
+            _propertyMapping = new PropertyMapping<TDto, TEntity>(mappings);
+        }
+
+        public (bool Valid, ProblemDetails Details) ClauseIsValid(string fields)
+        {
+            var propertyMapping = _propertyMapping.MappingDictionary;
+
+            if (string.IsNullOrWhiteSpace(fields))
+            {
+                return (true, null);
+            }
+
+            var fieldsAfterSplit = fields.Split(',');
+
+            foreach (var field in fieldsAfterSplit)
+            {
+                var trimmedField = field.Trim();
+
+                var indexOfFirstSpace = trimmedField.IndexOf(" ", StringComparison.Ordinal);
+                var propertyName = indexOfFirstSpace == -1 ?
+                    trimmedField : trimmedField.Remove(indexOfFirstSpace);
+
+                if (!propertyMapping.ContainsKey(propertyName))
+                {
+                    var propertyInfo = typeof(TDto).GetProperties().Any(p => p.Name.ToLowerInvariant().Equals(propertyName));
+                    if (!propertyInfo)
+                    {
+                        return (false, new ProblemDetails()
+                        {
+                            Detail = $"orderby clause contains unknown/unmapped field: {propertyName}",
+                            Title = "Invalid orderBy field/mapping"
+                        });
+                    }
+                }
+            }
+            return (true, null);
+        }
+
+
+        public IDictionary<string, OrderByPropertyMappingValue> GetPropertyMapping()
+        {
+            return _propertyMapping.MappingDictionary;
+        }
+    }
+}

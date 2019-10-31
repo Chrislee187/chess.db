@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace chess.games.db.api.Helpers
+namespace AspNetCore.MVC.RESTful.Parameters
 {
     public class OrderByPropertyMappingValue
     {

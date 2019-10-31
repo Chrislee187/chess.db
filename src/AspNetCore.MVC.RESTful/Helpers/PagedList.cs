@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using chess.games.db.api.Players;
+using AspNetCore.MVC.RESTful.Parameters;
 
-namespace chess.games.db.api
+namespace AspNetCore.MVC.RESTful.Helpers
 {
     public interface IPaginationMetadata
     {

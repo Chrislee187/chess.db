@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using AspNetCore.MVC.RESTful.Parameters;
 
-namespace chess.games.db.api.Helpers
+namespace AspNetCore.MVC.RESTful.Helpers
 {
     public static class QueryableApplySortExtension
     {
