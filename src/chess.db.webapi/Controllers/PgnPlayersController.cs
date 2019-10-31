@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
+using chess.db.webapi.Services;
 using chess.games.db.api.Players;
+using chess.games.db.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -17,56 +19,52 @@ namespace chess.db.webapi.Controllers
     /// </summary>
     [ApiController]
     [Route("api/pgnplayers")]
-    public class PgnPlayersController : ApiControllerBase
+    public class PgnPlayersController : ResourceControllerBase<PgnPlayerDto, PgnPlayer>
     {
-        private readonly IMapper _mapper;
+
         private readonly ILogger<PgnPlayersController> _logger;
         private readonly IPgnPlayersRepository _pgnPlayersRepository;
 
-        public PgnPlayersController(
-            IMapper mapper,
+        private const string GetPgnPlayersRouteName = "GetPgnPlayers";
+        private const string GetPgnPlayerRouteName = "GetPgnPlayer";
+        private const string GetPgnPlayerByIdRouteName = "GetPgnPlayerById";
+        public PgnPlayersController(IMapper mapper,
+            IOrderByPropertyMappingService orderByPropertyMappingService,
             IPgnPlayersRepository pgnPlayersRepository,
-            ILogger<PgnPlayersController> logger
-        )
+            ILogger<PgnPlayersController> logger)
+                : base(mapper, pgnPlayersRepository, orderByPropertyMappingService)
         {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _pgnPlayersRepository = pgnPlayersRepository ?? throw new ArgumentNullException(nameof(pgnPlayersRepository));
+             _pgnPlayersRepository = pgnPlayersRepository ?? throw new ArgumentNullException(nameof(pgnPlayersRepository));
             _logger = logger ?? NullLogger<PgnPlayersController>.Instance;
         }
 
 
-        [HttpGet]
+        [HttpGet(Name = GetPgnPlayersRouteName)]
         [HttpHead]
         public ActionResult<IEnumerable<PgnPlayerDto>> GetPgnPlayers(
             [FromQuery] PgnPlayerResourceParameters parameters
             )
         {
-            var filters = _mapper.Map<PgnPlayersFilters>(parameters);
-            var query = _mapper.Map<PgnPlayersSearchQuery>(parameters);
+            var filters = Mapper.Map<PgnPlayersFilters>(parameters);
+            var query = Mapper.Map<PgnPlayersSearchQuery>(parameters);
 
-            var players = _pgnPlayersRepository
-                .Get(filters, query)
-                .Take(1000); // TODO: Temp restriction until paging is implemented
-
-            return Ok(_mapper.Map<IEnumerable<PgnPlayerDto>>(players));
+            return ResourcesGet(
+                parameters,
+                filters,
+                query,
+                GetPgnPlayersRouteName);
         }
 
-        [HttpGet("{id:Guid}")]
+        [HttpGet("{id:Guid}", Name = GetPgnPlayerByIdRouteName)]
         public ActionResult<PgnPlayerDto> GetPgnPlayer(Guid id)
-        {
-            // NOTE: We know this will throw, let it all happen in a consistent
-            // manner though in case we change it to a more generic approach later
-            var player = _pgnPlayersRepository.Get(id);
+            => Problem(
+                "PgnPlayers are referenced by name, not Id.", 
+                Url.Link(GetPgnPlayerByIdRouteName, new {id}),
+                (int) HttpStatusCode.Forbidden,
+                $"Invalid route parameter {id}"
+                );
 
-            if (player == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(_mapper.Map<PgnPlayerDto>(player));
-        }
-
-        [HttpGet("{name}")]
+        [HttpGet("{name}", Name=GetPgnPlayerRouteName)]
         public ActionResult<PgnPlayerDto> GetPgnPlayer(string name)
         {
             var player = _pgnPlayersRepository.Get(name);
@@ -76,14 +74,11 @@ namespace chess.db.webapi.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<PgnPlayerDto>(player));
+            return Ok(Mapper.Map<PgnPlayerDto>(player));
         }
 
         [HttpOptions]
         public IActionResult GetOptions()
-        {
-            Response.Headers.Add("Allow", "GET,OPTIONS");
-            return Ok();
-        }
+            => ResourceOptions("OPTIONS,HEAD,GET");
     }
 }

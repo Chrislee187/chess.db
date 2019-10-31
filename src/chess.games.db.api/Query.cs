@@ -25,4 +25,6 @@ namespace chess.games.db.api
             public override IQueryable<T> ApplyQuery(IQueryable<T> set) => set;
         }    
     }
+
+    
 }

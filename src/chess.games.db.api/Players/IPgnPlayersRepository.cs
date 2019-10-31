@@ -3,13 +3,8 @@ using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players
 {
-    public interface IPgnPlayersRepository : IRepositoryBase<PgnPlayer>
+    public interface IPgnPlayersRepository : IResourceRepositoryBase<PgnPlayer>
     {
-        IEnumerable<PgnPlayer> Get(
-            PgnPlayersFilters filters, 
-            PgnPlayersSearchQuery searchQuery
-            );
-
         PgnPlayer Get(string name);
     }
 }

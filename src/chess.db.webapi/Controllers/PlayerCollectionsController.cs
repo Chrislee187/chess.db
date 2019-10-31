@@ -13,9 +13,8 @@ namespace chess.db.webapi.Controllers
 {
     [ApiController]
     [Route("api/playercollections")]
-    public class PlayerCollectionsController : ApiControllerBase
+    public class PlayerCollectionsController : ResourceControllerBase<PlayerDto, Player>
     {
-        private readonly IMapper _mapper;
         private readonly ILogger<PlayersController> _logger;
         private readonly IPlayersRepository _playersRepository;
 
@@ -25,9 +24,8 @@ namespace chess.db.webapi.Controllers
             IMapper mapper,
             IPlayersRepository playersRepository,
             ILogger<PlayersController> logger
-        )
+        ) : base(mapper, playersRepository, null)
         {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _playersRepository = playersRepository ?? throw new ArgumentNullException(nameof(playersRepository));
             _logger = logger ?? NullLogger<PlayersController>.Instance;
         }
@@ -53,13 +51,13 @@ namespace chess.db.webapi.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<IEnumerable<PlayerDto>>(entities));
+            return Ok(Mapper.Map<IEnumerable<PlayerDto>>(entities));
         }
 
         [HttpPost]
         public ActionResult<IEnumerable<PlayerCreationDto>> CreatePlayerCollection(IEnumerable<PlayerCreationDto> playerCollection)
         {
-            var entities = _mapper.Map<IEnumerable<Player>>(playerCollection);
+            var entities = Mapper.Map<IEnumerable<Player>>(playerCollection);
             foreach (var player in entities)
             {
                 _playersRepository.Add(player);
@@ -67,7 +65,7 @@ namespace chess.db.webapi.Controllers
 
             _playersRepository.Save();
 
-            var added = _mapper.Map<IEnumerable<PlayerDto>>(entities);
+            var added = Mapper.Map<IEnumerable<PlayerDto>>(entities);
             return CreatedAtRoute(
                 GetPlayerCollectionRouteName,
                 new {ids = string.Join(",", added.Select(a => a.Id)) },

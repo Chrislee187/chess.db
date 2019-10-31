@@ -2,6 +2,7 @@
 using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
+using chess.games.db.api;
 using chess.games.db.api.Players;
 using chess.games.db.Entities;
 
@@ -26,7 +27,6 @@ namespace chess.db.webapi.Mapping.Profiles
             CreateMap<Player, PlayerDto>()
                 .ForMember(m => m.Lastname, o =>o.MapFrom(i => i.Surname))
                 ;
-
             CreateMap<PlayerCreationDto, Player>()
                 .ForMember(m => m.Surname, o => o.MapFrom(i => i.Lastname))
                 ;
@@ -41,18 +41,33 @@ namespace chess.db.webapi.Mapping.Profiles
 
         private void MapPlayerParameters()
         {
-            CreateMap<PlayerResourceParameters, PlayersFilters>()
+            CreateMap<GetPlayersParameters, PlayersFilters>()
                 .ForMember(m => m.Firstname, o => o.MapFrom(i => i.FirstnameFilter))
                 .ForMember(m => m.Middlename, o => o.MapFrom(i => i.MiddlenameFilter))
                 .ForMember(m => m.Lastname, o => o.MapFrom(i => i.LastnameFilter))
                 ;
-
-            CreateMap<PlayerResourceParameters, PlayersSearchQuery>()
+            CreateMap<PlayersFilters, GetPlayersParameters>()
+                .ForMember(m => m.FirstnameFilter, o => o.MapFrom(i => i.Firstname))
+                .ForMember(m => m.MiddlenameFilter, o => o.MapFrom(i => i.Middlename))
+                .ForMember(m => m.LastnameFilter, o => o.MapFrom(i => i.Lastname))
+                ;
+            
+            CreateMap<GetPlayersParameters, PlayersSearchQuery>()
                 .ForMember(m => m.QueryText,
                     o => o.MapFrom(i => i.SearchQuery));
+            CreateMap<PlayersSearchQuery, GetPlayersParameters>()
+                .ForMember(m => m.SearchQuery,
+                    o => o.MapFrom(i => i.QueryText));
 
-            CreateMap<PlayerResourceParameters, PaginationParameters>()
+            CreateMap<GetPlayersParameters, PaginationParameters>()
                 .ForMember(m => m.Page, o => o.MapFrom(i => i.PageNumber));
+            CreateMap<PaginationParameters, GetPlayersParameters>()
+                .ForMember(m => m.PageNumber, o => o.MapFrom(i => i.Page));
+
+            CreateMap<OrderByParameters, GetPlayersParameters>()
+                .ForMember(m => m.OrderBy, o => o.MapFrom(i => i.Clause));
+            CreateMap<GetPlayersParameters, OrderByParameters>()
+                .ForMember(m => m.Clause, o => o.MapFrom(i => i.OrderBy));
         }
 
         private void MapPgnPlayers()
@@ -73,6 +88,16 @@ namespace chess.db.webapi.Mapping.Profiles
             CreateMap<PgnPlayerResourceParameters, PgnPlayersSearchQuery>()
                 .ForMember(m => m.QueryText,
                     o => o.MapFrom(i => i.SearchQuery));
+            CreateMap<PgnPlayerResourceParameters, PaginationParameters>()
+                .ForMember(m => m.Page, o => o.MapFrom(i => i.PageNumber));
+
+            CreateMap<PgnPlayerResourceParameters, PaginationParameters>()
+                .ForMember(m => m.Page, o => o.MapFrom(i => i.PageNumber));
+            CreateMap<PaginationParameters, PgnPlayerResourceParameters>()
+                .ForMember(m => m.PageNumber, o => o.MapFrom(i => i.Page));
+            CreateMap<OrderByParameters, PgnPlayerResourceParameters>()
+                .ForMember(m => m.OrderBy, o => o.MapFrom(i => i.Clause));
+
         }
     }
 }

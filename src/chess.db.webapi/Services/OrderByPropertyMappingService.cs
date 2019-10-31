@@ -4,13 +4,14 @@ using System.Linq;
 using chess.db.webapi.Models;
 using chess.games.db.api.Helpers;
 using chess.games.db.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace chess.db.webapi.Services
 {
     /// <summary>
     /// Simple service that maps property names to field names
     /// </summary>
-    public class OrderByOrderByPropertyMappingService : IOrderByPropertyMappingService
+    public class OrderByPropertyMappingService : IOrderByPropertyMappingService
     {
         private static readonly Dictionary<string, OrderByPropertyMappingValue> Mappings =
           new Dictionary<string, OrderByPropertyMappingValue>(StringComparer.OrdinalIgnoreCase)
@@ -20,18 +21,19 @@ namespace chess.db.webapi.Services
 
         private readonly IList<IPropertyMapping> _propertyMappings = new List<IPropertyMapping>();
 
-        public OrderByOrderByPropertyMappingService()
+        public OrderByPropertyMappingService()
         {
             _propertyMappings.Add(new PropertyMapping<PlayerDto, Player>(Mappings));
         }
 
-        public bool ClauseIsValid<TSource, TDestination>(string fields)
+        public (bool Valid, ProblemDetails Details) ClauseIsValid<TSource, TDestination>(string fields)
         {
-            var propertyMapping = GetPropertyMapping<TSource, TDestination>();
+            var propertyMapping = GetPropertyMapping<TSource, TDestination>()
+                ?? new Dictionary<string, OrderByPropertyMappingValue>();
 
             if (string.IsNullOrWhiteSpace(fields))
             {
-                return true;
+                return (true, null);
             }
 
             var fieldsAfterSplit = fields.Split(',');
@@ -49,11 +51,15 @@ namespace chess.db.webapi.Services
                     var propertyInfo = typeof(TSource).GetProperties().Any(p => p.Name.ToLowerInvariant().Equals(propertyName));
                     if (!propertyInfo)
                     {
-                        return false;
+                        return (false, new ProblemDetails()
+                        {
+                            Detail = $"orderby clause contains unknown/unmapped field: {propertyName}",
+                            Title = "Invalid orderBy field/mapping"
+                        });
                     }
                 }
             }
-            return true;
+            return (true, null);
         }
 
 
@@ -69,8 +75,7 @@ namespace chess.db.webapi.Services
                 return mapping.First().MappingDictionary;
             }
 
-            throw new Exception($"Cannot find exact property mapping instance " +
-                $"for <{typeof(TSource)},{typeof(TDestination)}");
+            return null;
         }
     }
 }

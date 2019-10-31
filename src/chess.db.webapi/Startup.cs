@@ -45,7 +45,7 @@ namespace chess.db.webapi
                     .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()) // Registers Mapping "Profiles"
                     .AddChessDatabaseContext(Configuration["ChessDB"])
                     .AddChessRepositories()
-                    .AddTransient<IOrderByPropertyMappingService, OrderByOrderByPropertyMappingService>()
+                    .AddTransient<IOrderByPropertyMappingService, OrderByPropertyMappingService>()
                     ;
         }
 

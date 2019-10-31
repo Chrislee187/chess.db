@@ -1,4 +1,4 @@
-﻿namespace chess.games.db.api.Players
+﻿namespace chess.games.db.api
 {
     public class PaginationParameters
     {

@@ -7,11 +7,8 @@ namespace chess.games.db.pgnimporter
 {
     public class PgnFileFinder
     {
-        public string[] FindFiles(string path)
+        public string[] FindFiles(string path, bool recurse = true)
         {
-            
-            var recurse = true;
-
             var pgnfiles = new List<string>();
 
             if (Directory.Exists(path))

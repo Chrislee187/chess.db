@@ -2,20 +2,24 @@
 
 namespace chess.db.webapi.ResourceParameters
 {
-    public class PgnPlayerResourceParameters
+    public class PgnPlayerResourceParameters : CommonResourceParameters
     {
         public string NameFilter { get; set; }
-        public string SearchQuery { get; set; }
     }
 
-    public class PlayerResourceParameters
+    public class GetPlayersParameters : CommonResourceParameters
     {
-        private const int MaxPageSize = 100;
-        private const int DefaultPageSize = 20;
-        private int _pageSize = DefaultPageSize;
         public string FirstnameFilter { get; set; }
         public string MiddlenameFilter { get; set; }
         public string LastnameFilter { get; set; }
+
+    }
+
+    public abstract class CommonResourceParameters {
+        protected const int MaxPageSize = 100;
+        protected const int DefaultPageSize = 20;
+        protected int _pageSize = DefaultPageSize;
+
         public string SearchQuery { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "pageNumber must be a postive integer.")]

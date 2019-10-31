@@ -5,12 +5,22 @@ using chess.games.db.api.Players;
 
 namespace chess.games.db.api
 {
-    public class PagedList<T> : List<T>
+    public interface IPaginationMetadata
     {
-        public int CurrentPage { get; private set; }
-        public int TotalPages { get; private set; }
-        public int PageSize { get; private set; }
-        public int TotalCount { get; private set; }
+        int CurrentPage { get; }
+        int TotalPages { get; }
+        int PageSize { get; }
+        int TotalCount { get; }
+        bool HasPrevious { get; }
+        bool HasNext { get; }
+    }
+
+    public class PagedList<T> : List<T>, IPaginationMetadata
+    {
+        public int CurrentPage { get; }
+        public int TotalPages { get; }
+        public int PageSize { get; }
+        public int TotalCount { get; }
         public bool HasPrevious => (CurrentPage > 1);
         public bool HasNext => (CurrentPage < TotalPages);
 
