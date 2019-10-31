@@ -14,10 +14,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace chess.db.webapi.Controllers
 {
-    /// <summary>
-    /// PgnPlayers are created by the import mechanism and are not creatable or deletable by the API.
-    /// They represent the original data from the original source before attempting to dedupe the data
-    /// </summary>
     [ApiController]
     [Route("api/pgnplayers")]
     public class PgnPlayersController : ResourceControllerBase<PgnPlayerDto, PgnPlayer>

@@ -7,7 +7,9 @@ namespace AspNetCore.MVC.RESTful.Parameters
     /// Maps Dto field names to one or more Entity field names for use when building
     /// order by clauses
     /// </summary>
+    // ReSharper disable UnusedTypeParameter
     public interface IOrderByPropertyMappingService<TDto, TEntity>
+        // ReSharper restore UnusedTypeParameter
     {
         IDictionary<string, OrderByPropertyMappingValue> GetPropertyMapping();
         

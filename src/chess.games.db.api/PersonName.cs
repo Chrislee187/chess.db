@@ -18,7 +18,7 @@ namespace chess.games.db.api
 
         public static bool TryParse(string text, out PersonName personName)
         {
-            string firstname = null, middleName = null, lastname = null;
+            string firstname = null, middleName = null, lastname;
 
             if (text.Contains(","))
             {
@@ -40,7 +40,7 @@ namespace chess.games.db.api
 
         private static (string firstname, string middlename, string lastname) ParseName(string text)
         {
-            string firstname = null, middleName = null, lastname = null;
+            string firstname = null, middleName = null, lastname;
             var names = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             switch (names.Length)
@@ -65,18 +65,18 @@ namespace chess.games.db.api
         }
         private static (string firstname, string middlename, string lastname) ParseReversedName(string text)
         {
-            string firstname = null, middleName = null, lastname = null;
+            string middleName = null;
             var firstNameLast = text.Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(t => t.Trim())
                 .ToArray();
 
             if (firstNameLast.Length > 2) throw new ArgumentException($"Too many ({firstNameLast.Length}) comma's found in name text", nameof(text));
 
-            firstname = firstNameLast[1].TrimEnd('.');
+            var firstname = firstNameLast[1].TrimEnd('.');
 
             var otherNames = SplitNames(firstNameLast[0]);
 
-            lastname = otherNames.Last();
+            var lastname = otherNames.Last();
 
             if (otherNames.Length >= 2)
             {

@@ -3,9 +3,9 @@
 namespace AspNetCore.MVC.RESTful.Parameters
 {
     public abstract class CommonResourceParameters {
-        protected const int MaxPageSize = 100;
-        protected const int DefaultPageSize = 20;
-        protected int _pageSize = DefaultPageSize;
+        private const int MaxPageSize = 100;
+        private const int DefaultPageSize = 20;
+        private int _pageSize = DefaultPageSize;
 
         public string SearchQuery { get; set; }
 

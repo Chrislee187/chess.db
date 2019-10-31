@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using AspNetCore.MVC.RESTful;
 using AspNetCore.MVC.RESTful.Parameters;
 using chess.games.db.Entities;
 

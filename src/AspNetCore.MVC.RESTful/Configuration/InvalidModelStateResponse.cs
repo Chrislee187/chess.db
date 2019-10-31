@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore.MVC.RESTful.Configuration
 {
     public class InvalidModelStateResponse
     {
-        private string _title;
+        private readonly string _title;
         private readonly int _statusCode;
         private readonly string _details;
-        private string _contentType;
+        private readonly string _contentType;
 
         public InvalidModelStateResponse(
             string title = "One or more model validation errors occurred.",
@@ -24,10 +25,11 @@ namespace AspNetCore.MVC.RESTful.Configuration
         }
         public IActionResult SetupInvalidModelStateResponse(ActionContext context)
         {
+            context = context ?? throw new ArgumentNullException(nameof(context));
             // NOTE: Give invalid model errors correct status and better details
             var problemDetails = new ValidationProblemDetails(context.ModelState)
             {
-                Title = "One or more model validation errors occurred.",
+                Title = _title,
                 Status = _statusCode,
                 Detail = _details,
                 Instance = context.HttpContext.Request.Path

@@ -19,9 +19,9 @@ namespace chess.games.db.Entities
 
         /// <summary>
         /// Chess Opening code
-        /// <see cref="https://en.wikipedia.org/wiki/Encyclopaedia_of_Chess_Openings"/>
+        /// https://en.wikipedia.org/wiki/Encyclopaedia_of_Chess_Openings
         /// </summary>
-        public string ECO { get; set; }
+        public string Eco { get; set; }
 
         public bool ContainsPlayer(string name)
         {

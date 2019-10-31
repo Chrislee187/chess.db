@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -13,15 +12,15 @@ namespace AspNetCore.MVC.RESTful.Parameters
         : IOrderByPropertyMappingService<TDto, TEntity>
     {
 
-        private readonly PropertyMapping<TDto, TEntity> _propertyMapping;
+        private readonly PropertyMapping _propertyMapping;
         
         public OrderByPropertyMappingService()
         {
-            _propertyMapping = new PropertyMapping<TDto, TEntity>(new Dictionary<string, OrderByPropertyMappingValue>());
+            _propertyMapping = new PropertyMapping(new Dictionary<string, OrderByPropertyMappingValue>());
         }
         public OrderByPropertyMappingService(IDictionary<string, OrderByPropertyMappingValue> mappings)
         {
-            _propertyMapping = new PropertyMapping<TDto, TEntity>(mappings);
+            _propertyMapping = new PropertyMapping(mappings);
         }
 
         public (bool Valid, ProblemDetails Details) ClauseIsValid(string fields)
@@ -45,7 +44,7 @@ namespace AspNetCore.MVC.RESTful.Parameters
 
                 if (!propertyMapping.ContainsKey(propertyName))
                 {
-                    var propertyInfo = typeof(TDto).GetProperties().Any(p => p.Name.ToLowerInvariant().Equals(propertyName));
+                    var propertyInfo = typeof(TDto).GetProperties().Any(p => p.Name.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase));
                     if (!propertyInfo)
                     {
                         return (false, new ProblemDetails()

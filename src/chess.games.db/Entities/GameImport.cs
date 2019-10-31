@@ -17,6 +17,6 @@ namespace chess.games.db.Entities
 
         public string MoveText { get; set; }
 
-        public string ECO { get; set; }
+        public string Eco { get; set; }
     }
 }

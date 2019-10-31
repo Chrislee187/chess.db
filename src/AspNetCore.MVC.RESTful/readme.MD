@@ -18,6 +18,7 @@ Todos;
 * Caching
 * 'rel' links
 * Test that expected status codes are returned for each condition in each end-point
+* Swagger
 
 # Restful Endpoints
 

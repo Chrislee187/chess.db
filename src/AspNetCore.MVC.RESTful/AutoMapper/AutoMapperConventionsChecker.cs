@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 
@@ -10,9 +11,8 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
     /// </summary>
     public class AutoMapperConventionsChecker
     {
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
 
-        public string Dto = "Dto";
         public AutoMapperConventionsChecker(IMapper mapper)
         {
             _mapper = mapper;
@@ -26,9 +26,7 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
                 checkResourceCreate: false,
                 checkResourceUpdate: false);
         }
-        private string Filters(string entity) => $"Get{entity}sFilters";
-        private string Parameters(string entity) => $"Get{entity}sParameters";
-        private string Search(string entity) => $"Get{entity}sSearchQuery";
+
 
         public void Check<TEntity>(
                 bool checkResourceGet = true,
@@ -45,7 +43,7 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
             var getMappings = new List<(string, string)>()
             {
                 // Base mapping from entity to dto
-                ($"{entity}", $"{entity}{Dto}"),
+                ($"{entity}", $"{entity}Dto"),
             };
 
             var getCollectionMappings = new List<(string, string)>()
@@ -89,19 +87,23 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
                 updateMappings.Remove(typeMapping);
             }
 
-            CheckMappingsFor(checkResourceGet,$"{entity}:ResourceGet", getMappings);
-            CheckMappingsFor(checkResourcesGet, $"{entity}:ResourcesGet", getCollectionMappings);
-            CheckMappingsFor(checkResourceCreate,$"{entity}:ResourceCreate", createMappings);
-            CheckMappingsFor(checkResourceUpdate,$"{entity}:ResourceUpdate", updateMappings);
+            CheckMappingsFor($"{entity}:ResourceGet", getMappings, checkResourceGet);
+            CheckMappingsFor($"{entity}:ResourcesGet", getCollectionMappings, checkResourcesGet);
+            CheckMappingsFor($"{entity}:ResourceCreate", createMappings, checkResourceCreate);
+            CheckMappingsFor($"{entity}:ResourceUpdate", updateMappings, checkResourceUpdate);
         }
 
-        private void CheckMappingsFor(bool check, string method, List<(string, string)> mappings)
+        private static void CheckMappingsFor(string method, List<(string, string)> mappings, bool check = true)
         {
             if (check && mappings.Any())
             {
                 throw new AutoMapperMappingException($"{method} is missing the following mappings:\n" +
-                                                     $"{string.Join("\n", mappings)}");
+                    $"\t{string.Join("\n\t", mappings).Replace(",","->", StringComparison.InvariantCultureIgnoreCase)}");
             }
         }
+
+        private static string Filters(string entity) => $"Get{entity}sFilters";
+        private static string Parameters(string entity) => $"Get{entity}sParameters";
+        private static string Search(string entity) => $"Get{entity}sSearchQuery";
     }
 }

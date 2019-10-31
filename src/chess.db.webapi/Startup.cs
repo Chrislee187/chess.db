@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using AspNetCore.MVC.RESTful;
 using AspNetCore.MVC.RESTful.AutoMapper;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Parameters;
@@ -64,10 +62,10 @@ namespace chess.db.webapi
                 endpoints.MapControllers();
             });
 
-            CheckAutoMapperConventionsForRESTful(app);
+            CheckAutoMapperConventionsForRestful(app);
         }
 
-        private static void CheckAutoMapperConventionsForRESTful(IApplicationBuilder app)
+        private static void CheckAutoMapperConventionsForRestful(IApplicationBuilder app)
         {
             var mapper = app.ApplicationServices.GetService<IMapper>();
             new AutoMapperConventionsChecker(mapper).Check<Player>();
