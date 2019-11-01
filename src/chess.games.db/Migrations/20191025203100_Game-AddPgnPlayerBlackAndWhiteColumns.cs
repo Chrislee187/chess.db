@@ -17,11 +17,11 @@ namespace chess.games.db.Migrations
                 nullable: true);
 
             migrationBuilder.Sql($"UPDATE Games " +
-                                 $"Set PgnPlayerWhite=(SELECT Name from PgnPlayers where Id = WhiteId) "
+                                 $"SetId PgnPlayerWhite=(SELECT Name from PgnPlayers where Id = WhiteId) "
                                  + @"WHERE PgnPlayerWhite is NULL "
             );
             migrationBuilder.Sql($"UPDATE Games " +
-                                 $"Set PgnPlayerBlack=(SELECT Name from PgnPlayers where Id = BlackId) "
+                                 $"SetId PgnPlayerBlack=(SELECT Name from PgnPlayers where Id = BlackId) "
                                  + @"WHERE PgnPlayerBlack is NULL "
             );
         }

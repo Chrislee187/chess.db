@@ -17,7 +17,7 @@ Todos;
 
 * Caching
 * 'rel' links
-* Test that expected status codes are returned for each condition in each end-point
+* Test expected status codes are returned for each condition in each end-point
 * Swagger
 
 # Restful Endpoints
@@ -41,6 +41,8 @@ By default retrieves all entries for a given resource, supports filters, searchi
 
 ### Options
 
+* TODO: docs on filters, search, pagination, orderby etc. 
+
 ### Returns
 
 * Ok (200) on success, body contains the resource array in request content format
@@ -53,11 +55,11 @@ Retrieves a single resource identified by the specified Id.
 
 ## Expected Mappings
 
-* By default the entity DTO is expected to be named `{resource}Dto`.
 * A mapping is expected to exist between the resource entity and a entity DTO object.
+* By default the entity DTO is expected to be named `{resource}Dto`.
 * A parameter object should exist named `Get{resource}sParameters`
 * A bi-directional mapping should exist between the parameters object and `PaginationParameters`, `OrderByParameters`
-* Resource specific filtering and searching parameter object should exist named `Get{resource}sFilters` & `Get{resource}sSearchQuery` this should both inherit from a `Query<{entity}> implementation.
+* Resource specific filtering and searching parameter object should exist named `Get{resource}sFilters` & `Get{resource}sSearchQuery` this should both inherit from `Query<{entity}> implementation.
 * Bi-directional mappings should exist between the parameters object and Filters and SearchQuery objects.
 
 ### Returns

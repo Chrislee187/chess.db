@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using AspNetCore.MVC.RESTful.Controllers;
+using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
 using chess.db.webapi.Models;
@@ -28,14 +29,15 @@ namespace chess.db.webapi.Controllers
         public PgnPlayersController(IMapper mapper,
             IPgnPlayersRepository pgnPlayersRepository,
             IOrderByPropertyMappingService<PgnPlayerDto, PgnPlayer> orderByPropertyMappingService,
+            IEntityUpdater<PgnPlayer> entityUpdater,
+
             ILogger<PgnPlayersController> logger)
-                : base(mapper, pgnPlayersRepository, orderByPropertyMappingService)
+                : base(mapper, pgnPlayersRepository, orderByPropertyMappingService, entityUpdater)
         {
              _pgnPlayersRepository = pgnPlayersRepository ?? throw new ArgumentNullException(nameof(pgnPlayersRepository));
             _logger = logger ?? NullLogger<PgnPlayersController>.Instance;
         }
-
-
+        
         [HttpGet(Name = GetPgnPlayersRouteName)]
         [HttpHead]
         public ActionResult<IEnumerable<PgnPlayerDto>> GetPgnPlayers(

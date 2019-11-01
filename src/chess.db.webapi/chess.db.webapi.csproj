@@ -22,10 +22,4 @@
     <ProjectReference Include="..\chess.games.db\chess.games.db.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-    <Folder Include="RESTful\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>

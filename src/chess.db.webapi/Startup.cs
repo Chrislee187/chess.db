@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using AspNetCore.MVC.RESTful.AutoMapper;
 using AspNetCore.MVC.RESTful.Configuration;
+using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
+using chess.db.webapi.Helpers;
 using chess.db.webapi.Models;
 using chess.games.db;
 using chess.games.db.api;
@@ -41,8 +43,10 @@ namespace chess.db.webapi
                             })
                     )
                     .AddTransient<IOrderByPropertyMappingService<PgnPlayerDto, PgnPlayer>>(s =>
-                        new OrderByPropertyMappingService<PgnPlayerDto,PgnPlayer>()
-                    );
+                        OrderByPropertyMappingService<PgnPlayerDto,PgnPlayer>.Default
+                    )
+                    .AddTransient(typeof(IEntityUpdater<>), typeof(EntityUpdater<>));
+                    ;
        }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

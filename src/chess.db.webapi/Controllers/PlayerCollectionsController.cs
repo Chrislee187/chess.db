@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using AspNetCore.MVC.RESTful.Controllers;
+using AspNetCore.MVC.RESTful.Helpers;
+using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
 using chess.db.webapi.Models;
 using chess.games.db.api.Players;
@@ -24,8 +26,10 @@ namespace chess.db.webapi.Controllers
         public PlayerCollectionsController(
             IMapper mapper,
             IPlayersRepository playersRepository,
+            IOrderByPropertyMappingService<PlayerDto, Player> orderByPropertyMappingService,
+            IEntityUpdater<Player> entityUpdater,
             ILogger<PlayersController> logger
-        ) : base(mapper, playersRepository, null)
+        ) : base(mapper, playersRepository, orderByPropertyMappingService, entityUpdater)
         {
             _playersRepository = playersRepository ?? throw new ArgumentNullException(nameof(playersRepository));
             _logger = logger ?? NullLogger<PlayersController>.Instance;

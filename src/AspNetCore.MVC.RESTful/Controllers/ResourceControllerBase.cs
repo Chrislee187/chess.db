@@ -29,21 +29,24 @@ namespace AspNetCore.MVC.RESTful.Controllers
     /// <typeparam name="TDto">Data Transfer Object that can be Automapped from TEntity</typeparam>
     /// <typeparam name="TEntity">Underlying Entity for the Resource being represented</typeparam>
     public abstract class ResourceControllerBase<TDto, TEntity> : ControllerBase 
-        where TEntity : class, IResourceEntity
+        where TEntity : class
+                where TDto : IResourceId
     {
         protected readonly IMapper Mapper;
         private readonly IResourceRepository<TEntity> _restResourceRepository;
         private readonly IOrderByPropertyMappingService<TDto, TEntity> _orderByPropertyMappingService;
+        private readonly IEntityUpdater<TEntity> _entityUpdater;
 
-        protected ResourceControllerBase(
-                IMapper mapper,
-                IResourceRepository<TEntity> resourceRepository,
-                IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService
-            )
+        protected ResourceControllerBase(IMapper mapper,
+            IResourceRepository<TEntity> resourceRepository,
+            IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService,
+            IEntityUpdater<TEntity> entityUpdater)
         {
-            _orderByPropertyMappingService = orderByPropertyMappingService ?? throw new ArgumentNullException(nameof(orderByPropertyMappingService));
             Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _restResourceRepository = resourceRepository ?? throw new ArgumentNullException(nameof(resourceRepository));
+            _orderByPropertyMappingService =
+                orderByPropertyMappingService ?? OrderByPropertyMappingService<TDto, TEntity>.Default;
+            _entityUpdater = entityUpdater ?? throw new ArgumentNullException(nameof(entityUpdater)); ;
         }
 
         /// <summary>
@@ -129,7 +132,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             // the response header containing the uri to retrieve the newly added resource
             return CreatedAtRoute(
                 resourceGetRouteName,
-                new { entity.Id },
+                new { createdResource.Id },
                 createdResource
             );
         }
@@ -153,7 +156,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             if (entity == null)
             {
                 var addedEntity = Mapper.Map<TEntity>(model);
-                addedEntity.Id = id;
+                _entityUpdater.SetId(addedEntity, id);
                 _restResourceRepository.Add(addedEntity);
 
                 var createdDto = Mapper.Map<TDto>(addedEntity);

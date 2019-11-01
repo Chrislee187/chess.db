@@ -2,7 +2,7 @@
 
 namespace AspNetCore.MVC.RESTful.Controllers
 {
-    public interface IResourceEntity
+    public interface IResourceId
     {
         Guid Id { get; set; }
     }

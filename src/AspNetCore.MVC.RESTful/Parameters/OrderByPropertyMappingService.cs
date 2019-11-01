@@ -11,17 +11,14 @@ namespace AspNetCore.MVC.RESTful.Parameters
     public class OrderByPropertyMappingService<TDto, TEntity> 
         : IOrderByPropertyMappingService<TDto, TEntity>
     {
-
+        public static OrderByPropertyMappingService<TDto, TEntity> Default => new OrderByPropertyMappingService<TDto, TEntity>();
         private readonly PropertyMapping _propertyMapping;
-        
-        public OrderByPropertyMappingService()
-        {
-            _propertyMapping = new PropertyMapping(new Dictionary<string, OrderByPropertyMappingValue>());
-        }
-        public OrderByPropertyMappingService(IDictionary<string, OrderByPropertyMappingValue> mappings)
-        {
-            _propertyMapping = new PropertyMapping(mappings);
-        }
+
+        private OrderByPropertyMappingService() 
+            => _propertyMapping = new PropertyMapping(new Dictionary<string, OrderByPropertyMappingValue>());
+
+        public OrderByPropertyMappingService(IDictionary<string, OrderByPropertyMappingValue> mappings) 
+            => _propertyMapping = new PropertyMapping(mappings);
 
         public (bool Valid, ProblemDetails Details) ClauseIsValid(string fields)
         {
@@ -59,9 +56,7 @@ namespace AspNetCore.MVC.RESTful.Parameters
         }
 
 
-        public IDictionary<string, OrderByPropertyMappingValue> GetPropertyMapping()
-        {
-            return _propertyMapping.MappingDictionary;
-        }
+        public IDictionary<string, OrderByPropertyMappingValue> GetPropertyMapping() 
+            => _propertyMapping.MappingDictionary;
     }
 }

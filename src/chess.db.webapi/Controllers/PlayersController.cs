@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AspNetCore.MVC.RESTful.Controllers;
+using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
 using chess.db.webapi.Models;
@@ -26,8 +27,9 @@ namespace chess.db.webapi.Controllers
         public PlayersController(IMapper mapper,
             IPlayersRepository playersRepository,
             IOrderByPropertyMappingService<PlayerDto, Player> orderByPropertyMappingService,
+            IEntityUpdater<Player> entityUpdater,
             ILogger<PlayersController> logger) 
-            : base(mapper, playersRepository, orderByPropertyMappingService)
+            : base(mapper, playersRepository, orderByPropertyMappingService, entityUpdater)
         {
             _logger = logger ?? NullLogger<PlayersController>.Instance;
         }
