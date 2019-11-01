@@ -7,13 +7,13 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
 {
     /// <summary>
     /// Checks whether the require Mappings have been registered for the 
-    /// RESTful endpoints (Get, Get (collection), Create, Update)
+    /// AddRestful endpoints (Get, Get (collection), Create, Update)
     /// </summary>
-    public class AutoMapperConventionsChecker
+    public class RestfulAutoMapperConventionsChecker
     {
         private readonly IMapper _mapper;
 
-        public AutoMapperConventionsChecker(IMapper mapper)
+        public RestfulAutoMapperConventionsChecker(IMapper mapper)
         {
             _mapper = mapper;
         }

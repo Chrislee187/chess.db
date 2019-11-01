@@ -11,10 +11,9 @@ namespace AspNetCore.MVC.RESTful.Parameters
     public class OrderByPropertyMappingService<TDto, TEntity> 
         : IOrderByPropertyMappingService<TDto, TEntity>
     {
-        public static OrderByPropertyMappingService<TDto, TEntity> Default => new OrderByPropertyMappingService<TDto, TEntity>();
         private readonly PropertyMapping _propertyMapping;
 
-        private OrderByPropertyMappingService() 
+        public OrderByPropertyMappingService() 
             => _propertyMapping = new PropertyMapping(new Dictionary<string, OrderByPropertyMappingValue>());
 
         public OrderByPropertyMappingService(IDictionary<string, OrderByPropertyMappingValue> mappings) 
@@ -54,7 +53,6 @@ namespace AspNetCore.MVC.RESTful.Parameters
             }
             return (true, null);
         }
-
 
         public IDictionary<string, OrderByPropertyMappingValue> GetPropertyMapping() 
             => _propertyMapping.MappingDictionary;

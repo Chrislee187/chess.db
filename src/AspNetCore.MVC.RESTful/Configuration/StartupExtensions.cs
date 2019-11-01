@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using AspNetCore.MVC.RESTful.Parameters;
+using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +11,22 @@ namespace AspNetCore.MVC.RESTful.Configuration
 {
     public static class StartupExtensions
     {
-        public static void RestConfig(this IServiceCollection services)
+        public static void UseRestful(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            // NOTE: Order is SPECIFIC!
+            // i.e. Authorisation `UseAuthorization()` comes after a Route endpoint is chosen `UseRouting()` but before
+            // the endpoint is actually executed `UseEndPoints()`
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+        public static void AddRestful(this IServiceCollection services)
         {
             services
                 .AddControllers(cfg =>
@@ -27,9 +45,14 @@ namespace AspNetCore.MVC.RESTful.Configuration
                 }
             );
 
+            services.AddTransient(typeof(IOrderByPropertyMappingService<,>), typeof(OrderByPropertyMappingService<,>));
+            
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()) // Registers Mapping "Profiles"
+                
+                ;
         }
 
-        public static void ConfigureExceptionHandling(this IApplicationBuilder app, IWebHostEnvironment env)
+        public static void RestfulExceptionHandling(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

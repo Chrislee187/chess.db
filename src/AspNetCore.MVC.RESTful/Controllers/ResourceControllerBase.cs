@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using AspNetCore.MVC.RESTful.AutoMapper;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
 using AspNetCore.MVC.RESTful.Repositories;
@@ -16,9 +17,9 @@ using Microsoft.Extensions.Options;
 namespace AspNetCore.MVC.RESTful.Controllers
 {
     /// <summary>
-    /// A base class for an MVC Controller that supports RESTful endpoints.
+    /// A base class for an MVC Controller that supports AddRestful endpoints.
     /// Relies heavily on Automapper mapping abilities to Generic'ify the process for simple reuse
-    /// <seealso cref="AspNetCore.MVC.RESTful.AutoMapper.AutoMapperConventionsChecker"></seealso>
+    /// <seealso cref="RestfulAutoMapperConventionsChecker"></seealso>
     /// </summary>
     /// <remarks>
     ///     JSON/XML content-types
@@ -45,8 +46,8 @@ namespace AspNetCore.MVC.RESTful.Controllers
             Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _restResourceRepository = resourceRepository ?? throw new ArgumentNullException(nameof(resourceRepository));
             _orderByPropertyMappingService =
-                orderByPropertyMappingService ?? OrderByPropertyMappingService<TDto, TEntity>.Default;
-            _entityUpdater = entityUpdater ?? throw new ArgumentNullException(nameof(entityUpdater)); ;
+                orderByPropertyMappingService ?? throw new ArgumentNullException(nameof(orderByPropertyMappingService));
+            _entityUpdater = entityUpdater ?? throw new ArgumentNullException(nameof(entityUpdater));
         }
 
         /// <summary>
