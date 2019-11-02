@@ -1,4 +1,5 @@
 ﻿using System;
+using AspNetCore.MVC.RESTful.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,8 +26,9 @@ namespace AspNetCore.MVC.RESTful.Configuration
         }
         public IActionResult SetupInvalidModelStateResponse(ActionContext context)
         {
-            context = context ?? throw new ArgumentNullException(nameof(context));
-            // NOTE: Give invalid model errors correct status and better details
+            context = NullX.Throw(context, nameof(context));
+
+            // NOTE: Gives invalid model errors correct status and better details
             var problemDetails = new ValidationProblemDetails(context.ModelState)
             {
                 Title = _title,

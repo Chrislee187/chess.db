@@ -34,7 +34,7 @@ namespace chess.db.webapi.Controllers
             ILogger<PgnPlayersController> logger)
                 : base(mapper, pgnPlayersRepository, orderByPropertyMappingService, entityUpdater)
         {
-             _pgnPlayersRepository = pgnPlayersRepository ?? throw new ArgumentNullException(nameof(pgnPlayersRepository));
+             _pgnPlayersRepository = NullX.Throw(pgnPlayersRepository, nameof(pgnPlayersRepository));
             _logger = logger ?? NullLogger<PgnPlayersController>.Instance;
         }
         

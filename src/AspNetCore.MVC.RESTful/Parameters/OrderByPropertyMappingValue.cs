@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using AspNetCore.MVC.RESTful.Helpers;
 
 namespace AspNetCore.MVC.RESTful.Parameters
 {
@@ -13,11 +14,12 @@ namespace AspNetCore.MVC.RESTful.Parameters
         {
             DestinationProperties = new List<string>();
         }
-        public OrderByPropertyMappingValue(IEnumerable<string> destinationProperties,
-            bool reverse = false)
+        public OrderByPropertyMappingValue(
+            IEnumerable<string> destinationProperties,
+            bool reverse = false
+            )
         {
-            DestinationProperties = destinationProperties
-                                    ?? throw new ArgumentNullException(nameof(destinationProperties));
+            DestinationProperties = NullX.Throw(destinationProperties, nameof(destinationProperties));
             Reverse = reverse;
         }
     }

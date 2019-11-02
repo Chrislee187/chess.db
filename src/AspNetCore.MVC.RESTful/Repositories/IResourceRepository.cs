@@ -13,10 +13,11 @@ namespace AspNetCore.MVC.RESTful.Repositories
         
         void Update(T player);
         
-        T Get(Guid id);
+        T Load(Guid id);
         
-        PagedList<T> Get(Query<T> filters = null,
-            Query<T> query = null,
+        PagedList<T> Load(
+            IResourceQuery<T> filters = null,
+            IResourceQuery<T> resourceQuery = null,
             PaginationParameters pagination = null,
             OrderByParameters orderByParameters = null,
             IDictionary<string, OrderByPropertyMappingValue> orderByMappings = null);

@@ -9,6 +9,7 @@
     <Company>Chris Lee</Company>
     <Copyright>Chris Lee</Copyright>
     <Description>Code and conventions that can be used to easily create a MVC Controller for a RESTful resource.</Description>
+    <UserSecretsId>d8d4e780-7344-48de-bb53-9daec1acafcd</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

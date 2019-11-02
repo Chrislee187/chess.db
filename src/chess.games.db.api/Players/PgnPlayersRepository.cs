@@ -9,7 +9,7 @@ namespace chess.games.db.api.Players
         public PgnPlayersRepository(ChessGamesDbContext dbContext)
         : base(dbContext) { }
 
-        public new PgnPlayer Get(Guid id)
+        public new PgnPlayer Load(Guid id)
             => throw new NotSupportedException($"PgnPlayers do not have GUID primary key, use the Name instead.");
 
         public PgnPlayer Get(string name)

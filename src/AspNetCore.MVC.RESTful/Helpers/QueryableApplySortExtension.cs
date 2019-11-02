@@ -20,10 +20,8 @@ namespace AspNetCore.MVC.RESTful.Helpers
             string orderBy, 
             IDictionary<string, OrderByPropertyMappingValue> mappingDictionary)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
+            NullX.Throw(source, nameof(source));
+
             if (string.IsNullOrWhiteSpace(orderBy))
             {
                 return source;
@@ -31,14 +29,12 @@ namespace AspNetCore.MVC.RESTful.Helpers
 
             mappingDictionary ??= new Dictionary<string, OrderByPropertyMappingValue>();
 
-            var orderByAfterSplit = orderBy.Split(',');
-
-            foreach (var orderByClause in orderByAfterSplit.Reverse().Select(o => o.Trim()))
+            foreach (var orderByClause in orderBy
+                .Split(',').Reverse()
+                .Select(o => o.Trim()))
             {
-                var orderDescending = orderByClause.EndsWith(" desc") || orderByClause.EndsWith(" descending");
-                var indexOfFirstSpace = orderByClause.IndexOf(" ", StringComparison.Ordinal);
-                var propertyName = indexOfFirstSpace == -1 ?
-                    orderByClause : orderByClause.Remove(indexOfFirstSpace);
+                var orderDescending = IsOrderDescending(orderByClause);
+                var propertyName = PropertyName(orderByClause);
 
                 if (!mappingDictionary.TryGetValue(propertyName, out var propertyMappingValue))
                 {
@@ -57,7 +53,20 @@ namespace AspNetCore.MVC.RESTful.Helpers
                         (orderDescending ? " descending" : " ascending"));
                 }
             }
+
             return source;
+
+            bool IsOrderDescending(string orderByClause)
+            {
+                return orderByClause.EndsWith(" desc", StringComparison.InvariantCulture)
+                       || orderByClause.EndsWith(" descending", StringComparison.InvariantCulture);
+            }
+
+            string PropertyName(string orderByClause)
+            {
+                var idx = orderByClause.IndexOf(" ", StringComparison.Ordinal);
+                return idx == -1 ? orderByClause : orderByClause.Remove(idx);
+            }
         }
     }
 }

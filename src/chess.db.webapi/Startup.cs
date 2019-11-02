@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using AspNetCore.MVC.RESTful.AutoMapper;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
-using AutoMapper;
 using chess.db.webapi.Helpers;
 using chess.db.webapi.Models;
 using chess.games.db;
@@ -54,14 +52,8 @@ namespace chess.db.webapi
 
             app.UseRestful(env);
 
-            CheckAutoMapperConventionsForRestful(app);
-        }
-
-        private static void CheckAutoMapperConventionsForRestful(IApplicationBuilder app)
-        {
-            var mapper = app.ApplicationServices.GetService<IMapper>();
-            new RestfulAutoMapperConventionsChecker(mapper).Check<Player>();
-            new RestfulAutoMapperConventionsChecker(mapper).CheckReadonly<PgnPlayer>();
+            app.CheckRestfulMappingsFor<Player>(RestfulEndpointMapping.Readwrite);
+            app.CheckRestfulMappingsFor<PgnPlayer>(RestfulEndpointMapping.Readonly);
         }
     }
 }

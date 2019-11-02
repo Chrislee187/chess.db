@@ -4,7 +4,7 @@ using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players
 {
-    public class GetPlayersFilters : Query<Player>
+    public class GetPlayersFilters : ResourceQuery<Player>
     {
         public string Firstname { get; set; }
         public string Middlename { get; set; }
@@ -12,18 +12,18 @@ namespace chess.games.db.api.Players
 
         public override bool Empty => new []{Firstname, Middlename, Lastname}.All(string.IsNullOrEmpty);
 
-        public override IQueryable<Player> ApplyQuery(IQueryable<Player> set)
+        public override IQueryable<Player> ApplyQuery(IQueryable<Player> resources)
         {
-            var result = set;
+            var result = resources;
 
             if (!string.IsNullOrEmpty(Firstname))
-                result = set.Where(p => p.Firstname.ToLower().Contains(Firstname.ToLower()));
+                result = resources.Where(p => p.Firstname.ToLower().Contains(Firstname.ToLower()));
 
             if (!string.IsNullOrEmpty(Middlename))
-                result = set.Where(p => p.Middlenames.ToLower().Contains(Middlename.ToLower()));
+                result = resources.Where(p => p.Middlenames.ToLower().Contains(Middlename.ToLower()));
             
             if (!string.IsNullOrEmpty(Lastname))
-                result = set.Where(p => p.Surname.ToLower().Contains(Lastname.ToLower()));
+                result = resources.Where(p => p.Surname.ToLower().Contains(Lastname.ToLower()));
 
             return result;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AspNetCore.MVC.RESTful.Helpers;
 
 namespace AspNetCore.MVC.RESTful.Parameters
 {
@@ -9,8 +10,7 @@ namespace AspNetCore.MVC.RESTful.Parameters
 
         public PropertyMapping(IDictionary<string, OrderByPropertyMappingValue> mappingDictionary)
         {
-            MappingDictionary = mappingDictionary ??
-                                throw new ArgumentNullException(nameof(mappingDictionary));
+            MappingDictionary = NullX.Throw(mappingDictionary,nameof(mappingDictionary));
         }
     }
 }

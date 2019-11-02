@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using AspNetCore.MVC.RESTful.AutoMapper;
@@ -33,7 +34,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
         where TEntity : class
                 where TDto : IResourceId
     {
-        protected readonly IMapper Mapper;
         private readonly IResourceRepository<TEntity> _restResourceRepository;
         private readonly IOrderByPropertyMappingService<TDto, TEntity> _orderByPropertyMappingService;
         private readonly IEntityUpdater<TEntity> _entityUpdater;
@@ -43,20 +43,21 @@ namespace AspNetCore.MVC.RESTful.Controllers
             IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService,
             IEntityUpdater<TEntity> entityUpdater)
         {
-            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _restResourceRepository = resourceRepository ?? throw new ArgumentNullException(nameof(resourceRepository));
-            _orderByPropertyMappingService =
-                orderByPropertyMappingService ?? throw new ArgumentNullException(nameof(orderByPropertyMappingService));
-            _entityUpdater = entityUpdater ?? throw new ArgumentNullException(nameof(entityUpdater));
+            Mapper = NullX.Throw(mapper, nameof(mapper));
+            _restResourceRepository = NullX.Throw(resourceRepository, nameof(resourceRepository));
+            _orderByPropertyMappingService = NullX.Throw(orderByPropertyMappingService, nameof(orderByPropertyMappingService));
+            _entityUpdater = NullX.Throw(entityUpdater, nameof(entityUpdater));
         }
+
+        protected IMapper Mapper { get; }
 
         /// <summary>
         /// HTTP GET /{resource}
         /// </summary>
         protected ActionResult<IEnumerable<TDto>> ResourcesGet<TParameters>(
             TParameters parameters,
-            Query<TEntity> filters,
-            Query<TEntity> query, 
+            IResourceQuery<TEntity> filters,
+            IResourceQuery<TEntity> resourceQuery, 
             string resourcesGetRouteName) 
                 where TParameters : CommonResourceParameters
         {
@@ -78,14 +79,14 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             var orderByMappings = _orderByPropertyMappingService.GetPropertyMapping();
 
-            var resources = _restResourceRepository.Get(filters, query, pagination, orderBy, orderByMappings);
+            var resources = _restResourceRepository.Load(filters, resourceQuery, pagination, orderBy, orderByMappings);
 
             var usedParameters = Activator.CreateInstance<TParameters>();
 
             Mapper.Map(pagination, usedParameters);
             Mapper.Map(orderBy, usedParameters);
             Mapper.Map(filters, usedParameters);
-            Mapper.Map(query, usedParameters);
+            Mapper.Map(resourceQuery, usedParameters);
 
             AddPaginationMetadataHeader(
                 resources,
@@ -104,7 +105,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// </summary>
         protected ActionResult<TDto> ResourceGet(Guid id)
         {
-            var resource = _restResourceRepository.Get(id);
+            var resource = _restResourceRepository.Load(id);
 
             if (resource == null)
             {
@@ -151,7 +152,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 return NotFound();
             }
 
-            var entity = _restResourceRepository.Get(id);
+            var entity = _restResourceRepository.Load(id);
 
             ActionResult result;
             if (entity == null)
@@ -183,7 +184,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// HTTP PATCH
         /// </summary>
         protected ActionResult ResourcePatch<TUpdateDto>(Guid id,
-            JsonPatchDocument<TUpdateDto> patchDocument) 
+            [NotNull] JsonPatchDocument<TUpdateDto> patchDocument) 
             where TUpdateDto : class
         {
             if (id.Equals(Guid.Empty))
@@ -191,7 +192,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 return NotFound();
             }
 
-            var resource = _restResourceRepository.Get(id);
+            var resource = _restResourceRepository.Load(id);
             if (resource == null)
             {
                 return NotFound();
@@ -223,7 +224,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 return NotFound();
             }
 
-            var resource = _restResourceRepository.Get(id);
+            var resource = _restResourceRepository.Load(id);
 
             if (resource == null)
             {
@@ -260,8 +261,8 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// Add 'X-Pagination' header containing pagination meta data
         /// </summary>
         protected void AddPaginationMetadataHeader<T>(
-            PagedList<T> data, 
-            IResourceUris urls)
+            [NotNull] PagedList<T> data, 
+            [NotNull] IResourceUris urls)
         {
             var paginationMetadata = new
             {

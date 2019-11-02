@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using AspNetCore.MVC.RESTful.Parameters;
 
 namespace AspNetCore.MVC.RESTful.Helpers
@@ -7,9 +8,10 @@ namespace AspNetCore.MVC.RESTful.Helpers
     {
         public string Previous { get; }
         public string Next { get; }
-        public ResourceUriBuilder(IPaginationMetadata pagination,
-            CommonResourceParameters common,
-            Func<object, string> urlBuilder)
+        public ResourceUriBuilder(
+            [NotNull] IPaginationMetadata pagination,
+            [NotNull] CommonResourceParameters common,
+            [NotNull] Func<object, string> urlBuilder)
         {
 
             Previous = pagination.HasPrevious

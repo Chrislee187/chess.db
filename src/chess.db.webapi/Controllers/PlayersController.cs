@@ -21,7 +21,7 @@ namespace chess.db.webapi.Controllers
     {
         private readonly ILogger<PlayersController> _logger;
 
-        private const string GetPlayerRouteName = "Get";
+        private const string GetPlayerRouteName = "Load";
         private const string GetPlayersRouteName = "GetPlayers";
 
         public PlayersController(IMapper mapper,
