@@ -9,9 +9,9 @@ namespace AspNetCore.MVC.RESTful.Helpers
         public string Previous { get; }
         public string Next { get; }
         public ResourceUriBuilder(
-            [NotNull] IPaginationMetadata pagination,
-            [NotNull] CommonResourceParameters common,
-            [NotNull] Func<object, string> urlBuilder)
+            IPaginationMetadata pagination,
+            CommonResourceParameters common,
+            Func<object, string> urlBuilder)
         {
 
             Previous = pagination.HasPrevious

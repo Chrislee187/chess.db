@@ -73,7 +73,8 @@ namespace AspNetCore.MVC.RESTful.Configuration
                     // NOTE: Newtonsoft needed for JsonPatchDocument support
                     cfg.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 }) 
-//                // system.text.json doesn't support JsonPatchDocument yet so have to use NewtonSoft above
+                // system.text.json doesn't support JsonPatchDocument yet so have to use NewtonSoft through out
+                // to make sure it's clear whats doing the serialisation.
 //                .AddJsonOptions(cfg =>
 //                {
 //                    cfg.JsonSerializerOptions.IgnoreNullValues = true;
@@ -117,4 +118,23 @@ namespace AspNetCore.MVC.RESTful.Configuration
                     app.ApplicationServices.GetService<IMapper>()
             );
     }
+
+//    public class ExpandoObjectJsonConverter : JsonConverter<ExpandoObject>
+//    {
+//        public override void WriteJson(JsonWriter writer, ExpandoObject value, JsonSerializer serializer)
+//        {
+//            if(value.)
+//            throw new NotImplementedException();
+//        }
+//
+//        public override ExpandoObject ReadJson(
+//            JsonReader reader, 
+//            Type objectType, 
+//            ExpandoObject existingValue, 
+//            bool hasExistingValue,
+//            JsonSerializer serializer)
+//        {
+//            throw new NotImplementedException();
+//        }
+//    }
 }

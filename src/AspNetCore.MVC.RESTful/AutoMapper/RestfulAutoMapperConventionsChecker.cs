@@ -87,19 +87,31 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
                 updateMappings.Remove(typeMapping);
             }
 
-            CheckMappingsFor($"{entity}:ResourceGet", getMappings, checkResourceGet);
-            CheckMappingsFor($"{entity}:ResourcesGet", getCollectionMappings, checkResourcesGet);
-            CheckMappingsFor($"{entity}:ResourceCreate", createMappings, checkResourceCreate);
-            CheckMappingsFor($"{entity}:ResourceUpdate", updateMappings, checkResourceUpdate);
+            var missingMappings = new List<Exception>
+            {
+                CheckMappingsFor($"{entity}:ResourceGet", getMappings, checkResourceGet),
+                CheckMappingsFor($"{entity}:ResourcesGet", getCollectionMappings, checkResourcesGet),
+                CheckMappingsFor($"{entity}:ResourceCreate", createMappings, checkResourceCreate),
+                CheckMappingsFor($"{entity}:ResourceUpdate", updateMappings, checkResourceUpdate)
+            };
+
+            var exceptions = missingMappings.Where(m => m != null).ToList();
+            if (exceptions.Any())
+            {
+                throw new AggregateException(@"Missing mappings", exceptions);
+            }
+
         }
 
-        private static void CheckMappingsFor(string method, List<(string, string)> mappings, bool check = true)
+        private static Exception CheckMappingsFor(string method, List<(string, string)> mappings, bool check = true)
         {
             if (check && mappings.Any())
             {
-                throw new AutoMapperMappingException($"{method} is missing the following mappings:\n" +
+                return new AutoMapperMappingException($"{method} is missing the following mappings:\n" +
                     $"\t{string.Join("\n\t", mappings).Replace(",","->", StringComparison.InvariantCultureIgnoreCase)}");
             }
+
+            return null;
         }
 
         private static string Filters(string entity) => $"Get{entity}sFilters";

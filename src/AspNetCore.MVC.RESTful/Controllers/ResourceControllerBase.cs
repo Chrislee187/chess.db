@@ -18,16 +18,10 @@ using Microsoft.Extensions.Options;
 namespace AspNetCore.MVC.RESTful.Controllers
 {
     /// <summary>
-    /// A base class for an MVC Controller that supports AddRestful endpoints.
+    /// A base class for an MVC Controller that supports Restful endpoints.
     /// Relies heavily on Automapper mapping abilities to Generic'ify the process for simple reuse
     /// <seealso cref="RestfulAutoMapperConventionsChecker"></seealso>
     /// </summary>
-    /// <remarks>
-    ///     JSON/XML content-types
-    ///     correct status-code usage
-    ///     standardised and detailed error responses
-    ///
-    /// </remarks>
     /// <typeparam name="TDto">Data Transfer Object that can be Automapped from TEntity</typeparam>
     /// <typeparam name="TEntity">Underlying Entity for the Resource being represented</typeparam>
     public abstract class ResourceControllerBase<TDto, TEntity> : ControllerBase 
@@ -54,15 +48,20 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <summary>
         /// HTTP GET /{resource}
         /// </summary>
-        protected ActionResult<IEnumerable<TDto>> ResourcesGet<TParameters>(
-            TParameters parameters,
-            IResourceQuery<TEntity> filters,
-            IResourceQuery<TEntity> resourceQuery, 
+        protected IActionResult ResourcesGet<TParameters>(
+            [NotNull] TParameters parameters,
+            [NotNull] IResourceQuery<TEntity> filters,
+            [NotNull] IResourceQuery<TEntity> resourceQuery, 
             string resourcesGetRouteName) 
                 where TParameters : CommonResourceParameters
         {
-            string LinkBuilder(object queryStringParams)
-                => Url.Link(resourcesGetRouteName, queryStringParams);
+            string LinkBuilder(object resourceParams)
+                => Url.Link(resourcesGetRouteName, resourceParams);
+
+            if (!typeof(TDto).TypeHasOutputProperties(parameters.Shape))
+            {
+                return BadRequest("Shape has one or more invalid field names.");
+            }
 
             var orderBy = Mapper.Map<OrderByParameters>(parameters);
             
@@ -71,7 +70,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             if (!orderByCheck.Valid)
             {
-                orderByCheck.Details.Instance = Url.Link(resourcesGetRouteName, parameters);
+                orderByCheck.Details.Instance = LinkBuilder(parameters);
                 return BadRequest(orderByCheck.Details);
             }
 
@@ -79,7 +78,8 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             var orderByMappings = _orderByPropertyMappingService.GetPropertyMapping();
 
-            var resources = _restResourceRepository.Load(filters, resourceQuery, pagination, orderBy, orderByMappings);
+            var entities = _restResourceRepository
+                .Load(filters, resourceQuery, pagination, orderBy, orderByMappings);
 
             var usedParameters = Activator.CreateInstance<TParameters>();
 
@@ -87,23 +87,27 @@ namespace AspNetCore.MVC.RESTful.Controllers
             Mapper.Map(orderBy, usedParameters);
             Mapper.Map(filters, usedParameters);
             Mapper.Map(resourceQuery, usedParameters);
+            usedParameters.Shape = parameters.Shape;
 
             AddPaginationMetadataHeader(
-                resources,
+                entities,
                 new ResourceUriBuilder(
-                    resources,
+                    entities,
                     usedParameters,
                     LinkBuilder
                 )
             );
 
-            return Ok(Mapper.Map<IEnumerable<TDto>>(resources));
+            var resources = Mapper.Map<IEnumerable<TDto>>(entities)
+                .ShapeData(parameters.Shape);
+
+            return Ok(resources);
         }
 
         /// <summary>
         /// HTTP GET /{resource}/{id}
         /// </summary>
-        protected ActionResult<TDto> ResourceGet(Guid id)
+        protected ActionResult<TDto> ResourceGet(Guid id, string shape)
         {
             var resource = _restResourceRepository.Load(id);
 
@@ -111,12 +115,19 @@ namespace AspNetCore.MVC.RESTful.Controllers
             {
                 return NotFound();
             }
+            if (!typeof(TDto).TypeHasOutputProperties(shape))
+            {
+                return BadRequest("Shape has one or more invalid field names.");
+            }
 
-            return Ok(Mapper.Map<TDto>(resource));
+            return Ok(Mapper.Map<TDto>(resource).ShapeData(shape));
         }
 
         /// <summary>
-        /// HTTP POST
+        /// HTTP POST - returns CreatedAtRoute (201 - Created) and places a 'Location' entry in
+        /// the response header containing the uri to retrieve the newly added resource
+        /// created from the supplied args, also returns the newly created resource in
+        /// the body
         /// </summary>
         protected ActionResult<TDto> ResourceCreate<TCreationDto>(
             TCreationDto model,
@@ -130,8 +141,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             var createdResource = Mapper.Map<TDto>(entity);
 
-            // NOTE: CreatedAtRoute returns 201 (Created) and places a 'Location' entry in
-            // the response header containing the uri to retrieve the newly added resource
             return CreatedAtRoute(
                 resourceGetRouteName,
                 new { createdResource.Id },

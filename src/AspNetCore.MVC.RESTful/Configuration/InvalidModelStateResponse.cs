@@ -1,5 +1,4 @@
-﻿using System;
-using AspNetCore.MVC.RESTful.Helpers;
+﻿using AspNetCore.MVC.RESTful.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

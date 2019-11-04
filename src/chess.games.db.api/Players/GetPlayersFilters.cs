@@ -12,7 +12,7 @@ namespace chess.games.db.api.Players
 
         public override bool Empty => new []{Firstname, Middlename, Lastname}.All(string.IsNullOrEmpty);
 
-        public override IQueryable<Player> ApplyQuery(IQueryable<Player> resources)
+        protected override IQueryable<Player> ApplyQuery(IQueryable<Player> resources)
         {
             var result = resources;
 

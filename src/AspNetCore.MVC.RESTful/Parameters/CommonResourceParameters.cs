@@ -20,5 +20,7 @@ namespace AspNetCore.MVC.RESTful.Parameters
         }
 
         public string OrderBy { get; set; }
+
+        public string Shape { get; set; } = "";
     }
 }

@@ -7,7 +7,7 @@ namespace AspNetCore.MVC.RESTful.Parameters
     {
         public static readonly ResourceQuery<T> Default = new EmptyResourceQuery();
         public abstract bool Empty { get; }
-        public abstract IQueryable<T> ApplyQuery([NotNull]IQueryable<T> resources);
+        protected abstract IQueryable<T> ApplyQuery([NotNull]IQueryable<T> resources);
 
         public IQueryable<T> Apply(IQueryable<T> set)
         {
@@ -22,7 +22,7 @@ namespace AspNetCore.MVC.RESTful.Parameters
         private class EmptyResourceQuery : ResourceQuery<T>
         {
             public override bool Empty { get; } = true;
-            public override IQueryable<T> ApplyQuery(IQueryable<T> resources) => resources;
+            protected override IQueryable<T> ApplyQuery(IQueryable<T> resources) => resources;
         }    
     }
 

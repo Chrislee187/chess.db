@@ -3,6 +3,7 @@ using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
+using chess.games.db.api.PgnPlayers;
 using chess.games.db.api.Players;
 using chess.games.db.Entities;
 

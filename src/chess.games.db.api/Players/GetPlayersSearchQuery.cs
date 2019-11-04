@@ -11,7 +11,7 @@ namespace chess.games.db.api.Players
 
         public override bool Empty => string.IsNullOrEmpty(QueryText);
 
-        public override IQueryable<Player> ApplyQuery(IQueryable<Player> resources) 
+        protected override IQueryable<Player> ApplyQuery(IQueryable<Player> resources) 
             => resources.Where(p => p.Firstname.Contains(QueryText) 
                               || p.Middlenames.Contains(QueryText) 
                               || p.Surname.Contains(QueryText));

@@ -1,4 +1,5 @@
-﻿using chess.games.db.api.Players;
+﻿using chess.games.db.api.PgnPlayers;
+using chess.games.db.api.Players;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace chess.games.db.api

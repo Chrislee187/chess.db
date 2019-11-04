@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
@@ -38,23 +37,20 @@ namespace chess.db.webapi.Controllers
 
         [HttpGet(Name = GetPlayersRouteName)]
         [HttpHead]
-        public ActionResult<IEnumerable<PlayerDto>> GetPlayers(
+        public IActionResult GetPlayers(
             [FromQuery] GetPlayersParameters parameters
         )
         {
-            var filters = Mapper.Map<GetPlayersFilters>(parameters);
-            var query = Mapper.Map<GetPlayersSearchQuery>(parameters);
-
             return ResourcesGet(
                 parameters, 
-                filters, 
-                query, 
+                Mapper.Map<GetPlayersFilters>(parameters), 
+                Mapper.Map<GetPlayersSearchQuery>(parameters), 
                 GetPlayersRouteName);
         }
 
         [HttpGet("{id}", Name = GetPlayerRouteName)]
-        public ActionResult<PlayerDto> GetPlayer(Guid id)
-            => ResourceGet(id);
+        public ActionResult<PlayerDto> GetPlayer(Guid id, string shape)
+            => ResourceGet(id, shape);
 
         [HttpPost]
         public ActionResult<PlayerDto> CreatePlayer(PlayerCreationDto model)
