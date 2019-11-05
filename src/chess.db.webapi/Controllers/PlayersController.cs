@@ -27,8 +27,13 @@ namespace chess.db.webapi.Controllers
             IPlayersRepository playersRepository,
             IOrderByPropertyMappingService<PlayerDto, Player> orderByPropertyMappingService,
             IEntityUpdater<Player> entityUpdater,
-            ILogger<PlayersController> logger) 
-            : base(mapper, playersRepository, orderByPropertyMappingService, entityUpdater)
+            ILogger<PlayersController> logger)
+            : base(mapper, playersRepository, orderByPropertyMappingService, entityUpdater
+//                ,cfg =>
+//                {
+//                    cfg.Hateoas.AddHateoasLinks = true;
+//                }
+                )
         {
             _logger = logger ?? NullLogger<PlayersController>.Instance;
         }
@@ -44,13 +49,13 @@ namespace chess.db.webapi.Controllers
             return ResourcesGet(
                 parameters, 
                 Mapper.Map<GetPlayersFilters>(parameters), 
-                Mapper.Map<GetPlayersSearchQuery>(parameters), 
-                GetPlayersRouteName);
+                Mapper.Map<GetPlayersSearchQuery>(parameters),
+                GetPlayersRouteName, resourceGetRouteName: GetPlayerRouteName);
         }
 
         [HttpGet("{id}", Name = GetPlayerRouteName)]
         public ActionResult<PlayerDto> GetPlayer(Guid id, string shape)
-            => ResourceGet(id, shape);
+            => ResourceGet(id, shape, GetPlayerRouteName);
 
         [HttpPost]
         public ActionResult<PlayerDto> CreatePlayer(PlayerCreationDto model)
