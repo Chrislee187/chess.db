@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AspNetCore.MVC.RESTful.Helpers
 {
@@ -18,7 +19,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <param name="shape">Comma separated list of property names to placed in the expando object</param>
-        /// <param name="ignoreNulls">Do add to the resulting ExpandoObjeect any properties whose value is NULL
+        /// <param name="ignoreNulls">When true, do not add any any properties whose value is NULL to the resulting ExpandoObject 
         ///<remarks>
         /// Because an ExpandoObject is treated as dictionary during serialization, default serializer NullValue handling will not be
         /// used as this functionality is for properties not dictionary
@@ -32,14 +33,16 @@ namespace AspNetCore.MVC.RESTful.Helpers
             string shape,
             bool ignoreNulls = true)
         {
+            source = source?.ToList();
+
             NullX.Throw(source, nameof(source));
 
             var expandoObjectList = new List<ExpandoObject>();
 
-            string[] propertyNames = (shape ?? "").Split(',')
-                .Where(s => !string.IsNullOrEmpty(s.Trim())).ToArray();
+            var propertyNames = (shape ?? "").Split(',')
+                .Where(s => !string.IsNullOrEmpty(s.Trim())).ToList();
 
-            var shapeProperties = GetProperties<T>(propertyNames).ToList();
+            var shapeProperties = GetProperties<T>(propertyNames.ToArray()).ToList();
 
             foreach (var sourceObject in source)
             {

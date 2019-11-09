@@ -31,11 +31,13 @@ namespace chess.db.webapi.Controllers
             IEntityUpdater<PgnPlayer> entityUpdater,
 
             ILogger<PgnPlayersController> logger)
-                : base(mapper, pgnPlayersRepository, orderByPropertyMappingService, entityUpdater
-                , cfg => { cfg.Hateoas.AddHateoasLinks = false; })
+                : base(mapper, pgnPlayersRepository, orderByPropertyMappingService, entityUpdater)
         {
              _pgnPlayersRepository = NullX.Throw(pgnPlayersRepository, nameof(pgnPlayersRepository));
             _logger = logger ?? NullLogger<PgnPlayersController>.Instance;
+
+            ControllerConfig.RegisterResourceGetRouteName(GetPgnPlayerRouteName);
+            ControllerConfig.RegisterResourcesGetRouteName(GetPgnPlayersRouteName);
         }
         
         [HttpGet(Name = GetPgnPlayersRouteName)]
@@ -50,8 +52,7 @@ namespace chess.db.webapi.Controllers
             return ResourcesGet(
                 parameters,
                 filters,
-                query,
-                GetPgnPlayersRouteName, resourceGetRouteName: GetPgnPlayersRouteName);
+                query);
         }
 
         [HttpGet("{id:Guid}", Name = GetPgnPlayerByIdRouteName)]
