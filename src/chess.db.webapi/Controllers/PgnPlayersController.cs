@@ -36,8 +36,8 @@ namespace chess.db.webapi.Controllers
              _pgnPlayersRepository = NullX.Throw(pgnPlayersRepository, nameof(pgnPlayersRepository));
             _logger = logger ?? NullLogger<PgnPlayersController>.Instance;
 
-            ControllerConfig.RegisterResourceGetRouteName(GetPgnPlayerRouteName);
-            ControllerConfig.RegisterResourcesGetRouteName(GetPgnPlayersRouteName);
+            HateoasConfig.ResourceGetRouteName.Set(GetPgnPlayerRouteName);
+            HateoasConfig.ResourcesGetRouteName.Set(GetPgnPlayersRouteName);
         }
         
         [HttpGet(Name = GetPgnPlayersRouteName)]

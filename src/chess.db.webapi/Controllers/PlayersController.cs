@@ -20,8 +20,12 @@ namespace chess.db.webapi.Controllers
     {
         private readonly ILogger<PlayersController> _logger;
 
-        private const string GetPlayerRouteName = "Load";
+        private const string GetPlayerRouteName = "GetPlayer";
         private const string GetPlayersRouteName = "GetPlayers";
+        private const string CreatePlayerRouteName = "CreatePlayer";
+        private const string UpsertPlayerRouteName = "UpsertPlayer";
+        private const string PatchPlayerRouteName = "PatchPlayer";
+        private const string DeletePlayerRouteName = "DeletePlayer";
 
         public PlayersController(IMapper mapper,
             IPlayersRepository playersRepository,
@@ -32,12 +36,14 @@ namespace chess.db.webapi.Controllers
         {
             _logger = logger ?? NullLogger<PlayersController>.Instance;
 
-            ControllerConfig
-                .RegisterResourcesGetRouteName(GetPlayersRouteName)
-                .RegisterResourceGetRouteName(GetPlayerRouteName);
+            HateoasConfig.ResourcesGetRouteName.Set(GetPlayersRouteName);
+            HateoasConfig.ResourceGetRouteName.Set(GetPlayerRouteName);
+            HateoasConfig.ResourceCreateRouteName.Set(CreatePlayerRouteName);
+            HateoasConfig.ResourceUpsertRouteName.Set(UpsertPlayerRouteName);
+            HateoasConfig.ResourcePatchRouteName.Set(PatchPlayerRouteName);
+            HateoasConfig.ResourceDeleteRouteName.Set(DeletePlayerRouteName);
         }
 
-        private const string UpsertPlayerRouteName = "UpsertPlayer";
 
         [HttpGet(Name = GetPlayersRouteName)]
         [HttpHead]
@@ -53,23 +59,23 @@ namespace chess.db.webapi.Controllers
         }
 
         [HttpGet("{id}", Name = GetPlayerRouteName)]
-        public ActionResult<PlayerDto> GetPlayer([FromRoute] Guid id, [FromQuery] string shape)
+        public ActionResult<PlayerDto> GetPlayer(Guid id, string shape)
             => ResourceGet(id, shape);
 
-        [HttpPost]
+        [HttpPost(Name = CreatePlayerRouteName)]
         public ActionResult<PlayerDto> CreatePlayer([FromBody] PlayerCreationDto model)
-            => ResourceCreate(model, GetPlayerRouteName);
+            => ResourceCreate(model);
 
         [HttpPut("{id}", Name = UpsertPlayerRouteName)]
         public ActionResult UpsertPlayer([FromRoute] Guid id, [FromBody] PlayerUpdateDto model)
-            => ResourceUpsert(id, model, GetPlayerRouteName);
+            => ResourceUpsert(id, model);
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id}", Name = PatchPlayerRouteName)]
         public ActionResult PatchPlayer([FromRoute] Guid id,
             [FromBody]JsonPatchDocument<PlayerUpdateDto> patchDocument)
             => ResourcePatch(id, patchDocument);
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name= DeletePlayerRouteName)]
         public ActionResult DeletePlayer([FromRoute]Guid id)
             => ResourceDelete(id);
 

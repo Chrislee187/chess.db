@@ -20,7 +20,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 {
     /// <summary>
     /// A base class for an MVC Controller that supports Restful endpoints.
-    /// Relies heavily on Automapper mapping abilities to Generic'ify the process for simple reuse
+    /// Relies heavily on AutoMapper mapping abilities to allow reuse
     /// <seealso cref="RestfulAutoMapperConventionsChecker"></seealso>
     /// </summary>
     /// <typeparam name="TDto">Data Transfer Object that can be Automapped from TEntity</typeparam>
@@ -33,16 +33,16 @@ namespace AspNetCore.MVC.RESTful.Controllers
         private readonly IOrderByPropertyMappingService<TDto, TEntity> _orderByPropertyMappingService;
         private readonly IEntityUpdater<TEntity> _entityUpdater;
 
-        protected readonly ResourceControllerConfig ControllerConfig;
+        protected readonly HateoasConfig HateoasConfig;
 
         protected ResourceControllerBase(IMapper mapper,
             IResourceRepository<TEntity> resourceRepository,
             IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService,
             IEntityUpdater<TEntity> entityUpdater,
-            Action<ResourceControllerConfig> config = null)
+            Action<HateoasConfig> config = null)
         {
-            ControllerConfig = new ResourceControllerConfig();
-            config?.Invoke(ControllerConfig);
+            HateoasConfig = new HateoasConfig();
+            config?.Invoke(HateoasConfig);
 
             Mapper = NullX.Throw(mapper, nameof(mapper));
             _restResourceRepository = NullX.Throw(resourceRepository, nameof(resourceRepository));
@@ -75,7 +75,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             if (!orderByCheck.Valid)
             {
-                orderByCheck.Details.Instance = Url.Link(ControllerConfig.ResourceGetRouteName(), parameters);
+                orderByCheck.Details.Instance = Url.Link(HateoasConfig.ResourceGetRouteName.Get(), parameters);
                 return BadRequest(orderByCheck.Details);
             }
 
@@ -94,22 +94,20 @@ namespace AspNetCore.MVC.RESTful.Controllers
             Mapper.Map(resourceQuery, usedParameters);
             usedParameters.Shape = parameters.Shape;
 
-            AddPaginationHeader(ControllerConfig.ResourceGetRouteName(), pagedEntities, usedParameters);
+            AddPaginationHeader(HateoasConfig.ResourceGetRouteName.Get(), pagedEntities, usedParameters);
 
             var resources = Mapper.Map<IEnumerable<TDto>>(pagedEntities)
                 .ShapeData(parameters.Shape).ToList();
             
-            if (ControllerConfig.Hateoas.AddDefaultLinksToIndividualResources)
+            if (HateoasConfig.AddDefaultLinksToIndividualResources)
             {
                 AddHateoasLinksToResources(resources, usedParameters, additionalIndividualLinks);
             }
 
-
-
             additionalCollectionLinks = additionalCollectionLinks == null
                 ? new List<HateoasLink>().ToList()
                 : additionalCollectionLinks.ToList();
-            if (ControllerConfig.Hateoas.AddDefaultLinksToCollectionResources)
+            if (HateoasConfig.AddDefaultLinksToCollectionResources)
             {
                 var collectionLinks = ResourcesGetLinks(parameters, pagedEntities);
                 AddCustomLinks(additionalCollectionLinks, collectionLinks);
@@ -121,44 +119,9 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 });
             }
 
-
             AddCustomLinks(additionalCollectionLinks, new List<HateoasLink>());
 
             return Ok(resources);
-        }
-
-        private HateoasLink ResourcesGetLinkBuilder(string rel, string method, object parameters) 
-            => new HateoasLink(
-                rel,
-                method,
-                Url.Link(ControllerConfig.ResourcesGetRouteName(), parameters)
-            );
-
-        private List<HateoasLink> ResourcesGetLinks<TParameters>(
-            TParameters parameters,
-            IPaginationMetadata pagination)
-                where TParameters : CommonResourceParameters
-        {
-            var links = new List<HateoasLink>
-            {
-                ResourcesGetLinkBuilder("current-page", "GET", parameters)
-            };
-
-            if (pagination.HasPrevious)
-            {
-                parameters.PageNumber = pagination.CurrentPage - 1;
-                links.Add(ResourcesGetLinkBuilder("prev-page", "GET", parameters));
-            }
-
-            if (pagination.HasNext)
-            {
-                parameters.PageNumber = pagination.CurrentPage + 1;
-                links.Add(ResourcesGetLinkBuilder("next-page", "GET", parameters));
-            }
-
-            parameters.PageNumber = pagination.CurrentPage;
-            return links;
-
         }
 
 
@@ -180,45 +143,20 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 return NotFound();
             }
 
-            var resource = (IDictionary<string, object>) Mapper.Map<TDto>(entity).ShapeData(shape);
+            shape ??= "";
 
-            if (ControllerConfig.Hateoas.AddDefaultLinksToIndividualResources)
+            var resource = (IDictionary<string, object>) Mapper.Map<TDto>(entity)
+                .ShapeData(shape);
+
+            if (HateoasConfig.AddDefaultLinksToIndividualResources)
             {
                 if (resource.ContainsKey("Id"))
                 {
-                    var links = ResourceGetLinks(id, shape, additionalLinks);
-
-                    resource.Add("links", links);
+                    resource.Add("_links", ResourceGetLinks(id, shape, additionalLinks));
                 }
             }
 
             return Ok(resource);
-        }
-
-        private HateoasLink ResourceGetLinkBuilder(string rel, string method, Guid id, string shape)
-        {
-            var s = string.IsNullOrEmpty(shape) ? "" : $"?shape={shape}";
-
-            return new HateoasLink(
-                rel,
-                method,
-                $"{Url.Link(ControllerConfig.ResourceGetRouteName(), null)}/{id}{s}");
-
-        }
-
-        public List<HateoasLink> ResourceGetLinks(Guid id, string shape,
-            IEnumerable<HateoasLink> additionalLinks = null)
-        {
-            var links = new List<HateoasLink>
-            {
-
-                ResourceGetLinkBuilder("self", "GET", id, shape),
-            };
-
-            AddCustomLinks(additionalLinks, links);
-
-            return links;
-
         }
 
         /// <summary>
@@ -229,7 +167,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// </summary>
         protected ActionResult<TDto> ResourceCreate<TCreationDto>(
             TCreationDto model,
-            string resourceGetRouteName
+            IEnumerable<HateoasLink> additionalLinks = null
         )
         {
             var entity = Mapper.Map<TEntity>(model);
@@ -239,10 +177,17 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             var createdResource = Mapper.Map<TDto>(entity);
 
+            IDictionary<string, object> resource = createdResource.ShapeData("");
+            
+            if (HateoasConfig.AddDefaultLinksToIndividualResources)
+            {
+                resource.Add("_links", ResourceCreateLinks(createdResource.Id, additionalLinks));
+            }
+
             return CreatedAtRoute(
-                resourceGetRouteName,
+                HateoasConfig.ResourcesGetRouteName.Get(),
                 new {createdResource.Id},
-                createdResource
+                resource
             );
         }
 
@@ -252,7 +197,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         protected ActionResult ResourceUpsert<TUpdateDto>(
             Guid id,
             TUpdateDto model,
-            string resourceGetRouteName)
+            IEnumerable<HateoasLink> additionalLinks = null)
         {
             if (id.Equals(Guid.Empty))
             {
@@ -270,10 +215,17 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
                 var createdDto = Mapper.Map<TDto>(addedEntity);
 
+                IDictionary<string, object> resource = createdDto.ShapeData("");
+
+                if (HateoasConfig.AddDefaultLinksToIndividualResources)
+                {
+                    resource.Add("_links", ResourceUpsertLinks(id, additionalLinks));
+                }
+
                 result = CreatedAtRoute(
-                    resourceGetRouteName,
+                    HateoasConfig.ResourceGetRouteName.Get(),
                     new {id},
-                    createdDto
+                    resource
                 );
             }
             else
@@ -318,6 +270,14 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             _restResourceRepository.Update(resource);
             _restResourceRepository.Save();
+
+            if (HateoasConfig.AddDefaultLinksToIndividualResources)
+            {
+                IDictionary<string, object> resourceForLinks = patchedResource.ShapeData("");
+
+                resourceForLinks.Add("_links", ResourcePatchLinks(id));
+                return Ok(resourceForLinks);
+            }
 
             return NoContent();
         }
@@ -365,6 +325,143 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return (ActionResult) options.Value.InvalidModelStateResponseFactory(ControllerContext);
         }
 
+        private HateoasLink ResourcesGetLinkBuilder(string rel, object parameters)
+            => new HateoasLink(
+                rel,
+                "GET",
+                Url.Link(HateoasConfig.ResourcesGetRouteName.Get(), parameters)
+            );
+
+        private List<HateoasLink> ResourcesGetLinks<TParameters>(
+            TParameters parameters,
+            IPaginationMetadata pagination)
+            where TParameters : CommonResourceParameters
+        {
+            var links = new List<HateoasLink>
+            {
+                ResourcesGetLinkBuilder("current-page", parameters)
+            };
+
+            if (pagination.HasPrevious)
+            {
+                parameters.PageNumber = pagination.CurrentPage - 1;
+                links.Add(ResourcesGetLinkBuilder("prev-page", parameters));
+            }
+
+            if (pagination.HasNext)
+            {
+                parameters.PageNumber = pagination.CurrentPage + 1;
+                links.Add(ResourcesGetLinkBuilder("next-page", parameters));
+            }
+
+            parameters.PageNumber = pagination.CurrentPage;
+
+            return links;
+        }
+
+        public List<HateoasLink> ResourceGetLinks(Guid id, string shape,
+            IEnumerable<HateoasLink> additionalLinks = null)
+        {
+            var links = new List<HateoasLink>
+            {
+                ResourceGetLinkBuilder("self", id, shape),
+                ResourceUpsertLinkBuilder(id),
+                ResourcePatchLinkBuilder(id),
+                ResourceDeleteLinkBuilder(id)
+            };
+
+            AddCustomLinks(additionalLinks, links);
+
+            return links;
+        }
+        public List<HateoasLink> ResourceCreateLinks(Guid id,
+            IEnumerable<HateoasLink> additionalLinks = null)
+        {
+            var links = new List<HateoasLink>
+            {
+                ResourceGetLinkBuilder("self", id, ""),
+                ResourceDeleteLinkBuilder(id)
+            };
+
+            AddCustomLinks(additionalLinks, links);
+
+            return links;
+        }
+
+        public List<HateoasLink> ResourceUpsertLinks(Guid id,
+            IEnumerable<HateoasLink> additionalLinks = null)
+        {
+            var links = new List<HateoasLink>
+            {
+                ResourceGetLinkBuilder("self", id, ""), 
+                ResourceDeleteLinkBuilder(id)
+            };
+
+            AddCustomLinks(additionalLinks, links);
+
+            return links;
+        }
+
+        public List<HateoasLink> ResourcePatchLinks(Guid id,
+            IEnumerable<HateoasLink> additionalLinks = null)
+        {
+            var links = new List<HateoasLink>
+            {
+                ResourceGetLinkBuilder("self", id, ""),
+                ResourceDeleteLinkBuilder(id)
+            };
+
+            AddCustomLinks(additionalLinks, links);
+
+            return links;
+        }
+
+        public List<HateoasLink> ResourceDeleteLinks(IEnumerable<HateoasLink> additionalLinks = null)
+        {
+            var links = new List<HateoasLink>
+            {
+                ResourcesGetLinkBuilder("current-page", null),
+                ResourceCreateLinkBuilder()
+            };
+
+            AddCustomLinks(additionalLinks, links);
+
+            return links;
+        }
+        private HateoasLink ResourceGetLinkBuilder(string rel, Guid id, string shape)
+        {
+            var s = string.IsNullOrEmpty(shape) ? "" : $"?shape={shape}";
+
+            return new HateoasLink(
+                rel,
+                "GET",
+                $"{Url.Link(HateoasConfig.ResourceGetRouteName.Get(), new { id })}{s}");
+        }
+
+        private HateoasLink ResourceCreateLinkBuilder() =>
+            new HateoasLink(
+                "create",
+                "POST",
+                $"{Url.Link(HateoasConfig.ResourceCreateRouteName.Get(), null)}");
+
+        private HateoasLink ResourceUpsertLinkBuilder(Guid id) =>
+            new HateoasLink(
+                "update",
+                "PUT",
+                $"{Url.Link(HateoasConfig.ResourceUpsertRouteName.Get(), new { id })}");
+
+        private HateoasLink ResourcePatchLinkBuilder(Guid id) =>
+            new HateoasLink(
+                "patch",
+                "PATCH",
+                $"{Url.Link(HateoasConfig.ResourcePatchRouteName.Get(), new { id })}");
+
+        private HateoasLink ResourceDeleteLinkBuilder(Guid id) =>
+            new HateoasLink(
+                "delete",
+                "DELETE",
+                $"{Url.Link(HateoasConfig.ResourceDeleteRouteName.Get(), new { id })}");
+
         private static void AddCustomLinks(IEnumerable<HateoasLink> additionalLinks, List<HateoasLink> links)
         {
             var hateoasLinks = additionalLinks?.ToArray() ?? new List<HateoasLink>().ToArray();
@@ -390,21 +487,25 @@ namespace AspNetCore.MVC.RESTful.Controllers
             TParameters usedParameters, IEnumerable<HateoasLink> additionalIndividualLinks)
             where TParameters : CommonResourceParameters
         {
-            var individualLinks = additionalIndividualLinks.ToList();
+            var individualLinks = additionalIndividualLinks?.ToList() ?? new List<HateoasLink>();
 
             foreach (IDictionary<string, object> resource in resources)
             {
-                // NOTE: Hateoas "links" support is only available if the ID is available, if
+                // NOTE: Hateoas "_links" support is only available if the ID is available, if
                 // the data has been reshaped to not include the Id, no links will be added.
                 if (resource.TryGetValue("Id", out var idObj))
                 {
-                    var links = ResourceGetLinks(new Guid(idObj.ToString()), usedParameters.Shape, individualLinks);
+                    var links = ResourceGetLinks(
+                        new Guid(idObj.ToString()), 
+                        usedParameters.Shape, 
+                        individualLinks);
 
                     if (links.Any())
                     {
-                        resource.Add("links", links);
+                        resource.Add("_links", links);
                     }
                 }
+
             }
         }
     }
