@@ -2,6 +2,8 @@
 
 namespace AspNetCore.MVC.RESTful.Parameters
 {
+    // TODO: Need a lower-level GlobalResourceParameters containing ?nolinks to disable any
+    // Hateoas links on a per call basis, all ResourceXXX Endpoints will need to support it.
     public abstract class CommonResourceParameters {
         private const int MaxPageSize = 100;
         private const int DefaultPageSize = 20;

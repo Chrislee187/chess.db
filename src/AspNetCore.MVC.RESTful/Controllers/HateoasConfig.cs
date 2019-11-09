@@ -26,7 +26,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         }
 
     }
-    public class HateoasConfig
+    public class HateoasConfig<TEntity>
     {
         public bool AddDefaultLinksToCollectionResources { get; set; } = true;
         public bool AddDefaultLinksToIndividualResources { get; set; } = true;
@@ -39,5 +39,16 @@ namespace AspNetCore.MVC.RESTful.Controllers
         public readonly ThrowIfNotSetString ResourcePatchRouteName = new ThrowIfNotSetString(nameof(ResourcePatchRouteName));
         public readonly ThrowIfNotSetString ResourceDeleteRouteName = new ThrowIfNotSetString(nameof(ResourceDeleteRouteName));
 
+        public HateoasConfig()
+        {
+            var entity = nameof(TEntity);
+            ResourcesGetRouteName.Set($"Get{entity}sRouteName");
+            ResourceGetRouteName.Set($"Get{entity}RouteName");
+            ResourceCreateRouteName.Set($"Create{entity}RouteName");
+            ResourceUpsertRouteName.Set($"Upsert{entity}RouteName");
+            ResourcePatchRouteName.Set($"Patch{entity}RouteName");
+            ResourceDeleteRouteName.Set($"Delete{entity}RouteName");
+
+        }
     }
 }

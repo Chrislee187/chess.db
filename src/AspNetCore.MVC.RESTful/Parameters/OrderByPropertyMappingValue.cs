@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
+﻿using System.Collections.Generic;
 using AspNetCore.MVC.RESTful.Helpers;
 
 namespace AspNetCore.MVC.RESTful.Parameters

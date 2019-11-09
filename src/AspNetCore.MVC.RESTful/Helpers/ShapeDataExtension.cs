@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.AspNetCore.Authorization;
 
 namespace AspNetCore.MVC.RESTful.Helpers
 {

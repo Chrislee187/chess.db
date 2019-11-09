@@ -33,25 +33,22 @@ namespace AspNetCore.MVC.RESTful.Controllers
         private readonly IOrderByPropertyMappingService<TDto, TEntity> _orderByPropertyMappingService;
         private readonly IEntityUpdater<TEntity> _entityUpdater;
 
-        protected readonly HateoasConfig HateoasConfig;
+        protected readonly HateoasConfig<TEntity> HateoasConfig = new HateoasConfig<TEntity>();
+        protected IMapper Mapper { get; }
 
         protected ResourceControllerBase(IMapper mapper,
             IResourceRepository<TEntity> resourceRepository,
             IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService,
             IEntityUpdater<TEntity> entityUpdater,
-            Action<HateoasConfig> config = null)
+            Action<HateoasConfig<TEntity>> config = null)
         {
-            HateoasConfig = new HateoasConfig();
-            config?.Invoke(HateoasConfig);
+            ConfigureHateoas(config);
 
             Mapper = NullX.Throw(mapper, nameof(mapper));
             _restResourceRepository = NullX.Throw(resourceRepository, nameof(resourceRepository));
             _orderByPropertyMappingService = NullX.Throw(orderByPropertyMappingService, nameof(orderByPropertyMappingService));
             _entityUpdater = NullX.Throw(entityUpdater, nameof(entityUpdater));
-
         }
-
-        protected IMapper Mapper { get; }
 
         /// <summary>
         /// HTTP GET /{resource}
@@ -374,6 +371,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             return links;
         }
+
         public List<HateoasLink> ResourceCreateLinks(Guid id,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
@@ -428,6 +426,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             return links;
         }
+
         private HateoasLink ResourceGetLinkBuilder(string rel, Guid id, string shape)
         {
             var s = string.IsNullOrEmpty(shape) ? "" : $"?shape={shape}";
@@ -507,6 +506,11 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 }
 
             }
+        }
+
+        private void ConfigureHateoas(Action<HateoasConfig<TEntity>> config)
+        {
+            config?.Invoke(HateoasConfig);
         }
     }
 }

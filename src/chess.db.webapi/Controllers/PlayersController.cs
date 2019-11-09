@@ -20,6 +20,10 @@ namespace chess.db.webapi.Controllers
     {
         private readonly ILogger<PlayersController> _logger;
 
+        // NOTE: The ResourceControllerBase needs to know the names of the supported
+        // routes. By default is assumes names based based on `nameof(TEntity)` that follow the pattern below
+        // override with `ResourceControllerBase.HateoasConfig.XXXXRouteName.Set()` calls in the ctor or ctor
+        // params if a different convention is required
         private const string GetPlayerRouteName = "GetPlayer";
         private const string GetPlayersRouteName = "GetPlayers";
         private const string CreatePlayerRouteName = "CreatePlayer";
@@ -35,27 +39,17 @@ namespace chess.db.webapi.Controllers
             : base(mapper, playersRepository, orderByPropertyMappingService, entityUpdater)
         {
             _logger = logger ?? NullLogger<PlayersController>.Instance;
-
-            HateoasConfig.ResourcesGetRouteName.Set(GetPlayersRouteName);
-            HateoasConfig.ResourceGetRouteName.Set(GetPlayerRouteName);
-            HateoasConfig.ResourceCreateRouteName.Set(CreatePlayerRouteName);
-            HateoasConfig.ResourceUpsertRouteName.Set(UpsertPlayerRouteName);
-            HateoasConfig.ResourcePatchRouteName.Set(PatchPlayerRouteName);
-            HateoasConfig.ResourceDeleteRouteName.Set(DeletePlayerRouteName);
+            
         }
-
-
+        
         [HttpGet(Name = GetPlayersRouteName)]
         [HttpHead]
         public IActionResult GetPlayers([FromQuery] GetPlayersParameters parameters)
         {
-
-            var resourcesGet = ResourcesGet(
+            return ResourcesGet(
                 parameters, 
                 Mapper.Map<GetPlayersFilters>(parameters), 
                 Mapper.Map<GetPlayersSearchQuery>(parameters));
-
-            return resourcesGet;
         }
 
         [HttpGet("{id}", Name = GetPlayerRouteName)]
