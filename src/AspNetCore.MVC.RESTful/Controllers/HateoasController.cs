@@ -18,10 +18,12 @@ namespace AspNetCore.MVC.RESTful.Controllers
     public abstract class HateoasController : ControllerBase
     {
         public readonly HateoasConfig HateoasConfig;
+        public readonly PaginationParameters PaginationParameters;
 
         protected HateoasController(string entityName)
         {
             HateoasConfig = new HateoasConfig(entityName);
+            PaginationParameters = new PaginationParameters();
         }
 
         protected List<HateoasLink> ResourcesGetLinks<TParameters>(
@@ -29,25 +31,25 @@ namespace AspNetCore.MVC.RESTful.Controllers
             IPaginationMetadata pagination)
             where TParameters : CommonResourcesGetParameters
         {
+            var currentPage = PaginationParameters.Page;
             var links = new List<HateoasLink>
             {
-                ResourcesGetLinkBuilder("current-page", parameters)
+                ResourcesGetLinkBuilder("current-page", parameters),
             };
-
+            
             if (pagination.HasPrevious)
             {
-                parameters.PageNumber = pagination.CurrentPage - 1;
+                PaginationParameters.Page = currentPage - 1;
                 links.Add(ResourcesGetLinkBuilder("prev-page", parameters));
             }
 
             if (pagination.HasNext)
             {
-                parameters.PageNumber = pagination.CurrentPage + 1;
+                PaginationParameters.Page = currentPage + 1;
                 links.Add(ResourcesGetLinkBuilder("next-page", parameters));
             }
 
-            parameters.PageNumber = pagination.CurrentPage;
-
+            PaginationParameters.Page = currentPage;
             return links;
         }
 
@@ -123,11 +125,17 @@ namespace AspNetCore.MVC.RESTful.Controllers
         }
 
         private HateoasLink ResourcesGetLinkBuilder(string rel, object parameters)
-            => new HateoasLink(
+        {
+            var link = Url.Link(HateoasConfig.ResourcesGetRouteName.Get(), parameters);
+
+            link = PaginationParameters.AppendToUrl(link);
+
+            return new HateoasLink(
                 rel,
                 "GET",
-                Url.Link(HateoasConfig.ResourcesGetRouteName.Get(), parameters)
+                link
             );
+        }
 
         private HateoasLink ResourceGetLinkBuilder(string rel, Guid id, string shape)
         {

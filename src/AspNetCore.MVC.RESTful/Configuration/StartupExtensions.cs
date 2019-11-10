@@ -70,10 +70,10 @@ namespace AspNetCore.MVC.RESTful.Configuration
                 })
                 .AddNewtonsoftJson(cfg =>
                 {
-                    // NOTE: Newtonsoft needed for JsonPatchDocument support
+                    // NOTE: Newtonsoft needed for JsonPatchDocument support otherwise would use System.Text.Json below
                     cfg.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 }) 
-                // system.text.json doesn't support JsonPatchDocument yet so use NewtonSoft through out
+                // NOTE: system.text.json doesn't support JsonPatchDocument yet so use NewtonSoft through out
                 // to make sure it's clear whats doing the serialisation.
 //                .AddJsonOptions(cfg =>
 //                {
@@ -90,6 +90,9 @@ namespace AspNetCore.MVC.RESTful.Configuration
             services.AddMvc(opts =>
             {
                 opts.Filters.Add(new EnableHateoasLinksActionFilter());
+                // NOTE: PaginationParameter support enabled using Attribute form on individual actions
+                // Can be enabled globally using the ActionFilter form here
+                // opts.Filters.Add(new SupportsPaginationParams()); 
             });
 
             services.AddTransient(typeof(IOrderByPropertyMappingService<,>), typeof(OrderByPropertyMappingService<,>));

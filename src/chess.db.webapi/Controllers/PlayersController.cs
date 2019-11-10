@@ -1,4 +1,5 @@
 ﻿using System;
+using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
@@ -37,6 +38,7 @@ namespace chess.db.webapi.Controllers
         
         [HttpGet(Name = GetPlayersRouteName)]
         [HttpHead]
+        [SupportsPaginationParams]
         public IActionResult GetPlayers([FromQuery] GetPlayersParameters parameters)
         {
             return ResourcesGet(

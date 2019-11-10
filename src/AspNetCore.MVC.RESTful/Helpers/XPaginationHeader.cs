@@ -7,15 +7,15 @@ namespace AspNetCore.MVC.RESTful.Helpers
 {
     public class XPaginationHeader
     {
+        private readonly PaginationParameters _paginationParameters;
         public string Key { get; set; }
         public string Value { get; set; }
 
-        public XPaginationHeader(
-            IPaginationMetadata pagination,
+        public XPaginationHeader(IPaginationMetadata pagination,
             CommonResourcesGetParameters common,
-            Func<object, string> urlBuilder
-            )
+            Func<object, string> urlBuilder, PaginationParameters paginationParameters)
         {
+            _paginationParameters = paginationParameters;
             var metadata = new
             {
                 pagination.TotalCount,
@@ -47,23 +47,25 @@ namespace AspNetCore.MVC.RESTful.Helpers
             
             )
         {
-            var currentPage = common.PageNumber;
+            var originalPage = _paginationParameters.Page;
+            var page = originalPage;
             switch (type)
             {
                 case ResourceUriType.PreviousPage:
-                    common.PageNumber -= 1;
+                    page -= 1;
                     break;
                 case ResourceUriType.NextPage:
-                    common.PageNumber += 1;
+                    page += 1;
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
 
-            var link = urlBuilder(common);
+            _paginationParameters.Page = page;
+            var link = _paginationParameters.AppendToUrl(urlBuilder(common));
+            _paginationParameters.Page = originalPage;
 
-            common.PageNumber = currentPage;
             return link;
         }
     }

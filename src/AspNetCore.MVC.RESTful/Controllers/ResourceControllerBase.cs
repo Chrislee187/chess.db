@@ -44,7 +44,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService,
             IEntityUpdater<TEntity> entityUpdater,
             Action<HateoasConfig> config = null)
-                :base(nameof(TEntity))
+                :base(typeof(TEntity).Name)
         {
             ConfigureHateoas(config);
 
@@ -80,15 +80,15 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 return BadRequest(orderByCheck.Details);
             }
 
-            var pagination = Mapper.Map<PaginationParameters>(parameters);
-
             var orderByMappings = _orderByPropertyMappingService.GetPropertyMapping();
 
-            var pagedEntities = _restResourceRepository.Load(filters, resourceQuery, pagination, orderBy, orderByMappings);
+            var pagedEntities = _restResourceRepository.Load(filters, resourceQuery, PaginationParameters, orderBy, orderByMappings);
 
-            var usedParameters = RecreateCollectionParameters(parameters, filters, resourceQuery, pagination, orderBy);
-
-            AddPaginationHeader(HateoasConfig.ResourceGetRouteName.Get(), pagedEntities, usedParameters);
+            var usedParameters = RecreateCollectionParameters(parameters, filters, resourceQuery, orderBy);
+            
+            
+            // TODO: Add pagination to usedParameters
+            AddPaginationHeader(HateoasConfig.ResourcesGetRouteName.Get(), pagedEntities, usedParameters);
 
             var resources = Mapper.Map<IEnumerable<TDto>>(pagedEntities).ShapeData(parameters.Shape).ToList();
             
@@ -108,7 +108,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 return Ok(new
                 {
                     value = resources,
-                    links = collectionLinks
+                    _links = collectionLinks
                 });
             }
 
@@ -325,18 +325,22 @@ namespace AspNetCore.MVC.RESTful.Controllers
             var xPaginationHeader = new XPaginationHeader(
                 pagedEntities,
                 usedParameters,
-                (parameters) => Url.Link(resourcesGetRouteName, parameters)
+                (parameters) => Url.Link(resourcesGetRouteName, parameters),
+                PaginationParameters
             );
             Response.Headers.Add(xPaginationHeader.Key, xPaginationHeader.Value);
         }
 
-        private TParameters RecreateCollectionParameters<TParameters>(TParameters parameters, IResourceQuery<TEntity> filters,
-            IResourceQuery<TEntity> resourceQuery, PaginationParameters pagination, OrderByParameters orderBy)
+        private TParameters RecreateCollectionParameters<TParameters>(
+            TParameters parameters, 
+            IResourceQuery<TEntity> filters,
+            IResourceQuery<TEntity> resourceQuery, 
+            OrderByParameters orderBy)
             where TParameters : CommonResourcesGetParameters
         {
             var usedParameters = Activator.CreateInstance<TParameters>();
 
-            Mapper.Map(pagination, usedParameters);
+//            Mapper.Map(pagination, usedParameters);
             Mapper.Map(orderBy, usedParameters);
             Mapper.Map(filters, usedParameters);
             Mapper.Map(resourceQuery, usedParameters);

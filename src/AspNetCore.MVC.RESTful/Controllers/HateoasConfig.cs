@@ -15,12 +15,12 @@
 
         public HateoasConfig(string entityName)
         {
-            ResourcesGetRouteName.Set($"Get{entityName}sRouteName");
-            ResourceGetRouteName.Set($"Get{entityName}RouteName");
-            ResourceCreateRouteName.Set($"Create{entityName}RouteName");
-            ResourceUpsertRouteName.Set($"Upsert{entityName}RouteName");
-            ResourcePatchRouteName.Set($"Patch{entityName}RouteName");
-            ResourceDeleteRouteName.Set($"Delete{entityName}RouteName");
+            ResourcesGetRouteName.Set($"Get{entityName}s");
+            ResourceGetRouteName.Set($"Get{entityName}");
+            ResourceCreateRouteName.Set($"Create{entityName}");
+            ResourceUpsertRouteName.Set($"Upsert{entityName}");
+            ResourcePatchRouteName.Set($"Patch{entityName}");
+            ResourceDeleteRouteName.Set($"Delete{entityName}");
         }
     }
 }

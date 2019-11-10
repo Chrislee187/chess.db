@@ -56,10 +56,6 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
                 ( $"{Parameters(entity)}", $"{Search(entity)}" ),
                 ( $"{Search(entity)}", $"{Parameters(entity)}" ),
 
-                // GET /{resources} parameters pagination
-                ( $"{Parameters(entity)}", $"PaginationParameters" ),
-                ( $"PaginationParameters", $"{Parameters(entity)}" ),
-
                 // GET /{resources} parameters order by
                 ( $"{Parameters(entity)}", $"OrderByParameters" ),
                 ( $"OrderByParameters", $"{Parameters(entity)}" ),
