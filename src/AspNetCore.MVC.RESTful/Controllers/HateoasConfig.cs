@@ -1,54 +1,26 @@
-﻿using System;
-
-namespace AspNetCore.MVC.RESTful.Controllers
+﻿namespace AspNetCore.MVC.RESTful.Controllers
 {
-    public class ThrowIfNotSetString
+    public class HateoasConfig
     {
-        private readonly string _name;
-        public ThrowIfNotSetString(string name)
+        public bool AddLinksToCollectionResources { get; set; } = true;
+        public bool AddLinksToIndividualResources { get; set; } = true;
+
+
+        public readonly MustSet<string> ResourcesGetRouteName = new MustSet<string>(nameof(ResourcesGetRouteName));
+        public readonly MustSet<string> ResourceGetRouteName = new MustSet<string>(nameof(ResourceGetRouteName));
+        public readonly MustSet<string> ResourceCreateRouteName = new MustSet<string>(nameof(ResourceCreateRouteName));
+        public readonly MustSet<string> ResourceUpsertRouteName = new MustSet<string>(nameof(ResourceUpsertRouteName));
+        public readonly MustSet<string> ResourcePatchRouteName = new MustSet<string>(nameof(ResourcePatchRouteName));
+        public readonly MustSet<string> ResourceDeleteRouteName = new MustSet<string>(nameof(ResourceDeleteRouteName));
+
+        public HateoasConfig(string entityName)
         {
-            _name = name;
-        }
-
-        private string _string;
-
-        public string Get()
-        {
-            if (string.IsNullOrEmpty(_string))
-            {
-                throw new NullReferenceException($"HateoasConfig.{_name} is not Set");
-            }
-            return _string;
-        }
-        public void Set(string routeName)
-        {
-            _string = routeName;
-        }
-
-    }
-    public class HateoasConfig<TEntity>
-    {
-        public bool AddDefaultLinksToCollectionResources { get; set; } = true;
-        public bool AddDefaultLinksToIndividualResources { get; set; } = true;
-
-
-        public readonly ThrowIfNotSetString ResourcesGetRouteName = new ThrowIfNotSetString(nameof(ResourcesGetRouteName));
-        public readonly ThrowIfNotSetString ResourceGetRouteName = new ThrowIfNotSetString(nameof(ResourceGetRouteName));
-        public readonly ThrowIfNotSetString ResourceCreateRouteName = new ThrowIfNotSetString(nameof(ResourceCreateRouteName));
-        public readonly ThrowIfNotSetString ResourceUpsertRouteName = new ThrowIfNotSetString(nameof(ResourceUpsertRouteName));
-        public readonly ThrowIfNotSetString ResourcePatchRouteName = new ThrowIfNotSetString(nameof(ResourcePatchRouteName));
-        public readonly ThrowIfNotSetString ResourceDeleteRouteName = new ThrowIfNotSetString(nameof(ResourceDeleteRouteName));
-
-        public HateoasConfig()
-        {
-            var entity = nameof(TEntity);
-            ResourcesGetRouteName.Set($"Get{entity}sRouteName");
-            ResourceGetRouteName.Set($"Get{entity}RouteName");
-            ResourceCreateRouteName.Set($"Create{entity}RouteName");
-            ResourceUpsertRouteName.Set($"Upsert{entity}RouteName");
-            ResourcePatchRouteName.Set($"Patch{entity}RouteName");
-            ResourceDeleteRouteName.Set($"Delete{entity}RouteName");
-
+            ResourcesGetRouteName.Set($"Get{entityName}sRouteName");
+            ResourceGetRouteName.Set($"Get{entityName}RouteName");
+            ResourceCreateRouteName.Set($"Create{entityName}RouteName");
+            ResourceUpsertRouteName.Set($"Upsert{entityName}RouteName");
+            ResourcePatchRouteName.Set($"Patch{entityName}RouteName");
+            ResourceDeleteRouteName.Set($"Delete{entityName}RouteName");
         }
     }
 }

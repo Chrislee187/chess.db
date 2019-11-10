@@ -49,7 +49,7 @@ namespace chess.db.webapi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.RestfulExceptionHandling(env);
-
+            
             app.UseRestful(env);
 
             // TODO: We could automate this further by finding all types in assembly that inherit from

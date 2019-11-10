@@ -2,7 +2,7 @@
 
 namespace chess.db.webapi.ResourceParameters
 {
-    public class GetPlayersParameters : CommonResourceParameters
+    public class GetPlayersParameters : CommonResourcesGetParameters
     {
         public string FirstnameFilter { get; set; }
         public string MiddlenameFilter { get; set; }

@@ -12,7 +12,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
 
         public XPaginationHeader(
             IPaginationMetadata pagination,
-            CommonResourceParameters common,
+            CommonResourcesGetParameters common,
             Func<object, string> urlBuilder
             )
         {
@@ -41,7 +41,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
         }
 
         private string CreatePlayersResourceUri(
-            CommonResourceParameters common,
+            CommonResourcesGetParameters common,
             ResourceUriType type,
             Func<object, string> urlBuilder
             

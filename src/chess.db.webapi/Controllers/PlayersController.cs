@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
@@ -57,7 +58,8 @@ namespace chess.db.webapi.Controllers
             => ResourceGet(id, shape);
 
         [HttpPost(Name = CreatePlayerRouteName)]
-        public ActionResult<PlayerDto> CreatePlayer([FromBody] PlayerCreationDto model)
+        public ActionResult<PlayerDto> CreatePlayer(
+            [FromBody] PlayerCreationDto model)
             => ResourceCreate(model);
 
         [HttpPut("{id}", Name = UpsertPlayerRouteName)]

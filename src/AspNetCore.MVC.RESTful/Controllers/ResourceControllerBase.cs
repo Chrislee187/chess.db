@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Dynamic;
 using System.Linq;
-using AspNetCore.MVC.RESTful.AutoMapper;
-using AspNetCore.MVC.RESTful.Helpers;
-using AspNetCore.MVC.RESTful.Models;
-using AspNetCore.MVC.RESTful.Parameters;
-using AspNetCore.MVC.RESTful.Repositories;
-using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using AutoMapper;
+using AspNetCore.MVC.RESTful.AutoMapper;
+using AspNetCore.MVC.RESTful.Helpers;
+using AspNetCore.MVC.RESTful.Models;
+using AspNetCore.MVC.RESTful.Parameters;
+using AspNetCore.MVC.RESTful.Repositories;
 
 namespace AspNetCore.MVC.RESTful.Controllers
 {
@@ -25,7 +24,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
     /// </summary>
     /// <typeparam name="TDto">Data Transfer Object that can be Automapped from TEntity</typeparam>
     /// <typeparam name="TEntity">Underlying Entity for the Resource being represented</typeparam>
-    public abstract class ResourceControllerBase<TDto, TEntity> : ControllerBase
+    public abstract class ResourceControllerBase<TDto, TEntity> : HateoasController
         where TEntity : class
         where TDto : IResourceId
     {
@@ -33,14 +32,14 @@ namespace AspNetCore.MVC.RESTful.Controllers
         private readonly IOrderByPropertyMappingService<TDto, TEntity> _orderByPropertyMappingService;
         private readonly IEntityUpdater<TEntity> _entityUpdater;
 
-        protected readonly HateoasConfig<TEntity> HateoasConfig = new HateoasConfig<TEntity>();
         protected IMapper Mapper { get; }
 
         protected ResourceControllerBase(IMapper mapper,
             IResourceRepository<TEntity> resourceRepository,
             IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService,
             IEntityUpdater<TEntity> entityUpdater,
-            Action<HateoasConfig<TEntity>> config = null)
+            Action<HateoasConfig> config = null)
+                :base(nameof(TEntity))
         {
             ConfigureHateoas(config);
 
@@ -58,7 +57,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             [NotNull] IResourceQuery<TEntity> resourceQuery,
             IEnumerable<HateoasLink> additionalCollectionLinks = null,
             IEnumerable<HateoasLink> additionalIndividualLinks = null)
-            where TParameters : CommonResourceParameters
+            where TParameters : CommonResourcesGetParameters
         {
             if (!typeof(TDto).TypeHasOutputProperties(parameters.Shape))
             {
@@ -80,34 +79,26 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             var orderByMappings = _orderByPropertyMappingService.GetPropertyMapping();
 
-            var pagedEntities = _restResourceRepository
-                .Load(filters, resourceQuery, pagination, orderBy, orderByMappings);
+            var pagedEntities = _restResourceRepository.Load(filters, resourceQuery, pagination, orderBy, orderByMappings);
 
-            var usedParameters = Activator.CreateInstance<TParameters>();
-
-            Mapper.Map(pagination, usedParameters);
-            Mapper.Map(orderBy, usedParameters);
-            Mapper.Map(filters, usedParameters);
-            Mapper.Map(resourceQuery, usedParameters);
-            usedParameters.Shape = parameters.Shape;
+            var usedParameters = RecreateCollectionParameters(parameters, filters, resourceQuery, pagination, orderBy);
 
             AddPaginationHeader(HateoasConfig.ResourceGetRouteName.Get(), pagedEntities, usedParameters);
 
-            var resources = Mapper.Map<IEnumerable<TDto>>(pagedEntities)
-                .ShapeData(parameters.Shape).ToList();
+            var resources = Mapper.Map<IEnumerable<TDto>>(pagedEntities).ShapeData(parameters.Shape).ToList();
             
-            if (HateoasConfig.AddDefaultLinksToIndividualResources)
+            if (HateoasConfig.AddLinksToIndividualResources)
             {
-                AddHateoasLinksToResources(resources, usedParameters, additionalIndividualLinks);
+                AddHateoasLinksToResourceCollection(resources, usedParameters, additionalIndividualLinks);
             }
 
             additionalCollectionLinks = additionalCollectionLinks == null
                 ? new List<HateoasLink>().ToList()
                 : additionalCollectionLinks.ToList();
-            if (HateoasConfig.AddDefaultLinksToCollectionResources)
+            if (HateoasConfig.AddLinksToCollectionResources)
             {
                 var collectionLinks = ResourcesGetLinks(parameters, pagedEntities);
-                AddCustomLinks(additionalCollectionLinks, collectionLinks);
+                AddCustomLinks(collectionLinks, additionalCollectionLinks);
 
                 return Ok(new
                 {
@@ -116,7 +107,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 });
             }
 
-            AddCustomLinks(additionalCollectionLinks, new List<HateoasLink>());
+            AddCustomLinks(new List<HateoasLink>(), additionalCollectionLinks);
 
             return Ok(resources);
         }
@@ -145,7 +136,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             var resource = (IDictionary<string, object>) Mapper.Map<TDto>(entity)
                 .ShapeData(shape);
 
-            if (HateoasConfig.AddDefaultLinksToIndividualResources)
+            if (HateoasConfig.AddLinksToIndividualResources)
             {
                 if (resource.ContainsKey("Id"))
                 {
@@ -176,7 +167,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             IDictionary<string, object> resource = createdResource.ShapeData("");
             
-            if (HateoasConfig.AddDefaultLinksToIndividualResources)
+            if (HateoasConfig.AddLinksToIndividualResources)
             {
                 resource.Add("_links", ResourceCreateLinks(createdResource.Id, additionalLinks));
             }
@@ -214,7 +205,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
                 IDictionary<string, object> resource = createdDto.ShapeData("");
 
-                if (HateoasConfig.AddDefaultLinksToIndividualResources)
+                if (HateoasConfig.AddLinksToIndividualResources)
                 {
                     resource.Add("_links", ResourceUpsertLinks(id, additionalLinks));
                 }
@@ -268,7 +259,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             _restResourceRepository.Update(resource);
             _restResourceRepository.Save();
 
-            if (HateoasConfig.AddDefaultLinksToIndividualResources)
+            if (HateoasConfig.AddLinksToIndividualResources)
             {
                 IDictionary<string, object> resourceForLinks = patchedResource.ShapeData("");
 
@@ -322,157 +313,9 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return (ActionResult) options.Value.InvalidModelStateResponseFactory(ControllerContext);
         }
 
-        private HateoasLink ResourcesGetLinkBuilder(string rel, object parameters)
-            => new HateoasLink(
-                rel,
-                "GET",
-                Url.Link(HateoasConfig.ResourcesGetRouteName.Get(), parameters)
-            );
-
-        private List<HateoasLink> ResourcesGetLinks<TParameters>(
-            TParameters parameters,
-            IPaginationMetadata pagination)
-            where TParameters : CommonResourceParameters
-        {
-            var links = new List<HateoasLink>
-            {
-                ResourcesGetLinkBuilder("current-page", parameters)
-            };
-
-            if (pagination.HasPrevious)
-            {
-                parameters.PageNumber = pagination.CurrentPage - 1;
-                links.Add(ResourcesGetLinkBuilder("prev-page", parameters));
-            }
-
-            if (pagination.HasNext)
-            {
-                parameters.PageNumber = pagination.CurrentPage + 1;
-                links.Add(ResourcesGetLinkBuilder("next-page", parameters));
-            }
-
-            parameters.PageNumber = pagination.CurrentPage;
-
-            return links;
-        }
-
-        public List<HateoasLink> ResourceGetLinks(Guid id, string shape,
-            IEnumerable<HateoasLink> additionalLinks = null)
-        {
-            var links = new List<HateoasLink>
-            {
-                ResourceGetLinkBuilder("self", id, shape),
-                ResourceUpsertLinkBuilder(id),
-                ResourcePatchLinkBuilder(id),
-                ResourceDeleteLinkBuilder(id)
-            };
-
-            AddCustomLinks(additionalLinks, links);
-
-            return links;
-        }
-
-        public List<HateoasLink> ResourceCreateLinks(Guid id,
-            IEnumerable<HateoasLink> additionalLinks = null)
-        {
-            var links = new List<HateoasLink>
-            {
-                ResourceGetLinkBuilder("self", id, ""),
-                ResourceDeleteLinkBuilder(id)
-            };
-
-            AddCustomLinks(additionalLinks, links);
-
-            return links;
-        }
-
-        public List<HateoasLink> ResourceUpsertLinks(Guid id,
-            IEnumerable<HateoasLink> additionalLinks = null)
-        {
-            var links = new List<HateoasLink>
-            {
-                ResourceGetLinkBuilder("self", id, ""), 
-                ResourceDeleteLinkBuilder(id)
-            };
-
-            AddCustomLinks(additionalLinks, links);
-
-            return links;
-        }
-
-        public List<HateoasLink> ResourcePatchLinks(Guid id,
-            IEnumerable<HateoasLink> additionalLinks = null)
-        {
-            var links = new List<HateoasLink>
-            {
-                ResourceGetLinkBuilder("self", id, ""),
-                ResourceDeleteLinkBuilder(id)
-            };
-
-            AddCustomLinks(additionalLinks, links);
-
-            return links;
-        }
-
-        public List<HateoasLink> ResourceDeleteLinks(IEnumerable<HateoasLink> additionalLinks = null)
-        {
-            var links = new List<HateoasLink>
-            {
-                ResourcesGetLinkBuilder("current-page", null),
-                ResourceCreateLinkBuilder()
-            };
-
-            AddCustomLinks(additionalLinks, links);
-
-            return links;
-        }
-
-        private HateoasLink ResourceGetLinkBuilder(string rel, Guid id, string shape)
-        {
-            var s = string.IsNullOrEmpty(shape) ? "" : $"?shape={shape}";
-
-            return new HateoasLink(
-                rel,
-                "GET",
-                $"{Url.Link(HateoasConfig.ResourceGetRouteName.Get(), new { id })}{s}");
-        }
-
-        private HateoasLink ResourceCreateLinkBuilder() =>
-            new HateoasLink(
-                "create",
-                "POST",
-                $"{Url.Link(HateoasConfig.ResourceCreateRouteName.Get(), null)}");
-
-        private HateoasLink ResourceUpsertLinkBuilder(Guid id) =>
-            new HateoasLink(
-                "update",
-                "PUT",
-                $"{Url.Link(HateoasConfig.ResourceUpsertRouteName.Get(), new { id })}");
-
-        private HateoasLink ResourcePatchLinkBuilder(Guid id) =>
-            new HateoasLink(
-                "patch",
-                "PATCH",
-                $"{Url.Link(HateoasConfig.ResourcePatchRouteName.Get(), new { id })}");
-
-        private HateoasLink ResourceDeleteLinkBuilder(Guid id) =>
-            new HateoasLink(
-                "delete",
-                "DELETE",
-                $"{Url.Link(HateoasConfig.ResourceDeleteRouteName.Get(), new { id })}");
-
-        private static void AddCustomLinks(IEnumerable<HateoasLink> additionalLinks, List<HateoasLink> links)
-        {
-            var hateoasLinks = additionalLinks?.ToArray() ?? new List<HateoasLink>().ToArray();
-            if (hateoasLinks.Any())
-            {
-                links.AddRange(hateoasLinks);
-            }
-        }
-
         private void AddPaginationHeader<TParameters>(string resourcesGetRouteName, 
             IPaginationMetadata pagedEntities,
-            TParameters usedParameters) where TParameters : CommonResourceParameters
+            TParameters usedParameters) where TParameters : CommonResourcesGetParameters
         {
             var xPaginationHeader = new XPaginationHeader(
                 pagedEntities,
@@ -482,35 +325,18 @@ namespace AspNetCore.MVC.RESTful.Controllers
             Response.Headers.Add(xPaginationHeader.Key, xPaginationHeader.Value);
         }
 
-        private void AddHateoasLinksToResources<TParameters>(IEnumerable<ExpandoObject> resources,
-            TParameters usedParameters, IEnumerable<HateoasLink> additionalIndividualLinks)
-            where TParameters : CommonResourceParameters
+        private TParameters RecreateCollectionParameters<TParameters>(TParameters parameters, IResourceQuery<TEntity> filters,
+            IResourceQuery<TEntity> resourceQuery, PaginationParameters pagination, OrderByParameters orderBy)
+            where TParameters : CommonResourcesGetParameters
         {
-            var individualLinks = additionalIndividualLinks?.ToList() ?? new List<HateoasLink>();
+            var usedParameters = Activator.CreateInstance<TParameters>();
 
-            foreach (IDictionary<string, object> resource in resources)
-            {
-                // NOTE: Hateoas "_links" support is only available if the ID is available, if
-                // the data has been reshaped to not include the Id, no links will be added.
-                if (resource.TryGetValue("Id", out var idObj))
-                {
-                    var links = ResourceGetLinks(
-                        new Guid(idObj.ToString()), 
-                        usedParameters.Shape, 
-                        individualLinks);
-
-                    if (links.Any())
-                    {
-                        resource.Add("_links", links);
-                    }
-                }
-
-            }
-        }
-
-        private void ConfigureHateoas(Action<HateoasConfig<TEntity>> config)
-        {
-            config?.Invoke(HateoasConfig);
+            Mapper.Map(pagination, usedParameters);
+            Mapper.Map(orderBy, usedParameters);
+            Mapper.Map(filters, usedParameters);
+            Mapper.Map(resourceQuery, usedParameters);
+            usedParameters.Shape = parameters.Shape;
+            return usedParameters;
         }
     }
 }

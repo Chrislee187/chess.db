@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using AspNetCore.MVC.RESTful.AutoMapper;
 using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
@@ -86,6 +87,11 @@ namespace AspNetCore.MVC.RESTful.Configuration
                 }
             );
 
+            services.AddMvc(opts =>
+            {
+                opts.Filters.Add(new EnableHateoasLinksActionFilter());
+            });
+
             services.AddTransient(typeof(IOrderByPropertyMappingService<,>), typeof(OrderByPropertyMappingService<,>));
             
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()) // Registers Mapping "Profiles"
@@ -119,22 +125,22 @@ namespace AspNetCore.MVC.RESTful.Configuration
             );
     }
 
-//    public class ExpandoObjectJsonConverter : JsonConverter<ExpandoObject>
-//    {
-//        public override void WriteJson(JsonWriter writer, ExpandoObject value, JsonSerializer serializer)
-//        {
-//            if(value.)
-//            throw new NotImplementedException();
-//        }
-//
-//        public override ExpandoObject ReadJson(
-//            JsonReader reader, 
-//            Type objectType, 
-//            ExpandoObject existingValue, 
-//            bool hasExistingValue,
-//            JsonSerializer serializer)
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
+    //    public class ExpandoObjectJsonConverter : JsonConverter<ExpandoObject>
+    //    {
+    //        public override void WriteJson(JsonWriter writer, ExpandoObject value, JsonSerializer serializer)
+    //        {
+    //            if(value.)
+    //            throw new NotImplementedException();
+    //        }
+    //
+    //        public override ExpandoObject ReadJson(
+    //            JsonReader reader, 
+    //            Type objectType, 
+    //            ExpandoObject existingValue, 
+    //            bool hasExistingValue,
+    //            JsonSerializer serializer)
+    //        {
+    //            throw new NotImplementedException();
+    //        }
+    //    }
 }

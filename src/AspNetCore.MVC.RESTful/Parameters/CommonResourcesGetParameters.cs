@@ -1,14 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using AspNetCore.MVC.RESTful.Configuration;
 
 namespace AspNetCore.MVC.RESTful.Parameters
 {
-    // TODO: Need a lower-level GlobalResourceParameters containing ?nolinks to disable any
-    // Hateoas links on a per call basis, all ResourceXXX Endpoints will need to support it.
-    public abstract class CommonResourceParameters {
+    // TODO: Note there also a &links=true|false query string parameter that can be used on any
+    // action on a controller that inherits from ResourceBaseController<,>, 
+    // See the `EnableHateoasLinksActionFilter` MVC filter
+    public abstract class CommonResourcesGetParameters 
+    {
         private const int MaxPageSize = 100;
         private const int DefaultPageSize = 20;
         private int _pageSize = DefaultPageSize;
-
+        
         public string SearchQuery { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "pageNumber must be a postive integer.")]
@@ -25,4 +28,5 @@ namespace AspNetCore.MVC.RESTful.Parameters
 
         public string Shape { get; set; } = "";
     }
+
 }
