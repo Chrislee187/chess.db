@@ -1,11 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AspNetCore.MVC.RESTful.Configuration;
 
 namespace AspNetCore.MVC.RESTful.Parameters
 {
-    // TODO: Note there also a &links=true|false query string parameter that can be used on any
-    // action on a controller that inherits from ResourceBaseController<,>, 
-    // See the `EnableHateoasLinksActionFilter` MVC filter
     public abstract class CommonResourcesGetParameters 
     {
         private const int MaxPageSize = 100;

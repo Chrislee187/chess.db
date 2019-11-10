@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using AspNetCore.MVC.RESTful.AutoMapper;
 using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
@@ -74,15 +73,16 @@ namespace AspNetCore.MVC.RESTful.Configuration
                     // NOTE: Newtonsoft needed for JsonPatchDocument support
                     cfg.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 }) 
-                // system.text.json doesn't support JsonPatchDocument yet so have to use NewtonSoft through out
+                // system.text.json doesn't support JsonPatchDocument yet so use NewtonSoft through out
                 // to make sure it's clear whats doing the serialisation.
 //                .AddJsonOptions(cfg =>
 //                {
 //                    cfg.JsonSerializerOptions.IgnoreNullValues = true;
 //                })
-                .AddXmlDataContractSerializerFormatters()   // NOTE: Add "application/xml" content-type support
+                .AddXmlDataContractSerializerFormatters()   // NOTE: Adds "application/xml" content-type support
                 .ConfigureApiBehaviorOptions(setupAction =>
                 {
+                    // NOTE: Setup custom response for model (typically from query params etc.) validation errors
                     setupAction.InvalidModelStateResponseFactory = new InvalidModelStateResponse().SetupInvalidModelStateResponse;
                 }
             );
@@ -124,23 +124,4 @@ namespace AspNetCore.MVC.RESTful.Configuration
                     app.ApplicationServices.GetService<IMapper>()
             );
     }
-
-    //    public class ExpandoObjectJsonConverter : JsonConverter<ExpandoObject>
-    //    {
-    //        public override void WriteJson(JsonWriter writer, ExpandoObject value, JsonSerializer serializer)
-    //        {
-    //            if(value.)
-    //            throw new NotImplementedException();
-    //        }
-    //
-    //        public override ExpandoObject ReadJson(
-    //            JsonReader reader, 
-    //            Type objectType, 
-    //            ExpandoObject existingValue, 
-    //            bool hasExistingValue,
-    //            JsonSerializer serializer)
-    //        {
-    //            throw new NotImplementedException();
-    //        }
-    //    }
 }

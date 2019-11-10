@@ -20,8 +20,13 @@ namespace AspNetCore.MVC.RESTful.Controllers
     /// <summary>
     /// A base class for an MVC Controller that supports Restful endpoints.
     /// Relies heavily on AutoMapper mapping abilities to allow reuse
-    /// <seealso cref="RestfulAutoMapperConventionsChecker"></seealso>
+    /// <list>
+    /// See also 
+    /// <seealso cref="RestfulAutoMapperConventionsChecker"></seealso>,
+    /// <seealso cref="HateoasController"></seealso>
+    /// </list>
     /// </summary>
+
     /// <typeparam name="TDto">Data Transfer Object that can be Automapped from TEntity</typeparam>
     /// <typeparam name="TEntity">Underlying Entity for the Resource being represented</typeparam>
     public abstract class ResourceControllerBase<TDto, TEntity> : HateoasController

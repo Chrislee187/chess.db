@@ -1,5 +1,4 @@
 ﻿using AspNetCore.MVC.RESTful.Controllers;
-using AspNetCore.MVC.RESTful.Parameters;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace AspNetCore.MVC.RESTful.Configuration

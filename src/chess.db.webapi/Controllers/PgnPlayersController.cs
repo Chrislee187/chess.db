@@ -9,8 +9,6 @@ using chess.db.webapi.ResourceParameters;
 using chess.games.db.api.PgnPlayers;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace chess.db.webapi.Controllers
 {
@@ -18,8 +16,6 @@ namespace chess.db.webapi.Controllers
     [Route("api/pgnplayers")]
     public class PgnPlayersController : ResourceControllerBase<PgnPlayerDto, PgnPlayer>
     {
-
-        private readonly ILogger<PgnPlayersController> _logger;
         private readonly IPgnPlayersRepository _pgnPlayersRepository;
 
         private const string GetPgnPlayersRouteName = "GetPgnPlayers";
@@ -28,13 +24,10 @@ namespace chess.db.webapi.Controllers
         public PgnPlayersController(IMapper mapper,
             IPgnPlayersRepository pgnPlayersRepository,
             IOrderByPropertyMappingService<PgnPlayerDto, PgnPlayer> orderByPropertyMappingService,
-            IEntityUpdater<PgnPlayer> entityUpdater,
-
-            ILogger<PgnPlayersController> logger)
+            IEntityUpdater<PgnPlayer> entityUpdater)
                 : base(mapper, pgnPlayersRepository, orderByPropertyMappingService, entityUpdater)
         {
              _pgnPlayersRepository = NullX.Throw(pgnPlayersRepository, nameof(pgnPlayersRepository));
-            _logger = logger ?? NullLogger<PgnPlayersController>.Instance;
 
             HateoasConfig.ResourceGetRouteName.Set(GetPgnPlayerRouteName);
             HateoasConfig.ResourcesGetRouteName.Set(GetPgnPlayersRouteName);

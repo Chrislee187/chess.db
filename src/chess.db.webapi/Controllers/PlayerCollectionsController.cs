@@ -9,8 +9,6 @@ using chess.db.webapi.Models;
 using chess.games.db.api.Players;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace chess.db.webapi.Controllers
 {
@@ -18,7 +16,6 @@ namespace chess.db.webapi.Controllers
     [Route("api/playercollections")]
     public class PlayerCollectionsController : ResourceControllerBase<PlayerDto, Player>
     {
-        private readonly ILogger<PlayersController> _logger;
         private readonly IPlayersRepository _playersRepository;
 
         private const string GetPlayerCollectionRouteName = "GetPlayerCollection";
@@ -27,12 +24,10 @@ namespace chess.db.webapi.Controllers
             IMapper mapper,
             IPlayersRepository playersRepository,
             IOrderByPropertyMappingService<PlayerDto, Player> orderByPropertyMappingService,
-            IEntityUpdater<Player> entityUpdater,
-            ILogger<PlayersController> logger
+            IEntityUpdater<Player> entityUpdater
         ) : base(mapper, playersRepository, orderByPropertyMappingService, entityUpdater)
         {
             _playersRepository = NullX.Throw(playersRepository, nameof(playersRepository));
-            _logger = logger ?? NullLogger<PlayersController>.Instance;
         }
 
         [HttpGet("({ids})", Name = GetPlayerCollectionRouteName)]

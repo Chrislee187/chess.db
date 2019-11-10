@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
@@ -10,8 +9,6 @@ using chess.games.db.api.Players;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace chess.db.webapi.Controllers
 {
@@ -19,8 +16,6 @@ namespace chess.db.webapi.Controllers
     [Route("api/players")]
     public class PlayersController : ResourceControllerBase<PlayerDto, Player>
     {
-        private readonly ILogger<PlayersController> _logger;
-
         // NOTE: The ResourceControllerBase needs to know the names of the supported
         // routes. By default is assumes names based based on `nameof(TEntity)` that follow the pattern below
         // override with `ResourceControllerBase.HateoasConfig.XXXXRouteName.Set()` calls in the ctor or ctor
@@ -35,12 +30,9 @@ namespace chess.db.webapi.Controllers
         public PlayersController(IMapper mapper,
             IPlayersRepository playersRepository,
             IOrderByPropertyMappingService<PlayerDto, Player> orderByPropertyMappingService,
-            IEntityUpdater<Player> entityUpdater,
-            ILogger<PlayersController> logger)
+            IEntityUpdater<Player> entityUpdater)
             : base(mapper, playersRepository, orderByPropertyMappingService, entityUpdater)
         {
-            _logger = logger ?? NullLogger<PlayersController>.Instance;
-            
         }
         
         [HttpGet(Name = GetPlayersRouteName)]
