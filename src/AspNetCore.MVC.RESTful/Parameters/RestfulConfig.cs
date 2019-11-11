@@ -1,12 +1,10 @@
 ﻿namespace AspNetCore.MVC.RESTful.Parameters
 {
-    public class PaginationParameters
+    public class RestfulConfig
     {
         private int _pageSize = DefaultPageSize;
         private const int MaxPageSize = 100;
         private const int DefaultPageSize = 20;
-
-        public static PaginationParameters Default { get; } = new PaginationParameters() { PageSize = DefaultPageSize, Page = 1};
 
         public int PageSize
         {
@@ -16,15 +14,32 @@
 
         public int Page { get; set; } = 1;
 
+        public string OrderBy { get; set; }
+        public string Shape { get; set; }
+        public string SearchQuery { get; set; }
+
         public string AppendToUrl(string url)
         {
-            string paramsStart = "?";
+            var paramsStart = "?";
             if (url.Contains("?"))
             {
                 paramsStart = "&";
             }
 
             url += $"{paramsStart}page={Page}&page-size={PageSize}";
+
+            if (!string.IsNullOrEmpty(OrderBy))
+            {
+                url += $"&order-by={OrderBy}";
+            }
+            if (!string.IsNullOrEmpty(Shape))
+            {
+                url += $"&shape={Shape}";
+            }
+            if (!string.IsNullOrEmpty(SearchQuery))
+            {
+                url += $"&search-query={SearchQuery}";
+            }
             return url;
         }
     }

@@ -92,7 +92,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
                 opts.Filters.Add(new EnableHateoasLinksActionFilter());
                 // NOTE: PaginationParameter support enabled using Attribute form on individual actions
                 // Can be enabled globally using the ActionFilter form here
-                // opts.Filters.Add(new SupportsPaginationParams()); 
+                // opts.Filters.Add(new SupportsCollectionParams()); 
             });
 
             services.AddTransient(typeof(IOrderByPropertyMappingService<,>), typeof(OrderByPropertyMappingService<,>));

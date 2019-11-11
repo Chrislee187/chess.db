@@ -52,13 +52,6 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
                 ( $"{Parameters(entity)}", $"{Filters(entity)}" ),
                 ( $"{Filters(entity)}", $"{Parameters(entity)}" ),
 
-                // GET /{resources} parameters search query
-                ( $"{Parameters(entity)}", $"{Search(entity)}" ),
-                ( $"{Search(entity)}", $"{Parameters(entity)}" ),
-
-                // GET /{resources} parameters order by
-                ( $"{Parameters(entity)}", $"OrderByParameters" ),
-                ( $"OrderByParameters", $"{Parameters(entity)}" ),
             };
 
             var createMappings = new List<(string, string)>
@@ -110,8 +103,7 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
             return null;
         }
 
-        private static string Filters(string entity) => $"Get{entity}sFilters";
+        private static string Filters(string entity) => $"Get{entity}sFilter";
         private static string Parameters(string entity) => $"Get{entity}sParameters";
-        private static string Search(string entity) => $"Get{entity}sSearchQuery";
     }
 }

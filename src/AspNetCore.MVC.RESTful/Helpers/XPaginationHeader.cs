@@ -7,15 +7,16 @@ namespace AspNetCore.MVC.RESTful.Helpers
 {
     public class XPaginationHeader
     {
-        private readonly PaginationParameters _paginationParameters;
+        private readonly RestfulConfig _restful;
         public string Key { get; set; }
         public string Value { get; set; }
 
-        public XPaginationHeader(IPaginationMetadata pagination,
-            CommonResourcesGetParameters common,
-            Func<object, string> urlBuilder, PaginationParameters paginationParameters)
+        public XPaginationHeader(
+            IPaginationMetadata pagination,
+            Func<object, string> urlBuilder, 
+            RestfulConfig restful)
         {
-            _paginationParameters = paginationParameters;
+            _restful = restful;
             var metadata = new
             {
                 pagination.TotalCount,
@@ -23,10 +24,10 @@ namespace AspNetCore.MVC.RESTful.Helpers
                 pagination.CurrentPage,
                 pagination.TotalPages,
                 PreviousPage = pagination.HasPrevious
-                    ? CreatePlayersResourceUri(common, ResourceUriType.PreviousPage, urlBuilder)
+                    ? CreatePlayersResourceUri(ResourceUriType.PreviousPage, urlBuilder)
                     : null,
                 NextPage = pagination.HasNext
-                    ? CreatePlayersResourceUri(common, ResourceUriType.NextPage, urlBuilder)
+                    ? CreatePlayersResourceUri(ResourceUriType.NextPage, urlBuilder)
                     : null
             };
 
@@ -40,14 +41,12 @@ namespace AspNetCore.MVC.RESTful.Helpers
                 });
         }
 
-        private string CreatePlayersResourceUri(
-            CommonResourcesGetParameters common,
-            ResourceUriType type,
+        private string CreatePlayersResourceUri(ResourceUriType type,
             Func<object, string> urlBuilder
             
             )
         {
-            var originalPage = _paginationParameters.Page;
+            var originalPage = _restful.Page;
             var page = originalPage;
             switch (type)
             {
@@ -62,9 +61,9 @@ namespace AspNetCore.MVC.RESTful.Helpers
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
 
-            _paginationParameters.Page = page;
-            var link = _paginationParameters.AppendToUrl(urlBuilder(common));
-            _paginationParameters.Page = originalPage;
+            _restful.Page = page;
+            var link = _restful.AppendToUrl(urlBuilder(null));
+            _restful.Page = originalPage;
 
             return link;
         }

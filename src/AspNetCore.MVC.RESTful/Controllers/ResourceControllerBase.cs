@@ -27,7 +27,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
     /// </list>
     /// </summary>
 
-    /// <typeparam name="TDto">Data Transfer Object that can be Automapped from TEntity</typeparam>
+    /// <typeparam name="TDto">Data Transfer Object that can be "Automapped" from TEntity</typeparam>
     /// <typeparam name="TEntity">Underlying Entity for the Resource being represented</typeparam>
     public abstract class ResourceControllerBase<TDto, TEntity> : HateoasController
         where TEntity : class
@@ -58,43 +58,42 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// HTTP GET /{resource}
         /// </summary>
         protected IActionResult ResourcesGet<TParameters>([NotNull] TParameters parameters,
-            [NotNull] IResourceQuery<TEntity> filters,
-            [NotNull] IResourceQuery<TEntity> resourceQuery,
+            [NotNull] IResourceFilter<TEntity> filterResource,
+            [NotNull] IResourceSearch<TEntity> searchResource,
             IEnumerable<HateoasLink> additionalCollectionLinks = null,
             IEnumerable<HateoasLink> additionalIndividualLinks = null)
-            where TParameters : CommonResourcesGetParameters
         {
-            if (!typeof(TDto).TypeHasOutputProperties(parameters.Shape))
+            if (!typeof(TDto).TypeHasOutputProperties(Restful.Shape))
             {
                 return BadRequest("Shape has one or more invalid field names.");
             }
 
-            var orderBy = Mapper.Map<OrderByParameters>(parameters);
-
             var orderByCheck = _orderByPropertyMappingService
-                .ClauseIsValid(orderBy.Clause);
+                .ClauseIsValid(Restful.OrderBy);
 
             if (!orderByCheck.Valid)
             {
-                orderByCheck.Details.Instance = Url.Link(HateoasConfig.ResourceGetRouteName.Get(), parameters);
+                orderByCheck.Details.Instance = Url.Link(HateoasConfig.ResourcesGetRouteName.Get(), parameters);
                 return BadRequest(orderByCheck.Details);
             }
 
             var orderByMappings = _orderByPropertyMappingService.GetPropertyMapping();
 
-            var pagedEntities = _restResourceRepository.Load(filters, resourceQuery, PaginationParameters, orderBy, orderByMappings);
+            var pagedEntities = _restResourceRepository
+                .Load(page: Restful.Page,
+                    pageSize: Restful.PageSize, 
+                    filters: filterResource, 
+                    search: searchResource,
+                    searchString: Restful.SearchQuery,
+                    orderBy: Restful.OrderBy, orderByMappings: orderByMappings);
 
-            var usedParameters = RecreateCollectionParameters(parameters, filters, resourceQuery, orderBy);
-            
-            
-            // TODO: Add pagination to usedParameters
-            AddPaginationHeader(HateoasConfig.ResourcesGetRouteName.Get(), pagedEntities, usedParameters);
+            AddPaginationHeader(HateoasConfig.ResourcesGetRouteName.Get(), pagedEntities);
 
-            var resources = Mapper.Map<IEnumerable<TDto>>(pagedEntities).ShapeData(parameters.Shape).ToList();
+            var resources = Mapper.Map<IEnumerable<TDto>>(pagedEntities).ShapeData(Restful.Shape).ToList();
             
             if (HateoasConfig.AddLinksToIndividualResources)
             {
-                AddHateoasLinksToResourceCollection(resources, usedParameters, additionalIndividualLinks);
+                AddHateoasLinksToResourceCollection(resources, additionalIndividualLinks);
             }
 
             additionalCollectionLinks = additionalCollectionLinks == null
@@ -121,10 +120,10 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <summary>
         /// HTTP GET /{resource}/{id}
         /// </summary>
-        protected ActionResult<TDto> ResourceGet(Guid id, string shape,
+        protected ActionResult<TDto> ResourceGet(Guid id,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
-            if (!typeof(TDto).TypeHasOutputProperties(shape))
+            if (!typeof(TDto).TypeHasOutputProperties(Restful.Shape))
             {
                 return BadRequest("Shape has one or more invalid field names.");
             }
@@ -136,16 +135,14 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 return NotFound();
             }
 
-            shape ??= "";
-
             var resource = (IDictionary<string, object>) Mapper.Map<TDto>(entity)
-                .ShapeData(shape);
+                .ShapeData(Restful.Shape);
 
             if (HateoasConfig.AddLinksToIndividualResources)
             {
                 if (resource.ContainsKey("Id"))
                 {
-                    resource.Add("_links", ResourceGetLinks(id, shape, additionalLinks));
+                    resource.Add("_links", ResourceGetLinks(id, Restful.Shape, additionalLinks));
                 }
             }
 
@@ -318,34 +315,15 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return (ActionResult) options.Value.InvalidModelStateResponseFactory(ControllerContext);
         }
 
-        private void AddPaginationHeader<TParameters>(string resourcesGetRouteName, 
-            IPaginationMetadata pagedEntities,
-            TParameters usedParameters) where TParameters : CommonResourcesGetParameters
+        private void AddPaginationHeader(string resourcesGetRouteName, 
+            IPaginationMetadata pagedEntities) 
         {
             var xPaginationHeader = new XPaginationHeader(
                 pagedEntities,
-                usedParameters,
                 (parameters) => Url.Link(resourcesGetRouteName, parameters),
-                PaginationParameters
+                Restful
             );
             Response.Headers.Add(xPaginationHeader.Key, xPaginationHeader.Value);
-        }
-
-        private TParameters RecreateCollectionParameters<TParameters>(
-            TParameters parameters, 
-            IResourceQuery<TEntity> filters,
-            IResourceQuery<TEntity> resourceQuery, 
-            OrderByParameters orderBy)
-            where TParameters : CommonResourcesGetParameters
-        {
-            var usedParameters = Activator.CreateInstance<TParameters>();
-
-//            Mapper.Map(pagination, usedParameters);
-            Mapper.Map(orderBy, usedParameters);
-            Mapper.Map(filters, usedParameters);
-            Mapper.Map(resourceQuery, usedParameters);
-            usedParameters.Shape = parameters.Shape;
-            return usedParameters;
         }
     }
 }

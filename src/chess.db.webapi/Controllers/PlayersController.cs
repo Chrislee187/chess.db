@@ -38,18 +38,20 @@ namespace chess.db.webapi.Controllers
         
         [HttpGet(Name = GetPlayersRouteName)]
         [HttpHead]
-        [SupportsPaginationParams]
-        public IActionResult GetPlayers([FromQuery] GetPlayersParameters parameters)
+        [SupportsCollectionParams]
+        [SupportsDataShapingParams]
+        public IActionResult GetPlayers([FromQuery] GetPlayersFilters filters)
         {
             return ResourcesGet(
-                parameters, 
-                Mapper.Map<GetPlayersFilters>(parameters), 
-                Mapper.Map<GetPlayersSearchQuery>(parameters));
+                filters, 
+                Mapper.Map<GetPlayersResourceFilter>(filters), 
+                new GetPlayersResourceSearch());
         }
 
         [HttpGet("{id}", Name = GetPlayerRouteName)]
-        public ActionResult<PlayerDto> GetPlayer(Guid id, string shape)
-            => ResourceGet(id, shape);
+        [SupportsDataShapingParams]
+        public ActionResult<PlayerDto> GetPlayer(Guid id)
+            => ResourceGet(id);
 
         [HttpPost(Name = CreatePlayerRouteName)]
         public ActionResult<PlayerDto> CreatePlayer(

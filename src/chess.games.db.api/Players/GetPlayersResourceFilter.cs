@@ -4,7 +4,7 @@ using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players
 {
-    public class GetPlayersFilters : ResourceQuery<Player>
+    public class GetPlayersResourceFilter : ResourceFilter<Player>
     {
         public string Firstname { get; set; }
         public string Middlename { get; set; }
@@ -12,7 +12,7 @@ namespace chess.games.db.api.Players
 
         public override bool Empty => new []{Firstname, Middlename, Lastname}.All(string.IsNullOrEmpty);
 
-        protected override IQueryable<Player> ApplyQuery(IQueryable<Player> resources)
+        protected override IQueryable<Player> FilterImpl(IQueryable<Player> resources)
         {
             var result = resources;
 

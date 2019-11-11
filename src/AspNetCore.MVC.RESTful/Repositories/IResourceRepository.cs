@@ -15,11 +15,12 @@ namespace AspNetCore.MVC.RESTful.Repositories
         
         T Load(Guid id);
         
-        PagedList<T> Load(
-            IResourceQuery<T> filters = null,
-            IResourceQuery<T> resourceQuery = null,
-            PaginationParameters pagination = null,
-            OrderByParameters orderByParameters = null,
+        PagedList<T> Load(int page = 1,
+            int pageSize = 20,
+            IResourceFilter<T> filters = null,
+            IResourceSearch<T> search = null,
+            string searchString = "",
+            string orderBy = "",
             IDictionary<string, OrderByPropertyMappingValue> orderByMappings = null);
         
         void Delete(T entity);

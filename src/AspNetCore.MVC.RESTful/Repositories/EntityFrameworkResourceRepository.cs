@@ -20,53 +20,54 @@ namespace AspNetCore.MVC.RESTful.Repositories
         public bool Exists(Guid id) => Load(id) != null;
         public void Update(TEntity player) { } // NOTE: No code needed, EF tracking handles it
 
-        public PagedList<TEntity> Load(
-            IResourceQuery<TEntity> filters = null,
-            IResourceQuery<TEntity> resourceQuery = null,
-            PaginationParameters pagination = null,
-            OrderByParameters orderByParameters = null,
+        public PagedList<TEntity> Load(int page = 1,
+            int pageSize = 20,
+            IResourceFilter<TEntity> filters = null,
+            IResourceSearch<TEntity> search = null,
+            string searchString = "",
+            string orderBy = "",
             IDictionary<string, OrderByPropertyMappingValue> orderByMappings = null)
         {
-            var f = filters ?? ResourceQuery<TEntity>.Default;
-            var q = resourceQuery ?? ResourceQuery<TEntity>.Default;
-            var p = pagination ?? PaginationParameters.Default;
-            var orderBy = orderByParameters ?? OrderByParameters.Default;
             orderByMappings ??= new Dictionary<string, OrderByPropertyMappingValue>();
             
-            var filtered = Reduce(Resource, f, q);
+            var filtered = Reduce(
+                Resource, 
+                filters ?? ResourceFilter<TEntity>.Default, 
+                search ?? new DefaultResourceSearch<TEntity>(), 
+                searchString);
 
-            filtered = filtered.ApplySort(orderBy.Clause, orderByMappings);
+            var sorted = filtered.ApplySort(orderBy, orderByMappings);
 
-            return new PagedList<TEntity>(filtered, p);
+            return new PagedList<TEntity>(sorted, pageSize, page);
         }
 
         public TEntity Load(Guid id) => _dbContext.Set<TEntity>().Find(id);
-
-
+        
         public void Delete(TEntity entity) => _dbContext.Set<TEntity>().Remove(entity);
         
         public bool Save() => (_dbContext.SaveChanges() >= 0);
         
         private IQueryable<TEntity> Reduce(
             IQueryable<TEntity> resources, 
-            IResourceQuery<TEntity> filters, 
-            IResourceQuery<TEntity> resourceQuery)
+            IResourceFilter<TEntity> filter, 
+            IResourceSearch<TEntity> search,
+            string searchText)
         {
-            if (filters.Empty && resourceQuery.Empty)
+            if (filter.Empty && string.IsNullOrEmpty(searchText))
             {
                 return resources;
             }
 
             var reduced = resources;
 
-            if (!filters.Empty)
+            if (!filter.Empty)
             {
-                reduced = filters.Apply(reduced);
+                reduced = filter.Filter(reduced);
             }
 
-            if (!resourceQuery.Empty)
+            if (!string.IsNullOrEmpty(searchText))
             {
-                reduced = resourceQuery.Apply(reduced);
+                reduced = search.Search(reduced, searchText);
             }
 
             return reduced;

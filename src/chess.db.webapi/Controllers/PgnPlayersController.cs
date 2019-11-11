@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
@@ -35,29 +36,22 @@ namespace chess.db.webapi.Controllers
         
         [HttpGet(Name = GetPgnPlayersRouteName)]
         [HttpHead]
+        [SupportsCollectionParams]
+        [SupportsDataShapingParams]
         public IActionResult GetPgnPlayers(
-            [FromQuery] GetPgnPlayersParameters parameters
+            [FromQuery] GetPgnPlayersFilters filters
             )
         {
-            var filters = Mapper.Map<GetPgnPlayersFilters>(parameters);
-            var query = Mapper.Map<GetPgnPlayersSearchQuery>(parameters);
+            var filter = Mapper.Map<GetPgnPlayersResourceFilter>(filters);
 
             return ResourcesGet(
-                parameters,
                 filters,
-                query);
+                filter,
+                new GetPgnPlayersResourceSearch());
         }
 
-        [HttpGet("{id:Guid}", Name = GetPgnPlayerByIdRouteName)]
-        public ActionResult<PgnPlayerDto> GetPgnPlayer(Guid id)
-            => Problem(
-                "PgnPlayers are referenced by name, not Id.", 
-                Url.Link(GetPgnPlayerByIdRouteName, new {id}),
-                (int) HttpStatusCode.Forbidden,
-                $"Invalid route parameter {id}"
-                );
-
         [HttpGet("{name}", Name=GetPgnPlayerRouteName)]
+        [SupportsDataShapingParams]
         public ActionResult<PgnPlayerDto> GetPgnPlayer(string name)
         {
             var player = _pgnPlayersRepository.Get(name);
@@ -73,5 +67,14 @@ namespace chess.db.webapi.Controllers
         [HttpOptions]
         public IActionResult GetOptions()
             => ResourceOptions("OPTIONS,HEAD,GET");
+
+        [HttpGet("{id:Guid}", Name = GetPgnPlayerByIdRouteName)]
+        public ActionResult<PgnPlayerDto> GetPgnPlayer(Guid id)
+            => Problem(
+                "PgnPlayers are referenced by name, not Id.", 
+                Url.Link(GetPgnPlayerByIdRouteName, new {id}),
+                (int) HttpStatusCode.Forbidden,
+                $"Invalid route parameter {id}"
+            );
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using AspNetCore.MVC.RESTful.Parameters;
 
 namespace AspNetCore.MVC.RESTful.Helpers
 {
@@ -16,12 +15,11 @@ namespace AspNetCore.MVC.RESTful.Helpers
         public bool HasNext => (CurrentPage < TotalPages);
 
         public PagedList(
-            [NotNull] IQueryable<T> items, 
-            [NotNull] PaginationParameters pagination)
+            [NotNull] IQueryable<T> items, int pageSize, int currentPage)
         {
             TotalCount = items.Count();
-            PageSize = pagination.PageSize;
-            CurrentPage = pagination.Page;
+            PageSize = pageSize;
+            CurrentPage = currentPage;
             TotalPages = (int)Math.Ceiling(TotalCount / (double)PageSize);
             AddRange(items.Skip((CurrentPage - 1) * PageSize).Take(PageSize));
         }

@@ -18,20 +18,19 @@ namespace AspNetCore.MVC.RESTful.Controllers
     public abstract class HateoasController : ControllerBase
     {
         public readonly HateoasConfig HateoasConfig;
-        public readonly PaginationParameters PaginationParameters;
+        public readonly RestfulConfig Restful;
 
         protected HateoasController(string entityName)
         {
             HateoasConfig = new HateoasConfig(entityName);
-            PaginationParameters = new PaginationParameters();
+            Restful = new RestfulConfig();
         }
 
         protected List<HateoasLink> ResourcesGetLinks<TParameters>(
             TParameters parameters,
             IPaginationMetadata pagination)
-            where TParameters : CommonResourcesGetParameters
         {
-            var currentPage = PaginationParameters.Page;
+            var currentPage = Restful.Page;
             var links = new List<HateoasLink>
             {
                 ResourcesGetLinkBuilder("current-page", parameters),
@@ -39,17 +38,17 @@ namespace AspNetCore.MVC.RESTful.Controllers
             
             if (pagination.HasPrevious)
             {
-                PaginationParameters.Page = currentPage - 1;
+                Restful.Page = currentPage - 1;
                 links.Add(ResourcesGetLinkBuilder("prev-page", parameters));
             }
 
             if (pagination.HasNext)
             {
-                PaginationParameters.Page = currentPage + 1;
+                Restful.Page = currentPage + 1;
                 links.Add(ResourcesGetLinkBuilder("next-page", parameters));
             }
 
-            PaginationParameters.Page = currentPage;
+            Restful.Page = currentPage;
             return links;
         }
 
@@ -128,7 +127,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         {
             var link = Url.Link(HateoasConfig.ResourcesGetRouteName.Get(), parameters);
 
-            link = PaginationParameters.AppendToUrl(link);
+            link = Restful.AppendToUrl(link);
 
             return new HateoasLink(
                 rel,
@@ -180,11 +179,9 @@ namespace AspNetCore.MVC.RESTful.Controllers
             }
         }
 
-        protected void AddHateoasLinksToResourceCollection<TParameters>(
-            IEnumerable<ExpandoObject> resources,
-            TParameters usedParameters, 
+        protected void AddHateoasLinksToResourceCollection(
+            IEnumerable<ExpandoObject> resources, 
             IEnumerable<HateoasLink> additionalIndividualLinks)
-            where TParameters : CommonResourcesGetParameters
         {
             var individualLinks = additionalIndividualLinks?.ToList() ?? new List<HateoasLink>();
 
@@ -196,7 +193,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 {
                     var links = ResourceGetLinks(
                         new Guid(idObj.ToString()),
-                        usedParameters.Shape,
+                        Restful.Shape,
                         individualLinks);
 
                     if (links.Any())

@@ -42,33 +42,17 @@ namespace chess.db.webapi.Mapping.Profiles
 
         private void MapPlayerParameters()
         {
-            CreateMap<GetPlayersParameters, GetPlayersFilters>()
+            CreateMap<GetPlayersFilters, GetPlayersResourceFilter>()
                 .ForMember(m => m.Firstname, o => o.MapFrom(i => i.FirstnameFilter))
                 .ForMember(m => m.Middlename, o => o.MapFrom(i => i.MiddlenameFilter))
                 .ForMember(m => m.Lastname, o => o.MapFrom(i => i.LastnameFilter))
                 ;
-            CreateMap<GetPlayersFilters, GetPlayersParameters>()
+            CreateMap<GetPlayersResourceFilter, GetPlayersFilters>()
                 .ForMember(m => m.FirstnameFilter, o => o.MapFrom(i => i.Firstname))
                 .ForMember(m => m.MiddlenameFilter, o => o.MapFrom(i => i.Middlename))
                 .ForMember(m => m.LastnameFilter, o => o.MapFrom(i => i.Lastname))
                 ;
-            
-            CreateMap<GetPlayersParameters, GetPlayersSearchQuery>()
-                .ForMember(m => m.QueryText,
-                    o => o.MapFrom(i => i.SearchQuery));
-            CreateMap<GetPlayersSearchQuery, GetPlayersParameters>()
-                .ForMember(m => m.SearchQuery,
-                    o => o.MapFrom(i => i.QueryText));
-//
-//            CreateMap<GetPlayersParameters, PaginationParameters>()
-//                .ForMember(m => m.Page, o => o.MapFrom(i => i.PageNumber));
-//            CreateMap<PaginationParameters, GetPlayersParameters>()
-//                .ForMember(m => m.PageNumber, o => o.MapFrom(i => i.Page));
 
-            CreateMap<OrderByParameters, GetPlayersParameters>()
-                .ForMember(m => m.OrderBy, o => o.MapFrom(i => i.Clause));
-            CreateMap<GetPlayersParameters, OrderByParameters>()
-                .ForMember(m => m.Clause, o => o.MapFrom(i => i.OrderBy));
         }
 
         private void MapPgnPlayers()
@@ -82,28 +66,13 @@ namespace chess.db.webapi.Mapping.Profiles
 
         private void MapPgnPlayerParameters()
         {
-            CreateMap<GetPgnPlayersParameters, GetPgnPlayersFilters>()
+            CreateMap<GetPgnPlayersFilters, GetPgnPlayersResourceFilter>()
                 .ForMember(m => m.Name,
                     o => o.MapFrom(i => i.NameFilter));
-            CreateMap<GetPgnPlayersFilters, GetPgnPlayersParameters>()
+            CreateMap<GetPgnPlayersResourceFilter, GetPgnPlayersFilters>()
                 .ForMember(m => m.NameFilter,
                     o => o.MapFrom(i => i.Name));
 
-            CreateMap<GetPgnPlayersParameters, GetPgnPlayersSearchQuery>()
-                .ForMember(m => m.QueryText,
-                    o => o.MapFrom(i => i.SearchQuery));
-            CreateMap<GetPgnPlayersSearchQuery, GetPgnPlayersParameters>()
-                .ForMember(m => m.SearchQuery, o => o.MapFrom(i => i.QueryText));
-
-//            CreateMap<GetPgnPlayersParameters, PaginationParameters>()
-//                .ForMember(m => m.Page, o => o.MapFrom(i => i.PageNumber));
-//            CreateMap<PaginationParameters, GetPgnPlayersParameters>()
-//                .ForMember(m => m.PageNumber, o => o.MapFrom(i => i.Page));
-
-            CreateMap<OrderByParameters, GetPgnPlayersParameters>()
-                .ForMember(m => m.OrderBy, o => o.MapFrom(i => i.Clause));
-            CreateMap<GetPgnPlayersParameters, OrderByParameters>()
-                .ForMember(m => m.Clause, o => o.MapFrom(i => i.OrderBy));
         }
     }
 }

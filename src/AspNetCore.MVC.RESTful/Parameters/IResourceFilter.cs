@@ -2,9 +2,9 @@
 
 namespace AspNetCore.MVC.RESTful.Parameters
 {
-    public interface IResourceQuery<T>
+    public interface IResourceFilter<T>
     {
         bool Empty { get; }
-        IQueryable<T> Apply(IQueryable<T> set);
+        IQueryable<T> Filter(IQueryable<T> resources);
     }
 }
