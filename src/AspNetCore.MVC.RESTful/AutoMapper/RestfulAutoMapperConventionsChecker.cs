@@ -49,8 +49,8 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
             var getCollectionMappings = new List<(string, string)>()
                 {
                 // GET /{resources} parameters filters
-                ( $"{Parameters(entity)}", $"{Filters(entity)}" ),
-                ( $"{Filters(entity)}", $"{Parameters(entity)}" ),
+                ( $"{Filters(entity)}", $"{ResourceFilter(entity)}" ),
+                ( $"{ResourceFilter(entity)}", $"{Filters(entity)}" ),
 
             };
 
@@ -103,7 +103,7 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
             return null;
         }
 
-        private static string Filters(string entity) => $"Get{entity}sFilter";
-        private static string Parameters(string entity) => $"Get{entity}sParameters";
+        private static string ResourceFilter(string entity) => $"Get{entity}sResourceFilter";
+        private static string Filters(string entity) => $"Get{entity}sFilters";
     }
 }

@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Models;
 using AspNetCore.MVC.RESTful.Parameters;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCore.MVC.RESTful.Controllers
+namespace AspNetCore.MVC.RESTful.Configuration
 {
     /// <summary>
     /// Base functionality required for Hateoas links support.
-    /// Links can be enabled/disabled at Controller level (see <see cref="Controllers.HateoasConfig"/>)
+    /// Links can be enabled/disabled at Controller level (see <see cref="Configuration.HateoasConfig"/>)
     /// and also on a per call level <see cref="EnableHateoasLinksActionFilter"/>)
+    ///
+    /// Pagination, filtering, searching, ordering and data shape values can be found <see cref="RestfulConfig"/>
     /// </summary>
     public abstract class HateoasController : ControllerBase
     {

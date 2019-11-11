@@ -18,7 +18,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
         private bool _individualSaved;
 
         private readonly string _linksArgName;
-        public EnableHateoasLinksActionFilter(string linksArgName = "links")
+        public EnableHateoasLinksActionFilter(string linksArgName = "nolinks")
         {
             _linksArgName = linksArgName;
         }
@@ -29,11 +29,10 @@ namespace AspNetCore.MVC.RESTful.Configuration
                 _collectionSaved = contextController.HateoasConfig.AddLinksToCollectionResources;
                 _individualSaved = contextController.HateoasConfig.AddLinksToIndividualResources;
 
-                if (contextController.Request.Query.TryGetValue(_linksArgName, out var showLinks))
+                if (contextController.Request.Query.ContainsKey(_linksArgName))
                 {
-                    var links = bool.Parse(showLinks);
-                    contextController.HateoasConfig.AddLinksToCollectionResources = links && _collectionSaved;
-                    contextController.HateoasConfig.AddLinksToIndividualResources = links && _collectionSaved;
+                    contextController.HateoasConfig.AddLinksToCollectionResources = false;
+                    contextController.HateoasConfig.AddLinksToIndividualResources = false;
                 }
             }
         }

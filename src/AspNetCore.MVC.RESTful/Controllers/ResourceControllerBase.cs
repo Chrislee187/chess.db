@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using AutoMapper;
 using AspNetCore.MVC.RESTful.AutoMapper;
+using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Models;
 using AspNetCore.MVC.RESTful.Parameters;
@@ -18,7 +19,7 @@ using AspNetCore.MVC.RESTful.Repositories;
 namespace AspNetCore.MVC.RESTful.Controllers
 {
     /// <summary>
-    /// A base class for an MVC Controller that supports Restful endpoints.
+    /// A base class for an MVC Controller that supports default Restful endpoints.
     /// Relies heavily on AutoMapper mapping abilities to allow reuse
     /// <list>
     /// See also 

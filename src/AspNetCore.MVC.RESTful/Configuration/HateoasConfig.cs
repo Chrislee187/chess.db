@@ -1,4 +1,6 @@
-﻿namespace AspNetCore.MVC.RESTful.Controllers
+﻿using AspNetCore.MVC.RESTful.Controllers;
+
+namespace AspNetCore.MVC.RESTful.Configuration
 {
     public class HateoasConfig
     {
