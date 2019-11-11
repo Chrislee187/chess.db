@@ -4,9 +4,9 @@ using chess.games.db.Entities;
 
 namespace chess.db.webapi.Helpers
 {
-        public class EntityUpdater<TEntity> : IEntityUpdater<TEntity>
-            where TEntity : IDbEntity
+        public class EntityUpdater<TEntity, TId> : IEntityUpdater<TEntity, TId>
+            where TEntity : IDbEntity<TId>
         { 
-            public void SetId(TEntity entity, Guid id) => entity.Id = id;
+            public void SetId(TEntity entity, TId id) => entity.Id = id;
         }
 }

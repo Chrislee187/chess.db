@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace chess.games.db.Entities
 {
-    public class PgnPlayer : IHaveAName, IDbEntity
+    public class PgnPlayer : IHaveAName, IDbEntity<Guid>
     {
         [Key]
         public string Name { get; set; }

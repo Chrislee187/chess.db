@@ -2,8 +2,8 @@
 
 namespace AspNetCore.MVC.RESTful.Controllers
 {
-    public interface IResourceId
+    public interface IResourceId<T>
     {
-        Guid Id { get; set; }
+        T Id { get; set; }
     }
 }

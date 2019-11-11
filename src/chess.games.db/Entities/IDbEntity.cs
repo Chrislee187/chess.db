@@ -2,8 +2,8 @@
 
 namespace chess.games.db.Entities
 {
-    public interface IDbEntity
+    public interface IDbEntity<T>
     {
-        Guid Id { get; set; }
+        T Id { get; set; }
     }
 }

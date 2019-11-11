@@ -5,25 +5,25 @@ using AspNetCore.MVC.RESTful.Parameters;
 
 namespace AspNetCore.MVC.RESTful.Repositories
 {
-    public interface IResourceRepository<T> where T : class
+    public interface IResourceRepository<TEntity, TId> where TEntity : class
     {
-        void Add(T entity);
+        void Add(TEntity entity);
         
-        bool Exists(Guid id);
+        bool Exists(TId id);
         
-        void Update(T player);
+        void Update(TEntity player);
         
-        T Load(Guid id);
+        TEntity Load(TId id);
         
-        PagedList<T> Load(int page = 1,
+        PagedList<TEntity> Load(int page = 1,
             int pageSize = 20,
-            IResourceFilter<T> filters = null,
-            IResourceSearch<T> search = null,
+            IResourceFilter<TEntity> filters = null,
+            IResourceSearch<TEntity> search = null,
             string searchString = "",
             string orderBy = "",
             IDictionary<string, OrderByPropertyMappingValue> orderByMappings = null);
         
-        void Delete(T entity);
+        void Delete(TEntity entity);
         bool Save();
     }
 }

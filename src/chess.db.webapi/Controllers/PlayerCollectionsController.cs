@@ -14,7 +14,7 @@ namespace chess.db.webapi.Controllers
 {
     [ApiController]
     [Route("api/playercollections")]
-    public class PlayerCollectionsController : ResourceControllerBase<PlayerDto, Player>
+    public class PlayerCollectionsController : ResourceControllerBase<PlayerDto, Player, Guid>
     {
         private readonly IPlayersRepository _playersRepository;
 
@@ -24,7 +24,7 @@ namespace chess.db.webapi.Controllers
             IMapper mapper,
             IPlayersRepository playersRepository,
             IOrderByPropertyMappingService<PlayerDto, Player> orderByPropertyMappingService,
-            IEntityUpdater<Player> entityUpdater
+            IEntityUpdater<Player, Guid> entityUpdater
         ) : base(mapper, playersRepository, orderByPropertyMappingService, entityUpdater)
         {
             _playersRepository = NullX.Throw(playersRepository, nameof(playersRepository));

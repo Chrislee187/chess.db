@@ -15,7 +15,7 @@ namespace chess.db.webapi.Controllers
 {
     [ApiController]
     [Route("api/players")]
-    public class PlayersController : ResourceControllerBase<PlayerDto, Player>
+    public class PlayersController : ResourceControllerBase<PlayerDto, Player, Guid>
     {
         // NOTE: The ResourceControllerBase needs to know the names of the supported
         // routes. By default is assumes names based based on `nameof(TEntity)` that follow the pattern below
@@ -31,7 +31,7 @@ namespace chess.db.webapi.Controllers
         public PlayersController(IMapper mapper,
             IPlayersRepository playersRepository,
             IOrderByPropertyMappingService<PlayerDto, Player> orderByPropertyMappingService,
-            IEntityUpdater<Player> entityUpdater)
+            IEntityUpdater<Player, Guid> entityUpdater)
             : base(mapper, playersRepository, orderByPropertyMappingService, entityUpdater)
         {
         }

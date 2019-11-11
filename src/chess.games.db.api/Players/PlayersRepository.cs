@@ -6,7 +6,7 @@ using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players
 {
-    public class PlayersRepository : EntityFrameworkResourceRepository<Player>, IPlayersRepository
+    public class PlayersRepository : EntityFrameworkResourceRepository<Player, Guid>, IPlayersRepository
     {
         public PlayersRepository(
             ChessGamesDbContext dbContext

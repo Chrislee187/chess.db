@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCore.MVC.RESTful.Repositories
 {
-    public abstract class EntityFrameworkResourceRepository<TEntity> : IResourceRepository<TEntity> where TEntity : class
+    public abstract class EntityFrameworkResourceRepository<TEntity, TId> : IResourceRepository<TEntity, TId> where TEntity : class
     {
         private readonly DbContext _dbContext;
 
@@ -17,7 +17,7 @@ namespace AspNetCore.MVC.RESTful.Repositories
             => _dbContext = dbContext;
 
         public void Add(TEntity entity) => _dbContext.Set<TEntity>().Add(entity);
-        public bool Exists(Guid id) => Load(id) != null;
+        public bool Exists(TId id) => Load(id) != null;
         public void Update(TEntity player) { } // NOTE: No code needed, EF tracking handles it
 
         public PagedList<TEntity> Load(int page = 1,
@@ -41,7 +41,7 @@ namespace AspNetCore.MVC.RESTful.Repositories
             return new PagedList<TEntity>(sorted, pageSize, page);
         }
 
-        public TEntity Load(Guid id) => _dbContext.Set<TEntity>().Find(id);
+        public TEntity Load(TId id) => _dbContext.Set<TEntity>().Find(id);
         
         public void Delete(TEntity entity) => _dbContext.Set<TEntity>().Remove(entity);
         

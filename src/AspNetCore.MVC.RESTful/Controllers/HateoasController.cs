@@ -11,12 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore.MVC.RESTful.Controllers
 {
-    /// <summary>
-    /// Base functionality required for Hateoas links support.
-    /// Links can be enabled/disabled at Controller level (see <see cref="Configuration.HateoasConfig"/>)
-    /// and also on a per call level <see cref="DisableHateoasLinksActionFilter"/>)
-    /// </summary>
-    public abstract class HateoasController : ControllerBase
+    public class HateoasController : ControllerBase
     {
         public readonly HateoasConfig HateoasConfig;
         public readonly RestfulConfig Restful;
@@ -26,6 +21,18 @@ namespace AspNetCore.MVC.RESTful.Controllers
             HateoasConfig = new HateoasConfig(entityName);
             Restful = new RestfulConfig();
         }
+    }
+    /// <summary>
+    /// Base functionality required for Hateoas links support.
+    /// Links can be enabled/disabled at Controller level (see <see cref="Configuration.HateoasConfig"/>)
+    /// and also on a per call level <see cref="DisableHateoasLinksActionFilter"/>)
+    /// </summary>
+    public abstract class HateoasController<TId> : HateoasController
+    {
+
+        protected HateoasController(string entityName) : base(entityName) 
+        { }
+
 
         protected List<HateoasLink> ResourcesGetLinks<TParameters>(
             TParameters parameters,
@@ -53,7 +60,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return links;
         }
 
-        public List<HateoasLink> ResourceGetLinks(Guid id, string shape,
+        public List<HateoasLink> ResourceGetLinks(TId id, string shape,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
             var links = new List<HateoasLink>
@@ -69,7 +76,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return links;
         }
 
-        public List<HateoasLink> ResourceCreateLinks(Guid id,
+        public List<HateoasLink> ResourceCreateLinks(TId id,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
             var links = new List<HateoasLink>
@@ -83,7 +90,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return links;
         }
 
-        public List<HateoasLink> ResourceUpsertLinks(Guid id,
+        public List<HateoasLink> ResourceUpsertLinks(TId id,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
             var links = new List<HateoasLink>
@@ -97,7 +104,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return links;
         }
 
-        public List<HateoasLink> ResourcePatchLinks(Guid id,
+        public List<HateoasLink> ResourcePatchLinks(TId id,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
             var links = new List<HateoasLink>
@@ -137,7 +144,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             );
         }
 
-        private HateoasLink ResourceGetLinkBuilder(string rel, Guid id, string shape)
+        private HateoasLink ResourceGetLinkBuilder(string rel, TId id, string shape)
         {
             var s = string.IsNullOrEmpty(shape) ? "" : $"?shape={shape}";
 
@@ -153,19 +160,19 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 "POST",
                 $"{Url.Link(HateoasConfig.ResourceCreateRouteName, null)}");
 
-        private HateoasLink ResourceUpsertLinkBuilder(Guid id) =>
+        private HateoasLink ResourceUpsertLinkBuilder(TId id) =>
             new HateoasLink(
                 "update",
                 "PUT",
                 $"{Url.Link(HateoasConfig.ResourceUpsertRouteName, new { id })}");
 
-        private HateoasLink ResourcePatchLinkBuilder(Guid id) =>
+        private HateoasLink ResourcePatchLinkBuilder(TId id) =>
             new HateoasLink(
                 "patch",
                 "PATCH",
                 $"{Url.Link(HateoasConfig.ResourcePatchRouteName, new { id })}");
 
-        private HateoasLink ResourceDeleteLinkBuilder(Guid id) =>
+        private HateoasLink ResourceDeleteLinkBuilder(TId id) =>
             new HateoasLink(
                 "delete",
                 "DELETE",
@@ -182,9 +189,9 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
         protected void AddHateoasLinksToResourceCollection(
             IEnumerable<ExpandoObject> resources, 
-            IEnumerable<HateoasLink> additionalIndividualLinks)
+            IEnumerable<HateoasLink> additionalLinks)
         {
-            var individualLinks = additionalIndividualLinks?.ToList() ?? new List<HateoasLink>();
+            additionalLinks = additionalLinks?.ToList() ?? new List<HateoasLink>();
 
             foreach (IDictionary<string, object> resource in resources)
             {
@@ -192,10 +199,11 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 // the data has been reshaped to not include the Id, no links will be added.
                 if (resource.TryGetValue("Id", out var idObj))
                 {
-                    var links = ResourceGetLinks(
-                        new Guid(idObj.ToString()),
+                    List<HateoasLink> links = new List<HateoasLink>();
+                    links = ResourceGetLinks(
+                        (dynamic) idObj,
                         Restful.Shape,
-                        individualLinks);
+                        additionalLinks);
 
                     if (links.Any())
                     {

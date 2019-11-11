@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Helpers;
@@ -16,7 +15,7 @@ namespace chess.db.webapi.Controllers
 {
     [ApiController]
     [Route("api/pgnplayers")]
-    public class PgnPlayersController : ResourceControllerBase<PgnPlayerDto, PgnPlayer>
+    public class PgnPlayersController : ResourceControllerBase<PgnPlayerDto, PgnPlayer, Guid>
     {
         private readonly IPgnPlayersRepository _pgnPlayersRepository;
 
@@ -26,7 +25,7 @@ namespace chess.db.webapi.Controllers
         public PgnPlayersController(IMapper mapper,
             IPgnPlayersRepository pgnPlayersRepository,
             IOrderByPropertyMappingService<PgnPlayerDto, PgnPlayer> orderByPropertyMappingService,
-            IEntityUpdater<PgnPlayer> entityUpdater)
+            IEntityUpdater<PgnPlayer, Guid> entityUpdater)
                 : base(mapper, pgnPlayersRepository, orderByPropertyMappingService, entityUpdater)
         {
              _pgnPlayersRepository = NullX.Throw(pgnPlayersRepository, nameof(pgnPlayersRepository));

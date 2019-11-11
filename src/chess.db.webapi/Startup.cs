@@ -41,7 +41,7 @@ namespace chess.db.webapi
                                 { "Lastname", new OrderByPropertyMappingValue(new List<string>() { "Surname" } ) }
                             })
                     )
-                .AddTransient(typeof(IEntityUpdater<>), typeof(EntityUpdater<>))
+                .AddTransient(typeof(IEntityUpdater<,>), typeof(EntityUpdater<,>))
                 ;
                     
        }

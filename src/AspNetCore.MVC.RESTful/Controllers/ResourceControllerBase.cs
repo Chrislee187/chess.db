@@ -31,20 +31,20 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
     /// <typeparam name="TDto">Data Transfer Object that can be "Automapped" from TEntity</typeparam>
     /// <typeparam name="TEntity">Underlying Entity for the Resource being represented</typeparam>
-    public abstract class ResourceControllerBase<TDto, TEntity> : HateoasController
+    public abstract class ResourceControllerBase<TDto, TEntity, TId> : HateoasController<TId>
         where TEntity : class
-        where TDto : IResourceId
+        where TDto : IResourceId<Guid>
     {
-        private readonly IResourceRepository<TEntity> _restResourceRepository;
+        private readonly IResourceRepository<TEntity, TId> _restResourceRepository;
         private readonly IOrderByPropertyMappingService<TDto, TEntity> _orderByPropertyMappingService;
-        private readonly IEntityUpdater<TEntity> _entityUpdater;
+        private readonly IEntityUpdater<TEntity, TId> _entityUpdater;
 
         protected IMapper Mapper { get; }
 
         protected ResourceControllerBase(IMapper mapper,
-            IResourceRepository<TEntity> resourceRepository,
+            IResourceRepository<TEntity, TId> resourceRepository,
             IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService,
-            IEntityUpdater<TEntity> entityUpdater,
+            IEntityUpdater<TEntity, TId> entityUpdater,
             Action<HateoasConfig> config = null)
                 :base(typeof(TEntity).Name)
         {
@@ -123,7 +123,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <summary>
         /// HTTP GET /{resource}/{id}
         /// </summary>
-        protected ActionResult<TDto> ResourceGet(Guid id,
+        protected ActionResult<TDto> ResourceGet(TId id,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
             if (!typeof(TDto).TypeHasOutputProperties(Restful.Shape))
@@ -174,7 +174,8 @@ namespace AspNetCore.MVC.RESTful.Controllers
             
             if (HateoasConfig.AddLinksToIndividualResources)
             {
-                resource.Add("_links", ResourceCreateLinks(createdResource.Id, additionalLinks));
+                dynamic id = createdResource.Id;
+                resource.Add("_links", ResourceCreateLinks(id, additionalLinks));
             }
 
             return CreatedAtRoute(
@@ -188,7 +189,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// HTTP PUT
         /// </summary>
         protected ActionResult ResourceUpsert<TUpdateDto>(
-            Guid id,
+            TId id,
             TUpdateDto model,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
@@ -236,7 +237,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <summary>
         /// HTTP PATCH
         /// </summary>
-        protected ActionResult ResourcePatch<TUpdateDto>(Guid id,
+        protected ActionResult ResourcePatch<TUpdateDto>(TId id,
             [NotNull] JsonPatchDocument<TUpdateDto> patchDocument)
             where TUpdateDto : class
         {
@@ -244,6 +245,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             {
                 return NotFound();
             }
+
 
             var resource = _restResourceRepository.Load(id);
             if (resource == null)
@@ -278,7 +280,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <summary>
         /// HTTP DELETE
         /// </summary>
-        protected ActionResult ResourceDelete(Guid id)
+        protected ActionResult ResourceDelete(TId id)
         {
             if (id.Equals(Guid.Empty))
             {

@@ -2,8 +2,8 @@
 
 namespace chess.games.db.Entities
 {
-    public abstract class DbEntity : IDbEntity
+    public abstract class DbEntity<T> : IDbEntity<T>
     {
-        public Guid Id { get; set; }
+        public T Id { get; set; }
     }
 }

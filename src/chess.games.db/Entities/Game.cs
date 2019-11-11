@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace chess.games.db.Entities
 {
-    public class Game : DbEntity
+    public class Game : DbEntity<Guid>
     {
         public Event Event { get; set; }
         public Site Site { get; set; }

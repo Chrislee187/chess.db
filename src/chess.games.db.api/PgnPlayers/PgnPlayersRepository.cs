@@ -4,7 +4,7 @@ using chess.games.db.Entities;
 
 namespace chess.games.db.api.PgnPlayers
 {
-    public class PgnPlayersRepository : EntityFrameworkResourceRepository<PgnPlayer>, IPgnPlayersRepository
+    public class PgnPlayersRepository : EntityFrameworkResourceRepository<PgnPlayer, Guid>, IPgnPlayersRepository
     {
         public PgnPlayersRepository(ChessGamesDbContext dbContext)
         : base(dbContext) { }
