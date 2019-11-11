@@ -1,0 +1,165 @@
+using System.Linq;
+using AspNetCore.MVC.RESTful.Controllers;
+using AspNetCore.MVC.Restful.Tests.Builders;
+using NUnit.Framework;
+using Shouldly;
+
+namespace AspNetCore.MVC.Restful.Tests.Controllers
+{
+    public class HateoasControllerTests
+    {
+        private HateoasController<TestEntity> _controller;
+
+        [SetUp]
+        public void Setup()
+        {
+            _controller = new TestHateoasController("TestEntity");
+        }
+
+        [Test]
+        public void ResourcesGetLinks_returns_current_page_only_for_single_page_lists()
+        {
+            var pagination = new PaginationMetadataBuilder()
+                .Build();
+
+            var resourcesGetLinks = _controller.ResourcesGetLinks<object>(null, pagination);
+
+            resourcesGetLinks
+                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.CurrentPage))
+                .ShouldBeTrue();
+
+            resourcesGetLinks
+                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.NextPage))
+                .ShouldBeFalse();
+
+            resourcesGetLinks
+                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.PreviousPage))
+                .ShouldBeFalse();
+        }
+
+        [Test]
+        public void ResourcesGetLinks_returns_previous_and_next_links()
+        {
+            var pagination = new PaginationMetadataBuilder()
+                .HasPrevious()
+                .HasNext()
+                .Build();
+
+            var resourcesGetLinks = _controller.ResourcesGetLinks<object>(null, pagination);
+
+            resourcesGetLinks
+                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.NextPage))
+                .ShouldBeTrue();
+
+            resourcesGetLinks
+                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.PreviousPage))
+                .ShouldBeTrue();
+        }
+
+        [Test]
+        public void ResourcesGetLinks_returns_current_for_empty_list()
+        {
+            var pagination = new PaginationMetadataBuilder()
+                .WithPage(1)
+                .WithPageSize(20)
+                .WithTotalCount(0)
+                .Build();
+
+            var resourcesGetLinks = _controller.ResourcesGetLinks<object>(null, pagination);
+
+            resourcesGetLinks
+                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.NextPage))
+                .ShouldBeFalse();
+
+            resourcesGetLinks
+                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.PreviousPage))
+                .ShouldBeFalse();
+        }
+
+
+        [Test]
+        public void ResourceGetLinks_returns_current_standard_four_relationships()
+        {
+            var resourceGetLinks = _controller.ResourceGetLinks(new TestEntity(), "");
+
+            resourceGetLinks
+                .ShouldContain(l 
+                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Self))
+                ;
+
+            resourceGetLinks
+                .ShouldContain(l 
+                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Update))
+                ;
+
+            resourceGetLinks
+                .ShouldContain(l 
+                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Patch))
+                ;
+
+            resourceGetLinks
+                .ShouldContain(l 
+                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Delete))
+                ;
+        }
+
+        [Test]
+        public void ResourceCreateLinks_returns_get_and_delete_relationships()
+        {
+            var resourceGetLinks = _controller.ResourceCreateLinks(new TestEntity());
+
+            resourceGetLinks
+                .ShouldContain(l 
+                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Self))
+                ;
+
+            resourceGetLinks
+                .ShouldContain(l =>
+                    l.Rel.Equals(_controller.HateoasConfig.Relationships.Delete))
+                ;
+        }
+
+        [Test]
+        public void ResourceUpsertLinks_returns_get_and_delete_relationships()
+        {
+            var resourceGetLinks = _controller.ResourceUpsertLinks(new TestEntity());
+
+            resourceGetLinks
+                .ShouldContain(l 
+                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Self))
+                ;
+
+            resourceGetLinks
+                .ShouldContain(l 
+                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Delete))
+                ;
+        }
+        
+        [Test]
+        public void ResourcePatchLinks_returns_get_and_delete_relationships()
+        {
+            var resourceGetLinks = _controller.ResourcePatchLinks(new TestEntity());
+
+            resourceGetLinks
+                .ShouldContain(l 
+                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Self))
+                ;
+
+            resourceGetLinks
+                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.Delete))
+                .ShouldBeTrue();
+        }
+        
+        [Test]
+        public void ResourceDeleteLinks_returns_get_and_delete_relationships()
+        {
+            var resourceGetLinks = _controller.ResourceDeleteLinks();
+
+            resourceGetLinks.ShouldContain(l 
+                => l.Rel.Equals(_controller.HateoasConfig.Relationships.CurrentPage));
+
+            resourceGetLinks.ShouldContain(l
+                => l.Rel.Equals(_controller.HateoasConfig.Relationships.Create));
+        }
+    }
+}

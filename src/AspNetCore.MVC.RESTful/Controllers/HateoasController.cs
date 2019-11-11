@@ -33,7 +33,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         { }
 
 
-        protected List<HateoasLink> ResourcesGetLinks<TParameters>(
+        public List<HateoasLink> ResourcesGetLinks<TParameters>(
             TParameters parameters,
             IPaginationMetadata pagination)
         {

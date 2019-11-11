@@ -3,8 +3,8 @@
     public class RestfulConfig
     {
         private int _pageSize = DefaultPageSize;
-        private const int MaxPageSize = 100;
-        private const int DefaultPageSize = 20;
+        public const int MaxPageSize = 100;
+        public const int DefaultPageSize = 20;
 
         public int PageSize
         {
