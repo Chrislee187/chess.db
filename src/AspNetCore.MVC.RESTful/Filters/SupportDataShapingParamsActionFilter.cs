@@ -1,11 +1,18 @@
-﻿using AspNetCore.MVC.RESTful.Controllers;
+﻿using AspNetCore.MVC.RESTful.Configuration;
+using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Helpers;
+using AspNetCore.MVC.RESTful.Parameters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace AspNetCore.MVC.RESTful.Configuration
-{
-    public class SupportsDataShapingParams : ActionFilterAttribute
+namespace AspNetCore.MVC.RESTful.Filters
+{   
+    /// <summary>
+    ///  Checks if the controller is a HateoasController and for
+    /// a `shape`query string parameter. If found, sets 
+    /// <see cref="RestfulConfig.Shape"/>
+    /// </summary>
+    public class SupportDataShapingParamsActionFilter : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
@@ -14,15 +21,13 @@ namespace AspNetCore.MVC.RESTful.Configuration
             {
                 var queryCollection = contextController.Request.Query;
 
-
                 GetShape(queryCollection, contextController);
             }
         }
 
         private static void GetShape(IQueryCollection queryCollection, HateoasController contextController)
         {
-            var currentPageKeys = new[] {"shape"};
-            var val = queryCollection.ArgValue(currentPageKeys);
+            var val = queryCollection.GetByAlias("shape", "data-shape");
             contextController.Restful.Shape = val;
         }
     }

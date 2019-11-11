@@ -1,24 +1,23 @@
-﻿using AspNetCore.MVC.RESTful.Controllers;
+﻿using AspNetCore.MVC.RESTful.Configuration;
+using AspNetCore.MVC.RESTful.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace AspNetCore.MVC.RESTful.Configuration
+namespace AspNetCore.MVC.RESTful.Filters
 {
     /// <summary>
-    /// A filter that checks if the controller is a HateoasController and for
-    /// a `links=true|false` query string parameter which it uses to enable/disable links
-    /// for an individual call to an action.
+    ///  Checks if the controller is a HateoasController and for
+    /// a `nolinks` query string parameter. If found, sets the <see cref="HateoasConfig.AddLinksToCollectionResources"/>
+    /// and <see cref="HateoasConfig.AddLinksToIndividualResources"/> flags to false.
     ///
-    /// NB. Although `links` will accept `true` it as AND'd with controller level values found
-    /// in ResourceBaseController.HateoasConfig.AddLinksXXX values, ensuring that links cannot be enabled
-    /// for a controller that explicitly has disabled them
+    /// Restores original values after action is executed
     /// </summary>
-    public class EnableHateoasLinksActionFilter : IActionFilter
+    public class DisableHateoasLinksActionFilter : IActionFilter
     {
         private bool _collectionSaved;
         private bool _individualSaved;
 
         private readonly string _linksArgName;
-        public EnableHateoasLinksActionFilter(string linksArgName = "nolinks")
+        public DisableHateoasLinksActionFilter(string linksArgName = "nolinks")
         {
             _linksArgName = linksArgName;
         }

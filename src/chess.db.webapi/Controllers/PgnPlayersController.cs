@@ -2,6 +2,7 @@
 using System.Net;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Controllers;
+using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
@@ -29,15 +30,12 @@ namespace chess.db.webapi.Controllers
                 : base(mapper, pgnPlayersRepository, orderByPropertyMappingService, entityUpdater)
         {
              _pgnPlayersRepository = NullX.Throw(pgnPlayersRepository, nameof(pgnPlayersRepository));
-
-            HateoasConfig.ResourceGetRouteName.Set(GetPgnPlayerRouteName);
-            HateoasConfig.ResourcesGetRouteName.Set(GetPgnPlayersRouteName);
         }
         
         [HttpGet(Name = GetPgnPlayersRouteName)]
         [HttpHead]
-        [SupportsCollectionParams]
-        [SupportsDataShapingParams]
+        [SupportCollectionParamsActionFilter]
+        [SupportDataShapingParamsActionFilter]
         public IActionResult GetPgnPlayers(
             [FromQuery] GetPgnPlayersFilters filters
             )
@@ -51,7 +49,7 @@ namespace chess.db.webapi.Controllers
         }
 
         [HttpGet("{name}", Name=GetPgnPlayerRouteName)]
-        [SupportsDataShapingParams]
+        [SupportDataShapingParamsActionFilter]
         public ActionResult<PgnPlayerDto> GetPgnPlayer(string name)
         {
             var player = _pgnPlayersRepository.Get(name);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using AspNetCore.MVC.RESTful.AutoMapper;
+using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
@@ -89,12 +90,12 @@ namespace AspNetCore.MVC.RESTful.Configuration
 
             services.AddMvc(opts =>
             {
-                opts.Filters.Add(new EnableHateoasLinksActionFilter());
+                opts.Filters.Add(new DisableHateoasLinksActionFilter());
 
                 // NOTE: Add support for collection and data-shaping to RESTful resource endpoints
                 // (namely Controllers that inherit from ResourceControllerBase<,>
-                opts.Filters.Add(new SupportsCollectionParams());
-                opts.Filters.Add(new SupportsDataShapingParams());
+                opts.Filters.Add(new SupportCollectionParamsActionFilter());
+                opts.Filters.Add(new SupportDataShapingParamsActionFilter());
             });
 
             services.AddTransient(typeof(IOrderByPropertyMappingService<,>), typeof(OrderByPropertyMappingService<,>));

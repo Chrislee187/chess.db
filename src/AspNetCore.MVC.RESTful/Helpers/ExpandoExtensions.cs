@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace AspNetCore.MVC.RESTful.Helpers
 {
-    public static class IDictionaryExtensions
+    public static class ExpandoExtensions
     {
         public static ExpandoObject ToExpando(this object obj)
         {

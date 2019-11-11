@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using AspNetCore.MVC.RESTful.Configuration;
+using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Models;
 using AspNetCore.MVC.RESTful.Parameters;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCore.MVC.RESTful.Configuration
+namespace AspNetCore.MVC.RESTful.Controllers
 {
     /// <summary>
     /// Base functionality required for Hateoas links support.
     /// Links can be enabled/disabled at Controller level (see <see cref="Configuration.HateoasConfig"/>)
-    /// and also on a per call level <see cref="EnableHateoasLinksActionFilter"/>)
-    ///
-    /// Pagination, filtering, searching, ordering and data shape values can be found <see cref="RestfulConfig"/>
+    /// and also on a per call level <see cref="DisableHateoasLinksActionFilter"/>)
     /// </summary>
     public abstract class HateoasController : ControllerBase
     {
@@ -126,7 +126,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
 
         private HateoasLink ResourcesGetLinkBuilder(string rel, object parameters)
         {
-            var link = Url.Link(HateoasConfig.ResourcesGetRouteName.Get(), parameters);
+            var link = Url.Link(HateoasConfig.ResourcesGetRouteName, parameters);
 
             link = Restful.AppendToUrl(link);
 
@@ -144,32 +144,32 @@ namespace AspNetCore.MVC.RESTful.Configuration
             return new HateoasLink(
                 rel,
                 "GET",
-                $"{Url.Link(HateoasConfig.ResourceGetRouteName.Get(), new { id })}{s}");
+                $"{Url.Link(HateoasConfig.ResourceGetRouteName, new { id })}{s}");
         }
 
         private HateoasLink ResourceCreateLinkBuilder() =>
             new HateoasLink(
                 "create",
                 "POST",
-                $"{Url.Link(HateoasConfig.ResourceCreateRouteName.Get(), null)}");
+                $"{Url.Link(HateoasConfig.ResourceCreateRouteName, null)}");
 
         private HateoasLink ResourceUpsertLinkBuilder(Guid id) =>
             new HateoasLink(
                 "update",
                 "PUT",
-                $"{Url.Link(HateoasConfig.ResourceUpsertRouteName.Get(), new { id })}");
+                $"{Url.Link(HateoasConfig.ResourceUpsertRouteName, new { id })}");
 
         private HateoasLink ResourcePatchLinkBuilder(Guid id) =>
             new HateoasLink(
                 "patch",
                 "PATCH",
-                $"{Url.Link(HateoasConfig.ResourcePatchRouteName.Get(), new { id })}");
+                $"{Url.Link(HateoasConfig.ResourcePatchRouteName, new { id })}");
 
         private HateoasLink ResourceDeleteLinkBuilder(Guid id) =>
             new HateoasLink(
                 "delete",
                 "DELETE",
-                $"{Url.Link(HateoasConfig.ResourceDeleteRouteName.Get(), new { id })}");
+                $"{Url.Link(HateoasConfig.ResourceDeleteRouteName, new { id })}");
 
         protected static void AddCustomLinks(List<HateoasLink> links, IEnumerable<HateoasLink> additionalLinks)
         {

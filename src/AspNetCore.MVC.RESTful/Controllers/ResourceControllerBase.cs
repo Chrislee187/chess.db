@@ -75,7 +75,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             if (!orderByCheck.Valid)
             {
-                orderByCheck.Details.Instance = Url.Link(HateoasConfig.ResourcesGetRouteName.Get(), parameters);
+                orderByCheck.Details.Instance = Url.Link(HateoasConfig.ResourcesGetRouteName, parameters);
                 return BadRequest(orderByCheck.Details);
             }
 
@@ -89,7 +89,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                     searchString: Restful.SearchQuery,
                     orderBy: Restful.OrderBy, orderByMappings: orderByMappings);
 
-            AddPaginationHeader(HateoasConfig.ResourcesGetRouteName.Get(), pagedEntities);
+            AddPaginationHeader(HateoasConfig.ResourcesGetRouteName, pagedEntities);
 
             var resources = Mapper.Map<IEnumerable<TDto>>(pagedEntities)
                 .ShapeData(Restful.Shape).ToList();
@@ -178,7 +178,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             }
 
             return CreatedAtRoute(
-                HateoasConfig.ResourcesGetRouteName.Get(),
+                HateoasConfig.ResourcesGetRouteName,
                 new {createdResource.Id},
                 resource.ShapeData(Restful.Shape)
             );
@@ -216,7 +216,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 }
 
                 result = CreatedAtRoute(
-                    HateoasConfig.ResourceGetRouteName.Get(),
+                    HateoasConfig.ResourceGetRouteName,
                     new {id},
                     resource.ShapeData(Restful.Shape)
                 );

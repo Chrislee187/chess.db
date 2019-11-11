@@ -6,13 +6,9 @@ namespace AspNetCore.MVC.RESTful.Helpers
 {
     public static class QueryCollectionExtensions
     {
-        public static bool ContainsArg(this IQueryCollection query, string argName)
+        public static string GetByAlias(this IQueryCollection query, params string[] aliases)
         {
-            return query.Keys.Any(k => k.Equals(argName, StringComparison.OrdinalIgnoreCase));
-        }
-        public static string ArgValue(this IQueryCollection query, params string[] argNames)
-        {
-            var key = query.Keys.SingleOrDefault(k => argNames.Select(a => a.ToLowerInvariant()).Contains(k.ToLowerInvariant()));
+            var key = query.Keys.SingleOrDefault(k => aliases.Select(a => a.ToLowerInvariant()).Contains(k.ToLowerInvariant()));
             return key == null 
                 ? null 
                 : (string)query[key];

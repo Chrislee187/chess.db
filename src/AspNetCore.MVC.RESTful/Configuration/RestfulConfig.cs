@@ -1,4 +1,4 @@
-﻿namespace AspNetCore.MVC.RESTful.Parameters
+﻿namespace AspNetCore.MVC.RESTful.Configuration
 {
     public class RestfulConfig
     {

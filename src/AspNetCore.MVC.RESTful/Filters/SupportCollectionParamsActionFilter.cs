@@ -1,13 +1,18 @@
-﻿using System;
+﻿using AspNetCore.MVC.RESTful.Configuration;
+using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Helpers;
+using AspNetCore.MVC.RESTful.Parameters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace AspNetCore.MVC.RESTful.Configuration
-{
-    public class SupportsCollectionParams : ActionFilterAttribute
+namespace AspNetCore.MVC.RESTful.Filters
+{    /// <summary>
+     ///  Checks if the controller is a HateoasController and for
+     /// a `pagesize`, `page` and `orderby` query string parameter. If found, sets 
+     /// <see cref="RestfulConfig.PageSize"/>, <see cref="RestfulConfig.Page"/> and <see cref="RestfulConfig.OrderBy"/>
+     /// </summary>
+    public class SupportCollectionParamsActionFilter : ActionFilterAttribute
     {
-
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
@@ -23,11 +28,9 @@ namespace AspNetCore.MVC.RESTful.Configuration
 
         private static void GetPageSize(IQueryCollection queryCollection, HateoasController contextController)
         {
-            var pageSizeKeys = new[] {"pagesize", "page-size"};
+            var val = queryCollection.GetByAlias("pagesize", "page-size");
 
-            var val = queryCollection.ArgValue(pageSizeKeys);
-
-            if (Int32.TryParse(val, out int pageSize))
+            if (int.TryParse(val, out var pageSize))
             {
                 contextController.Restful.PageSize = pageSize;
             }
@@ -35,10 +38,9 @@ namespace AspNetCore.MVC.RESTful.Configuration
 
         private static void GetCurrentPage(IQueryCollection queryCollection, HateoasController contextController)
         {
-            var currentPageKeys = new[] {"page", "currentpage", "current-page", "pagenumber", "page-number"};
-            var val = queryCollection.ArgValue(currentPageKeys);
+            var val = queryCollection.GetByAlias("page", "currentpage", "current-page", "pagenumber", "page-number");
 
-            if (Int32.TryParse(val, out int page))
+            if (int.TryParse(val, out var page))
             {
                 contextController.Restful.Page = page;
             }
@@ -47,8 +49,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
 
         private static void GetOrderBy(IQueryCollection queryCollection, HateoasController contextController)
         {
-            var currentPageKeys = new[] {"orderby", "order-by"};
-            var val = queryCollection.ArgValue(currentPageKeys);
+            var val = queryCollection.GetByAlias("orderby", "order-by");
             contextController.Restful.OrderBy = val;
         }
     }
