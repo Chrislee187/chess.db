@@ -38,8 +38,6 @@ namespace chess.db.webapi.Controllers
         
         [HttpGet(Name = GetPlayersRouteName)]
         [HttpHead]
-        [SupportsCollectionParams]
-        [SupportsDataShapingParams]
         public IActionResult GetPlayers([FromQuery] GetPlayersFilters filters)
         {
             return ResourcesGet(
@@ -49,7 +47,6 @@ namespace chess.db.webapi.Controllers
         }
 
         [HttpGet("{id}", Name = GetPlayerRouteName)]
-        [SupportsDataShapingParams]
         public ActionResult<PlayerDto> GetPlayer(Guid id)
             => ResourceGet(id);
 

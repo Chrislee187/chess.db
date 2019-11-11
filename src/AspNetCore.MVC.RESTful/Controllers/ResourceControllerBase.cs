@@ -20,7 +20,8 @@ namespace AspNetCore.MVC.RESTful.Controllers
 {
     /// <summary>
     /// A base class for an MVC Controller that supports default Restful endpoints.
-    /// Relies heavily on AutoMapper mapping abilities to allow reuse
+    /// Uses AutoMapper to map Entities to/from DTO's and for mapping entity specific
+    /// filtering data.
     /// <list>
     /// See also 
     /// <seealso cref="RestfulAutoMapperConventionsChecker"></seealso>,
@@ -90,7 +91,8 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             AddPaginationHeader(HateoasConfig.ResourcesGetRouteName.Get(), pagedEntities);
 
-            var resources = Mapper.Map<IEnumerable<TDto>>(pagedEntities).ShapeData(Restful.Shape).ToList();
+            var resources = Mapper.Map<IEnumerable<TDto>>(pagedEntities)
+                .ShapeData(Restful.Shape).ToList();
             
             if (HateoasConfig.AddLinksToIndividualResources)
             {
@@ -178,7 +180,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return CreatedAtRoute(
                 HateoasConfig.ResourcesGetRouteName.Get(),
                 new {createdResource.Id},
-                resource
+                resource.ShapeData(Restful.Shape)
             );
         }
 
@@ -216,7 +218,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 result = CreatedAtRoute(
                     HateoasConfig.ResourceGetRouteName.Get(),
                     new {id},
-                    resource
+                    resource.ShapeData(Restful.Shape)
                 );
             }
             else
@@ -267,7 +269,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 IDictionary<string, object> resourceForLinks = patchedResource.ShapeData("");
 
                 resourceForLinks.Add("_links", ResourcePatchLinks(id));
-                return Ok(resourceForLinks);
+                return Ok(resourceForLinks.ShapeData(Restful.Shape));
             }
 
             return NoContent();

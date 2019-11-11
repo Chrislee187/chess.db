@@ -90,9 +90,11 @@ namespace AspNetCore.MVC.RESTful.Configuration
             services.AddMvc(opts =>
             {
                 opts.Filters.Add(new EnableHateoasLinksActionFilter());
-                // NOTE: PaginationParameter support enabled using Attribute form on individual actions
-                // Can be enabled globally using the ActionFilter form here
-                // opts.Filters.Add(new SupportsCollectionParams()); 
+
+                // NOTE: Add support for collection and data-shaping to RESTful resource endpoints
+                // (namely Controllers that inherit from ResourceControllerBase<,>
+                opts.Filters.Add(new SupportsCollectionParams());
+                opts.Filters.Add(new SupportsDataShapingParams());
             });
 
             services.AddTransient(typeof(IOrderByPropertyMappingService<,>), typeof(OrderByPropertyMappingService<,>));
