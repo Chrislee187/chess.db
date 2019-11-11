@@ -11,15 +11,18 @@ namespace AspNetCore.MVC.RESTful.Configuration
         private readonly string _details;
         private readonly string _contentType;
         private readonly string _traceIdKey;
+        private string _problemType;
 
         public InvalidModelStateResponse(
             string title = "One or more model validation errors occurred.",
             int statusCode = StatusCodes.Status422UnprocessableEntity,
             string details = "See the errors property for details.",
+            string problemType = "https://example.com/invalid-model-state",
             string contentType = "application/problem+json",
             string traceIdKey = "trace-id"
         )
         {
+            _problemType = problemType;
             _title = title;
             _statusCode = statusCode;
             _details = details;
@@ -30,14 +33,13 @@ namespace AspNetCore.MVC.RESTful.Configuration
         {
             context = NullX.Throw(context, nameof(context));
 
-            // NOTE: Gives invalid model errors correct status and better details
             var problemDetails = new ValidationProblemDetails(context.ModelState)
             {
                 Title = _title,
                 Status = _statusCode,
                 Detail = _details,
                 Instance = context.HttpContext.Request.Path,
-                Type = _contentType
+                Type = _problemType
             };
 
             problemDetails.Extensions.Add(_traceIdKey, context.HttpContext.TraceIdentifier);
