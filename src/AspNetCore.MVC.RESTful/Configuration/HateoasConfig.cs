@@ -4,14 +4,14 @@
     {
         public bool AddLinksToCollectionResources { get; set; } = true;
         public bool AddLinksToIndividualResources { get; set; } = true;
-
-
         public string ResourcesGetRouteName { get; set; }
         public string ResourceGetRouteName{ get; set; }
         public string ResourceCreateRouteName{ get; set; }
         public string ResourceUpsertRouteName{ get; set; }
         public string ResourcePatchRouteName{ get; set; }
         public string ResourceDeleteRouteName{ get; set; }
+        public RelationshipNames Relationships { get; } = new RelationshipNames();
+        public string LinksPropertyName { get; set; } = "_links";
 
         public HateoasConfig(string entityName)
         {
@@ -22,10 +22,6 @@
             ResourcePatchRouteName = $"Patch{entityName}";
             ResourceDeleteRouteName = $"Delete{entityName}";
         }
-
-        public RelationshipNames Relationships { get; } = new RelationshipNames();
-
-        public string LinksPropertyName { get; set; } = "_links";
 
         public class RelationshipNames
         {

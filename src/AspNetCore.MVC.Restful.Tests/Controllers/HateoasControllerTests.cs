@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.Restful.Tests.Builders;
@@ -8,7 +9,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
 {
     public class HateoasControllerTests
     {
-        private HateoasController<TestEntity> _controller;
+        private HateoasController<TestEntity, Guid> _controller;
 
         [SetUp]
         public void Setup()
@@ -80,7 +81,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         [Test]
         public void ResourceGetLinks_returns_current_standard_four_relationships()
         {
-            var resourceGetLinks = _controller.ResourceGetLinks(new TestEntity(), "");
+            var resourceGetLinks = _controller.ResourceGetLinks(Guid.NewGuid(), "");
 
             resourceGetLinks
                 .ShouldContain(l 
@@ -106,7 +107,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         [Test]
         public void ResourceCreateLinks_returns_get_and_delete_relationships()
         {
-            var resourceGetLinks = _controller.ResourceCreateLinks(new TestEntity());
+            var resourceGetLinks = _controller.ResourceCreateLinks(Guid.NewGuid());
 
             resourceGetLinks
                 .ShouldContain(l 
@@ -122,7 +123,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         [Test]
         public void ResourceUpsertLinks_returns_get_and_delete_relationships()
         {
-            var resourceGetLinks = _controller.ResourceUpsertLinks(new TestEntity());
+            var resourceGetLinks = _controller.ResourceUpsertLinks(Guid.NewGuid());
 
             resourceGetLinks
                 .ShouldContain(l 
@@ -138,7 +139,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         [Test]
         public void ResourcePatchLinks_returns_get_and_delete_relationships()
         {
-            var resourceGetLinks = _controller.ResourcePatchLinks(new TestEntity());
+            var resourceGetLinks = _controller.ResourcePatchLinks(Guid.NewGuid());
 
             resourceGetLinks
                 .ShouldContain(l 

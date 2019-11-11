@@ -32,7 +32,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
     /// <typeparam name="TDto">Data Transfer Object that can be "Automapped" from TEntity</typeparam>
     /// <typeparam name="TEntity">Underlying Entity for the Resource being represented</typeparam>
     /// <typeparam name="TId">Underlying type of the primary key "Id" field on the Entity</typeparam>
-    public abstract class ResourceControllerBase<TDto, TEntity, TId> : HateoasController<TId>
+    public abstract class ResourceControllerBase<TDto, TEntity, TId> : HateoasController<TEntity, TId>
         where TEntity : class
         where TDto : IResourceId<Guid>
     {
@@ -42,12 +42,13 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
         protected IMapper Mapper { get; }
 
-        protected ResourceControllerBase(IMapper mapper,
-            IResourceRepository<TEntity, TId> resourceRepository,
+        protected ResourceControllerBase(
+            [NotNull] IMapper mapper,
+            [NotNull] IResourceRepository<TEntity, TId> resourceRepository,
             IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService,
             IEntityUpdater<TEntity, TId> entityUpdater,
             Action<HateoasConfig> config = null)
-                :base(typeof(TEntity).Name)
+                :base()
         {
             ConfigureHateoas(config);
 
@@ -160,7 +161,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// the body
         /// </summary>
         protected ActionResult<TDto> ResourceCreate<TCreationDto>(
-            TCreationDto model,
+            [NotNull] TCreationDto model,
             IEnumerable<HateoasLink> additionalLinks = null
         )
         {
@@ -191,7 +192,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// </summary>
         protected ActionResult ResourceUpsert<TUpdateDto>(
             TId id,
-            TUpdateDto model,
+            [NotNull] TUpdateDto model,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
             if (id.Equals(Guid.Empty))
@@ -321,8 +322,8 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return (ActionResult) options.Value.InvalidModelStateResponseFactory(ControllerContext);
         }
 
-        private void AddPaginationHeader(string resourcesGetRouteName, 
-            IPaginationMetadata pagedEntities) 
+        private void AddPaginationHeader(string resourcesGetRouteName,
+            [NotNull] IPaginationMetadata pagedEntities) 
         {
             var xPaginationHeader = new XPaginationHeader(
                 pagedEntities,

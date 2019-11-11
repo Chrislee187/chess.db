@@ -26,10 +26,10 @@ namespace AspNetCore.MVC.RESTful.Controllers
     /// Links can be enabled/disabled at Controller level (see <see cref="Configuration.HateoasConfig"/>)
     /// and also on a per call level <see cref="DisableHateoasLinksActionFilter"/>)
     /// </summary>
-    public abstract class HateoasController<TId> : HateoasController
+    public abstract class HateoasController<TEntity, TId> : HateoasController
     {
 
-        protected HateoasController(string entityName) : base(entityName) 
+        protected HateoasController() : base(typeof(TEntity).Name) 
         { }
 
 
@@ -198,7 +198,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 // the data has been reshaped to not include the Id, no links will be added.
                 if (resource.TryGetValue("Id", out var idObj))
                 {
-                    var links = ResourceGetLinks(
+                    var links = (IEnumerable<HateoasLink>) ResourceGetLinks(
                         (dynamic) idObj,
                         Restful.Shape,
                         additionalLinks);
