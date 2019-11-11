@@ -31,6 +31,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
     /// <typeparam name="TDto">Data Transfer Object that can be "Automapped" from TEntity</typeparam>
     /// <typeparam name="TEntity">Underlying Entity for the Resource being represented</typeparam>
+    /// <typeparam name="TId">Underlying type of the primary key "Id" field on the Entity</typeparam>
     public abstract class ResourceControllerBase<TDto, TEntity, TId> : HateoasController<TId>
         where TEntity : class
         where TDto : IResourceId<Guid>
@@ -60,8 +61,8 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// HTTP GET /{resource}
         /// </summary>
         protected IActionResult ResourcesGet<TParameters>([NotNull] TParameters parameters,
-            [NotNull] IResourceFilter<TEntity> filterResource,
-            [NotNull] IResourceSearch<TEntity> searchResource,
+            [NotNull] IResourceFilter<TEntity> resourceFilter,
+            [NotNull] IResourceSearch<TEntity> resourceSearch,
             IEnumerable<HateoasLink> additionalCollectionLinks = null,
             IEnumerable<HateoasLink> additionalIndividualLinks = null)
         {
@@ -82,12 +83,14 @@ namespace AspNetCore.MVC.RESTful.Controllers
             var orderByMappings = _orderByPropertyMappingService.GetPropertyMapping();
 
             var pagedEntities = _restResourceRepository
-                .Load(page: Restful.Page,
-                    pageSize: Restful.PageSize, 
-                    filters: filterResource, 
-                    search: searchResource,
-                    searchString: Restful.SearchQuery,
-                    orderBy: Restful.OrderBy, orderByMappings: orderByMappings);
+                .Load(
+                    Restful.Page,
+                    Restful.PageSize, 
+                    resourceFilter, 
+                    resourceSearch,
+                    Restful.SearchQuery,
+                    Restful.OrderBy, 
+                    orderByMappings);
 
             AddPaginationHeader(HateoasConfig.ResourcesGetRouteName, pagedEntities);
 
@@ -98,23 +101,21 @@ namespace AspNetCore.MVC.RESTful.Controllers
             {
                 AddHateoasLinksToResourceCollection(resources, additionalIndividualLinks);
             }
-
-            additionalCollectionLinks = additionalCollectionLinks == null
-                ? new List<HateoasLink>().ToList()
-                : additionalCollectionLinks.ToList();
+            
             if (HateoasConfig.AddLinksToCollectionResources)
             {
+                additionalCollectionLinks = additionalCollectionLinks == null
+                    ? new List<HateoasLink>().ToList()
+                    : additionalCollectionLinks.ToList();
+                
                 var collectionLinks = ResourcesGetLinks(parameters, pagedEntities);
                 AddCustomLinks(collectionLinks, additionalCollectionLinks);
 
-                return Ok(new
-                {
-                    value = resources,
-                    _links = collectionLinks
-                });
+                var expandoObject = new {value = resources}.ShapeData("");
+                expandoObject.TryAdd(HateoasConfig.LinksPropertyName, collectionLinks);
+                
+                return Ok(expandoObject);
             }
-
-            AddCustomLinks(new List<HateoasLink>(), additionalCollectionLinks);
 
             return Ok(resources);
         }
@@ -145,7 +146,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             {
                 if (resource.ContainsKey("Id"))
                 {
-                    resource.Add("_links", ResourceGetLinks(id, Restful.Shape, additionalLinks));
+                    resource.Add(HateoasConfig.LinksPropertyName, ResourceGetLinks(id, Restful.Shape, additionalLinks));
                 }
             }
 
@@ -175,7 +176,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             if (HateoasConfig.AddLinksToIndividualResources)
             {
                 dynamic id = createdResource.Id;
-                resource.Add("_links", ResourceCreateLinks(id, additionalLinks));
+                resource.Add(HateoasConfig.LinksPropertyName, ResourceCreateLinks(id, additionalLinks));
             }
 
             return CreatedAtRoute(
@@ -213,7 +214,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
                 if (HateoasConfig.AddLinksToIndividualResources)
                 {
-                    resource.Add("_links", ResourceUpsertLinks(id, additionalLinks));
+                    resource.Add(HateoasConfig.LinksPropertyName, ResourceUpsertLinks(id, additionalLinks));
                 }
 
                 result = CreatedAtRoute(
@@ -270,7 +271,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             {
                 IDictionary<string, object> resourceForLinks = patchedResource.ShapeData("");
 
-                resourceForLinks.Add("_links", ResourcePatchLinks(id));
+                resourceForLinks.Add(HateoasConfig.LinksPropertyName, ResourcePatchLinks(id));
                 return Ok(resourceForLinks.ShapeData(Restful.Shape));
             }
 

@@ -32,10 +32,6 @@ namespace AspNetCore.MVC.RESTful.Helpers
             string shape,
             bool ignoreNulls = true)
         {
-            source = source?.ToList();
-
-            NullX.Throw(source, nameof(source));
-
             var expandoObjectList = new List<ExpandoObject>();
 
             var propertyNames = (shape ?? "").Split(',')

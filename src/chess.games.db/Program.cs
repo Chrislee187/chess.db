@@ -7,6 +7,7 @@ namespace chess.games.db
 {
     class Program
     {
+        // ReSharper disable once UnusedParameter.Local
         static void Main(string[] args)
         {
             Console.WriteLine("Chess DB");

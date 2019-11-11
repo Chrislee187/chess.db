@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Models;
-using AspNetCore.MVC.RESTful.Parameters;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore.MVC.RESTful.Controllers
 {
@@ -41,19 +40,19 @@ namespace AspNetCore.MVC.RESTful.Controllers
             var currentPage = Restful.Page;
             var links = new List<HateoasLink>
             {
-                ResourcesGetLinkBuilder("current-page", parameters),
+                ResourcesGetLinkBuilder(HateoasConfig.Relationships.CurrentPage, parameters),
             };
             
             if (pagination.HasPrevious)
             {
                 Restful.Page = currentPage - 1;
-                links.Add(ResourcesGetLinkBuilder("prev-page", parameters));
+                links.Add(ResourcesGetLinkBuilder(HateoasConfig.Relationships.PreviousPage, parameters));
             }
 
             if (pagination.HasNext)
             {
                 Restful.Page = currentPage + 1;
-                links.Add(ResourcesGetLinkBuilder("next-page", parameters));
+                links.Add(ResourcesGetLinkBuilder(HateoasConfig.Relationships.NextPage, parameters));
             }
 
             Restful.Page = currentPage;
@@ -65,7 +64,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         {
             var links = new List<HateoasLink>
             {
-                ResourceGetLinkBuilder("self", id, shape),
+                ResourceGetLinkBuilder(HateoasConfig.Relationships.Self, id, shape),
                 ResourceUpsertLinkBuilder(id),
                 ResourcePatchLinkBuilder(id),
                 ResourceDeleteLinkBuilder(id)
@@ -81,7 +80,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         {
             var links = new List<HateoasLink>
             {
-                ResourceGetLinkBuilder("self", id, ""),
+                ResourceGetLinkBuilder(HateoasConfig.Relationships.Self, id, ""),
                 ResourceDeleteLinkBuilder(id)
             };
 
@@ -95,7 +94,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         {
             var links = new List<HateoasLink>
             {
-                ResourceGetLinkBuilder("self", id, ""),
+                ResourceGetLinkBuilder(HateoasConfig.Relationships.Self, id, ""),
                 ResourceDeleteLinkBuilder(id)
             };
 
@@ -109,7 +108,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         {
             var links = new List<HateoasLink>
             {
-                ResourceGetLinkBuilder("self", id, ""),
+                ResourceGetLinkBuilder(HateoasConfig.Relationships.Self, id, ""),
                 ResourceDeleteLinkBuilder(id)
             };
 
@@ -122,7 +121,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         {
             var links = new List<HateoasLink>
             {
-                ResourcesGetLinkBuilder("current-page", null),
+                ResourcesGetLinkBuilder(HateoasConfig.Relationships.CurrentPage, null),
                 ResourceCreateLinkBuilder()
             };
 
@@ -156,25 +155,25 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
         private HateoasLink ResourceCreateLinkBuilder() =>
             new HateoasLink(
-                "create",
+                HateoasConfig.Relationships.Create,
                 "POST",
                 $"{Url.Link(HateoasConfig.ResourceCreateRouteName, null)}");
 
         private HateoasLink ResourceUpsertLinkBuilder(TId id) =>
             new HateoasLink(
-                "update",
+                HateoasConfig.Relationships.Update,
                 "PUT",
                 $"{Url.Link(HateoasConfig.ResourceUpsertRouteName, new { id })}");
 
         private HateoasLink ResourcePatchLinkBuilder(TId id) =>
             new HateoasLink(
-                "patch",
+                HateoasConfig.Relationships.Patch,
                 "PATCH",
                 $"{Url.Link(HateoasConfig.ResourcePatchRouteName, new { id })}");
 
         private HateoasLink ResourceDeleteLinkBuilder(TId id) =>
             new HateoasLink(
-                "delete",
+                HateoasConfig.Relationships.Delete,
                 "DELETE",
                 $"{Url.Link(HateoasConfig.ResourceDeleteRouteName, new { id })}");
 
@@ -195,19 +194,18 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             foreach (IDictionary<string, object> resource in resources)
             {
-                // NOTE: Hateoas "_links" support is only available if the ID is available, if
+                // NOTE: Hateoas support is only available if the ID is available, if
                 // the data has been reshaped to not include the Id, no links will be added.
                 if (resource.TryGetValue("Id", out var idObj))
                 {
-                    List<HateoasLink> links = new List<HateoasLink>();
-                    links = ResourceGetLinks(
+                    var links = ResourceGetLinks(
                         (dynamic) idObj,
                         Restful.Shape,
                         additionalLinks);
 
                     if (links.Any())
                     {
-                        resource.Add("_links", links);
+                        resource.Add(HateoasConfig.LinksPropertyName, links);
                     }
                 }
 

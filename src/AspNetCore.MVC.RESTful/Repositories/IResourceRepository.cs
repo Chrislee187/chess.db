@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
 
@@ -17,7 +16,7 @@ namespace AspNetCore.MVC.RESTful.Repositories
         
         PagedList<TEntity> Load(int page = 1,
             int pageSize = 20,
-            IResourceFilter<TEntity> filters = null,
+            IResourceFilter<TEntity> filter = null,
             IResourceSearch<TEntity> search = null,
             string searchString = "",
             string orderBy = "",

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Parameters;
@@ -22,7 +21,7 @@ namespace AspNetCore.MVC.RESTful.Repositories
 
         public PagedList<TEntity> Load(int page = 1,
             int pageSize = 20,
-            IResourceFilter<TEntity> filters = null,
+            IResourceFilter<TEntity> filter = null,
             IResourceSearch<TEntity> search = null,
             string searchString = "",
             string orderBy = "",
@@ -32,7 +31,7 @@ namespace AspNetCore.MVC.RESTful.Repositories
             
             var filtered = Reduce(
                 Resource, 
-                filters ?? ResourceFilter<TEntity>.Default, 
+                filter ?? ResourceFilter<TEntity>.Default, 
                 search ?? new DefaultResourceSearch<TEntity>(), 
                 searchString);
 

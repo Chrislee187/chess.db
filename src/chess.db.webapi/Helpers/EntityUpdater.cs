@@ -1,5 +1,4 @@
-﻿using System;
-using AspNetCore.MVC.RESTful.Helpers;
+﻿using AspNetCore.MVC.RESTful.Helpers;
 using chess.games.db.Entities;
 
 namespace chess.db.webapi.Helpers

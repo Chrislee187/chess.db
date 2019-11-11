@@ -1,5 +1,4 @@
 ﻿using System;
-using AspNetCore.MVC.RESTful.Parameters;
 using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;

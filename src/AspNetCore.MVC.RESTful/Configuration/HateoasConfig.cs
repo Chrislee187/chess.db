@@ -1,6 +1,4 @@
-﻿using AspNetCore.MVC.RESTful.Controllers;
-
-namespace AspNetCore.MVC.RESTful.Configuration
+﻿namespace AspNetCore.MVC.RESTful.Configuration
 {
     public class HateoasConfig
     {
@@ -23,6 +21,22 @@ namespace AspNetCore.MVC.RESTful.Configuration
             ResourceUpsertRouteName = $"Upsert{entityName}";
             ResourcePatchRouteName = $"Patch{entityName}";
             ResourceDeleteRouteName = $"Delete{entityName}";
+        }
+
+        public RelationshipNames Relationships { get; } = new RelationshipNames();
+
+        public string LinksPropertyName { get; set; } = "_links";
+
+        public class RelationshipNames
+        {
+            public string Self { get; set; } = "self";
+            public string Create { get; set; } = "create";
+            public string Update { get; set; } = "update";
+            public string Patch { get; set; } = "patch";
+            public string Delete { get; set; } = "delete";
+            public string CurrentPage { get; set; } = "current-page";
+            public string NextPage { get; set; } =  "next-page";
+            public string PreviousPage { get; set; } =  "prev-page";
         }
     }
 }

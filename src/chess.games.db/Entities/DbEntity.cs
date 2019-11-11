@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace chess.games.db.Entities
+﻿namespace chess.games.db.Entities
 {
     public abstract class DbEntity<T> : IDbEntity<T>
     {
