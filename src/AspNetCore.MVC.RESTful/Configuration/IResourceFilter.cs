@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace AspNetCore.MVC.RESTful.Parameters
+namespace AspNetCore.MVC.RESTful.Configuration
 {
     public interface IResourceFilter<T>
     {

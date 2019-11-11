@@ -3,7 +3,7 @@ using System.Net;
 using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Helpers;
-using AspNetCore.MVC.RESTful.Parameters;
+using AspNetCore.MVC.RESTful.Services;
 using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;

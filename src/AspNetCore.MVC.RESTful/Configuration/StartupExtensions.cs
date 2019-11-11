@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using AspNetCore.MVC.RESTful.AutoMapper;
 using AspNetCore.MVC.RESTful.Filters;
-using AspNetCore.MVC.RESTful.Parameters;
+using AspNetCore.MVC.RESTful.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

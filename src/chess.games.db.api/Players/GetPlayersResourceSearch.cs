@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using AspNetCore.MVC.RESTful.Parameters;
+using AspNetCore.MVC.RESTful.Configuration;
 using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players

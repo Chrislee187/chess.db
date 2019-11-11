@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using AspNetCore.MVC.RESTful.Helpers;
 
-namespace AspNetCore.MVC.RESTful.Parameters
+namespace AspNetCore.MVC.RESTful.Services
 {
     public class PropertyMapping : IPropertyMapping
     {

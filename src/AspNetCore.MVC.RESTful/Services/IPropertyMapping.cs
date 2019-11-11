@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AspNetCore.MVC.RESTful.Parameters
+namespace AspNetCore.MVC.RESTful.Services
 {
     public interface IPropertyMapping
     {

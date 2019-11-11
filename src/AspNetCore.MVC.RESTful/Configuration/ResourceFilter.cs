@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace AspNetCore.MVC.RESTful.Parameters
+namespace AspNetCore.MVC.RESTful.Configuration
 {
     public abstract class ResourceFilter<T> : IResourceFilter<T>
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using AspNetCore.MVC.RESTful.Parameters;
+using AspNetCore.MVC.RESTful.Services;
 
 namespace AspNetCore.MVC.RESTful.Helpers
 {

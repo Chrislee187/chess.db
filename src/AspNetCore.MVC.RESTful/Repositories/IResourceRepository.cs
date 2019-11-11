@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Helpers;
-using AspNetCore.MVC.RESTful.Parameters;
+using AspNetCore.MVC.RESTful.Services;
 
 namespace AspNetCore.MVC.RESTful.Repositories
 {

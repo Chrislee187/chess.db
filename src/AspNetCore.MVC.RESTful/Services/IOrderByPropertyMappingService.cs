@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCore.MVC.RESTful.Parameters
+namespace AspNetCore.MVC.RESTful.Services
 {
     /// <summary>
     /// Maps Dto field names to one or more Entity field names for use when building

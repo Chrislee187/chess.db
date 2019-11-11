@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Helpers;
-using AspNetCore.MVC.RESTful.Parameters;
+using AspNetCore.MVC.RESTful.Services;
 using chess.db.webapi.Helpers;
 using chess.db.webapi.Models;
 using chess.games.db;

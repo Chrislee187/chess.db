@@ -13,8 +13,8 @@ using AspNetCore.MVC.RESTful.AutoMapper;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Models;
-using AspNetCore.MVC.RESTful.Parameters;
 using AspNetCore.MVC.RESTful.Repositories;
+using AspNetCore.MVC.RESTful.Services;
 
 namespace AspNetCore.MVC.RESTful.Controllers
 {
