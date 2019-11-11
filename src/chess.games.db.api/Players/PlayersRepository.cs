@@ -13,7 +13,7 @@ namespace chess.games.db.api.Players
             )
             : base(dbContext) { }
 
-        public IEnumerable<Player> Get(IEnumerable<Guid> ids)
+        public IEnumerable<Player> Load(IEnumerable<Guid> ids)
             => Resource.Where(p => ids.Contains(p.Id));
 
     }

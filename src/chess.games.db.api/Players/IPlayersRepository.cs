@@ -7,6 +7,6 @@ namespace chess.games.db.api.Players
 {
     public interface IPlayersRepository : IResourceRepository<Player, Guid>
     {
-        IEnumerable<Player> Get(IEnumerable<Guid> ids);
+        IEnumerable<Player> Load(IEnumerable<Guid> ids);
     }
 }

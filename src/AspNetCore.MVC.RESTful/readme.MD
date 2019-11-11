@@ -1,10 +1,18 @@
 ﻿# RESTful
 
-This project offers code and conventions that can be used to easily create a MVC Controller for a RESTful resource. 
+This project offers code and conventions that can be used to easily create a RESTful MVC Controller for a resource. 
 
-Resources themselves are accessed via Repository components with an EntityFrameworkResourceComponents implementation supplied.
+Resources themselves are accessed via Repository components implementing a simple IRepository interface and can therefore be backed by any datastore required. 
 
-Supports the following RESTful endpoints.
+An Entity Framework Core base Repository implementation is provided that can be used to fulfill all the default requirements of Restful Resource controller for a single ENTITY. 
+
+Filtering and searching are handled by implementing simple objects that perform the filter and search on an IQueryable<ENTITY> instance.
+
+Pagination, sorting and data-shaping are automatically supported via querystring params: `page-number, page-size, order-by, shape'
+
+By default, sensible HATEOAS 'rel' links are created for each resource.
+
+Restful supports the following HTTP methods.
 
 ## HTTP GET /{collection}
 
@@ -40,7 +48,7 @@ Removes the specified document from the collection
 * Data-shaping (customising output fields displayed)
 * Pagination
 * Hateoas Link support
-* Standardised error handling using the proposed (Problem Details for HTTP APIs)[https://tools.ietf.org/html/rfc7807] schema available using the (ProblemDetails)[https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.problemdetails?view=aspnetcore-3.0] class.
+* Standardised error handling using the proposed (Problem Details for HTTP APIs)[https://tools.ietf.org/html/rfc7807] schema using the (ProblemDetails)[https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.problemdetails?view=aspnetcore-3.0] class.
 
 Configurable features are configured using query-string parameters (i.e. `?page-size=20&page-number=1&orderby=lastname desc, firstname&shape=id,firstname,lastname`) handled at an ActionFilter level and not needed to be exposed as arguments on the actual controller action.
 

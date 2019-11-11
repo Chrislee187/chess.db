@@ -44,7 +44,7 @@ namespace chess.db.webapi.Controllers
                 return Ok(new List<PlayerDto>());
             }
 
-            var entities = _playersRepository.Get(idList);
+            var entities = _playersRepository.Load(idList);
 
             if (idList.Count() != entities.Count())
             {
