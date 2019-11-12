@@ -4,4 +4,9 @@
     {
         T Id { get; set; }
     }
+
+    public class Resource<T> : IResourceId<T>
+    {
+        public T Id { get; set; }
+    }
 }

@@ -64,9 +64,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// </summary>
         public IActionResult ResourcesGet<TParameters>([NotNull] TParameters parameters,
             [NotNull] IEntityFilter<TEntity> entityFilter,
-            [NotNull] IEntitySearch<TEntity> entitySearch,
-            IEnumerable<HateoasLink> additionalCollectionLinks = null,
-            IEnumerable<HateoasLink> additionalIndividualLinks = null)
+            [NotNull] IEntitySearch<TEntity> entitySearch)
         {
             if (!typeof(TDto).TypeHasOutputProperties(CollectionConfig.Shape))
             {
@@ -101,17 +99,12 @@ namespace AspNetCore.MVC.RESTful.Controllers
             
             if (HateoasConfig.AddLinks)
             {
-                AddHateoasLinksToResourceCollection(resources, additionalIndividualLinks);
+                AddHateoasLinksToResourceCollection(resources);
             }
             
             if (HateoasConfig.AddLinks)
             {
-                additionalCollectionLinks = additionalCollectionLinks == null
-                    ? new List<HateoasLink>().ToList()
-                    : additionalCollectionLinks.ToList();
-                
                 var collectionLinks = ResourcesGetLinks(parameters, pagedEntities);
-                AddCustomLinks(collectionLinks, additionalCollectionLinks);
 
                 var expandoObject = new {value = resources}.ShapeData("");
                 expandoObject.TryAdd(HateoasConfig.LinksPropertyName, collectionLinks);
@@ -148,7 +141,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             {
                 if (resource.ContainsKey("Id"))
                 {
-                    resource.Add(HateoasConfig.LinksPropertyName, ResourceGetLinks(id, CollectionConfig.Shape, additionalLinks));
+                    resource.Add(HateoasConfig.LinksPropertyName, ResourceGetLinks(id, CollectionConfig.Shape));
                 }
             }
 
@@ -178,7 +171,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             if (HateoasConfig.AddLinks)
             {
                 dynamic id = createdResource.Id;
-                resource.Add(HateoasConfig.LinksPropertyName, ResourceCreateLinks(id, additionalLinks));
+                resource.Add(HateoasConfig.LinksPropertyName, ResourceCreateLinks(id));
             }
 
             return CreatedAtRoute(
@@ -216,7 +209,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
                 if (HateoasConfig.AddLinks)
                 {
-                    resource.Add(HateoasConfig.LinksPropertyName, ResourceUpsertLinks(id, additionalLinks));
+                    resource.Add(HateoasConfig.LinksPropertyName, ResourceUpsertLinks(id));
                 }
 
                 result = CreatedAtRoute(

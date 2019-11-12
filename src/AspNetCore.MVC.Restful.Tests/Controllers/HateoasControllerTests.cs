@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.Restful.Tests.Builders;
 using NUnit.Framework;
@@ -26,15 +27,15 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             var resourcesGetLinks = _controller.ResourcesGetLinks<object>(null, pagination);
 
             resourcesGetLinks
-                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.CurrentPage))
+                .Any(l => l.Rel.Equals(HateoasConfig.Relationships.CurrentPage))
                 .ShouldBeTrue();
 
             resourcesGetLinks
-                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.NextPage))
+                .Any(l => l.Rel.Equals(HateoasConfig.Relationships.NextPage))
                 .ShouldBeFalse();
 
             resourcesGetLinks
-                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.PreviousPage))
+                .Any(l => l.Rel.Equals(HateoasConfig.Relationships.PreviousPage))
                 .ShouldBeFalse();
         }
 
@@ -49,11 +50,11 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             var resourcesGetLinks = _controller.ResourcesGetLinks<object>(null, pagination);
 
             resourcesGetLinks
-                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.NextPage))
+                .Any(l => l.Rel.Equals(HateoasConfig.Relationships.NextPage))
                 .ShouldBeTrue();
 
             resourcesGetLinks
-                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.PreviousPage))
+                .Any(l => l.Rel.Equals(HateoasConfig.Relationships.PreviousPage))
                 .ShouldBeTrue();
         }
 
@@ -69,11 +70,11 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             var resourcesGetLinks = _controller.ResourcesGetLinks<object>(null, pagination);
 
             resourcesGetLinks
-                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.NextPage))
+                .Any(l => l.Rel.Equals(HateoasConfig.Relationships.NextPage))
                 .ShouldBeFalse();
 
             resourcesGetLinks
-                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.PreviousPage))
+                .Any(l => l.Rel.Equals(HateoasConfig.Relationships.PreviousPage))
                 .ShouldBeFalse();
         }
 
@@ -85,22 +86,22 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
 
             resourceGetLinks
                 .ShouldContain(l 
-                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Self))
+                    => l.Rel.Equals(HateoasConfig.Relationships.Self))
                 ;
 
             resourceGetLinks
                 .ShouldContain(l 
-                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Update))
+                    => l.Rel.Equals(HateoasConfig.Relationships.Upsert))
                 ;
 
             resourceGetLinks
                 .ShouldContain(l 
-                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Patch))
+                    => l.Rel.Equals(HateoasConfig.Relationships.Patch))
                 ;
 
             resourceGetLinks
                 .ShouldContain(l 
-                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Delete))
+                    => l.Rel.Equals(HateoasConfig.Relationships.Delete))
                 ;
         }
 
@@ -111,12 +112,12 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
 
             resourceGetLinks
                 .ShouldContain(l 
-                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Self))
+                    => l.Rel.Equals(HateoasConfig.Relationships.Self))
                 ;
 
             resourceGetLinks
                 .ShouldContain(l =>
-                    l.Rel.Equals(_controller.HateoasConfig.Relationships.Delete))
+                    l.Rel.Equals(HateoasConfig.Relationships.Delete))
                 ;
         }
 
@@ -127,12 +128,12 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
 
             resourceGetLinks
                 .ShouldContain(l 
-                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Self))
+                    => l.Rel.Equals(HateoasConfig.Relationships.Self))
                 ;
 
             resourceGetLinks
                 .ShouldContain(l 
-                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Delete))
+                    => l.Rel.Equals(HateoasConfig.Relationships.Delete))
                 ;
         }
         
@@ -143,11 +144,11 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
 
             resourceGetLinks
                 .ShouldContain(l 
-                    => l.Rel.Equals(_controller.HateoasConfig.Relationships.Self))
+                    => l.Rel.Equals(HateoasConfig.Relationships.Self))
                 ;
 
             resourceGetLinks
-                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.Delete))
+                .Any(l => l.Rel.Equals(HateoasConfig.Relationships.Delete))
                 .ShouldBeTrue();
         }
         
@@ -157,10 +158,10 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             var resourceGetLinks = _controller.ResourceDeleteLinks();
 
             resourceGetLinks.ShouldContain(l 
-                => l.Rel.Equals(_controller.HateoasConfig.Relationships.CurrentPage));
+                => l.Rel.Equals(HateoasConfig.Relationships.CurrentPage));
 
             resourceGetLinks.ShouldContain(l
-                => l.Rel.Equals(_controller.HateoasConfig.Relationships.Create));
+                => l.Rel.Equals(HateoasConfig.Relationships.Create));
         }
     }
 }

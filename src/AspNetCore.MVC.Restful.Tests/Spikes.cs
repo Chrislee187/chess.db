@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.Restful.Tests.Builders;
 using NUnit.Framework;
@@ -25,15 +26,15 @@ namespace AspNetCore.MVC.Restful.Tests
             var resourcesGetLinks = _controller.ResourcesGetLinks<object>(null, pagination);
 
             resourcesGetLinks
-                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.CurrentPage))
+                .Any(l => l.Rel.Equals(HateoasConfig.Relationships.CurrentPage))
                 .ShouldBeTrue();
 
             resourcesGetLinks
-                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.NextPage))
+                .Any(l => l.Rel.Equals(HateoasConfig.Relationships.NextPage))
                 .ShouldBeFalse();
 
             resourcesGetLinks
-                .Any(l => l.Rel.Equals(_controller.HateoasConfig.Relationships.PreviousPage))
+                .Any(l => l.Rel.Equals(HateoasConfig.Relationships.PreviousPage))
                 .ShouldBeFalse();
         }
    }

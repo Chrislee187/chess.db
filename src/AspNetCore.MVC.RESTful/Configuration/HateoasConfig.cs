@@ -67,7 +67,8 @@ namespace AspNetCore.MVC.RESTful.Configuration
         /// <summary>
         /// Default strings used for the the default Hateoas links "rel" properties
         /// </summary>
-        public RelationshipNames Relationships { get; } = new RelationshipNames();
+        private static readonly RelationshipNames Relations = new RelationshipNames();
+        public static RelationshipNames Relationships { get; } = Relations;
 
         public HateoasConfig(string entityName)
         {
@@ -78,7 +79,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
             ResourcePatchRouteName = $"Patch{entityName}";
             ResourceDeleteRouteName = $"Delete{entityName}";
         }
-
+        
         /// <summary>
         /// Default names used for the Hateoas link "rel" properties.
         /// </summary>
@@ -86,12 +87,12 @@ namespace AspNetCore.MVC.RESTful.Configuration
         {
             public string Self { get; set; } = "self";
             public string Create { get; set; } = "create";
-            public string Update { get; set; } = "update";
+            public string Upsert { get; set; } = "upsert";
             public string Patch { get; set; } = "patch";
             public string Delete { get; set; } = "delete";
             public string CurrentPage { get; set; } = "current-page";
-            public string NextPage { get; set; } =  "next-page";
-            public string PreviousPage { get; set; } =  "prev-page";
+            public string NextPage { get; set; } = "next-page";
+            public string PreviousPage { get; set; } = "prev-page";
         }
     }
 }

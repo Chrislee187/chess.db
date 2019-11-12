@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Linq;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Repositories;
 using AspNetCore.MVC.RESTful.Services;
-using AspNetCore.MVC.Restful.Tests.Builders;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace AspNetCore.MVC.Restful.Tests.Controllers
+namespace AspNetCore.MVC.Restful.Tests.Builders
 {
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class TestResourceControllerMockery
     {
         private string _shape;

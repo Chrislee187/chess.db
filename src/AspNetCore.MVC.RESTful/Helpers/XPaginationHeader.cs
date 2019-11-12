@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using AspNetCore.MVC.RESTful.Configuration;
 using Microsoft.Extensions.Primitives;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace AspNetCore.MVC.RESTful.Helpers
 {
@@ -50,7 +51,6 @@ namespace AspNetCore.MVC.RESTful.Helpers
 
         private string CreatePlayersResourceUri(ResourceUriType type,
             Func<object, string> urlBuilder
-            
             )
         {
             var originalPage = _collectionConfig.Page;
@@ -63,16 +63,16 @@ namespace AspNetCore.MVC.RESTful.Helpers
                 case ResourceUriType.NextPage:
                     page += 1;
                     break;
-
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
 
             _collectionConfig.Page = page;
             var link = _collectionConfig.AppendToUrl(urlBuilder(null));
+            
             _collectionConfig.Page = originalPage;
-
             return link;
         }
+
     }
 }

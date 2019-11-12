@@ -3,15 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Models;
-using AspNetCore.MVC.RESTful.Repositories;
-using AspNetCore.MVC.RESTful.Services;
 using AspNetCore.MVC.Restful.Tests.Builders;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
@@ -24,7 +19,6 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
     {
         private ResourceControllerBase<TestDto, TestEntity, Guid> _controller;
         private TestResourceControllerMockery _mockery;
-
 
         [SetUp]
         public void Setup()
@@ -109,7 +103,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
                 .ResourcesGet((object)null, null, null);
 
 
-            var dictCollection = (resourcesResult.Value as IEnumerable<ExpandoObject>)
+            var dictCollection = ((IEnumerable<ExpandoObject>) resourcesResult.Value)
                 .Select(e => e.ToExpandoDict())
                 .ToList();
 
@@ -128,7 +122,6 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             _mockery.WithCurrentPage(2); 
             _mockery.WithPageSize(2);
 
-
             _controller
                 .ResourcesGet((object)null, null, null);
 
@@ -136,10 +129,26 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
                 .ContainsKey("X-Pagination")
                 .ShouldBeTrue();
 
-            XPaginationHeaderShouldBeCorrect(_controller.Response.Headers["X-Pagination"], 2, 2, 5, 10);
+            PaginationHeaderShouldContain(
+                _controller.Response.Headers["X-Pagination"], 
+                2, 2, 5, 10);
+        }
+        
+        [TestCase(true, false, false, false)]
+        [TestCase(false, true, false, false)]
+        [TestCase(false, false, true, false)]
+        [TestCase(false, false, false, true)]
+        public void Construction_null_dependencies_should_throw_exceptions(bool nullMapper, bool nullRepo, bool nullOrderByMapper, bool nullUpdater)
+        {
+            Should.Throw<ArgumentNullException>(() 
+                => new TestResourceController(
+                    nullMapper ? null : _mockery.Mapper.Object,
+                    nullRepo ? null : _mockery.ResourceRepository.Object,
+                    nullOrderByMapper ? null : _mockery.OrderByPropertyMappingService.Object,
+                    nullUpdater ? null : _mockery.EntityUpdater.Object));
         }
 
-        private void XPaginationHeaderShouldBeCorrect(StringValues headerValues, int currentPage, int pageSize, int totalPages, int pageCount)
+        private void PaginationHeaderShouldContain(StringValues headerValues, int currentPage, int pageSize, int totalPages, int pageCount)
         {
             var p = JsonConvert.DeserializeObject<ExpandoObject>(headerValues);
             var pagination = new Dictionary<string, object>(p);
@@ -169,38 +178,5 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             }
 
         }
-
-
-        [TestCase(true, false, false, false)]
-        [TestCase(false, true, false, false)]
-        [TestCase(false, false, true, false)]
-        [TestCase(false, false, false, true)]
-        public void Construction_null_dependencies_should_throw_exceptions(bool nullMapper, bool nullRepo, bool nullOrderByMapper, bool nullUpdater)
-        {
-            Should.Throw<ArgumentNullException>(() =>
-            {
-                new TestResourceController(
-                    nullMapper ? null : _mockery.Mapper.Object,
-                    nullRepo ? null : _mockery.ResourceRepository.Object,
-                    nullOrderByMapper ? null : _mockery.OrderByPropertyMappingService.Object,
-                    nullUpdater ? null : _mockery.EntityUpdater.Object);
-            });
-        }
-
-    }
-
-    public class TestResourceController : ResourceControllerBase<TestDto, TestEntity, Guid>
-    {
-        public TestResourceController(
-            IMapper mapper, 
-            IResourceRepository<TestEntity, Guid> resourceRepository, 
-            IOrderByPropertyMappingService<TestDto, TestEntity> orderByPropertyMappingService, 
-            IEntityUpdater<TestEntity, Guid> entityUpdater, 
-            Action<HateoasConfig> config = null) 
-            : base(mapper, resourceRepository, orderByPropertyMappingService, entityUpdater, config)
-        {
-        }
-
-        public new HttpResponse Response { get; set; } 
     }
 }

@@ -54,6 +54,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
         /// Configures InvalidModelStateResponseFactory. 
         /// Adds AutoMapper using <see cref="AppDomain.GetAssemblies"/> from the <see cref="AppDomain.CurrentDomain"/>.
         /// Configures 406 to be returned for unacceptable Content-types
+        /// Set Null value handling to ignore nulls when serializing output
         /// </summary>
         /// <param name="services"></param>
         public static void AddRestful(this IServiceCollection services)
@@ -87,7 +88,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
                 opts.Filters.Add(new DisableHateoasLinksActionFilter());
 
                 // NOTE: Add support for collection and data-shaping to RESTful resource endpoints
-                // (namely Controllers that inherit from ResourceControllerBase<,>
+                // (only for Controllers that inherit from ResourceControllerBase<,>
                 opts.Filters.Add(new SupportCollectionParamsActionFilter());
                 opts.Filters.Add(new SupportDataShapingParamsActionFilter());
             });
@@ -106,11 +107,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
         /// <param name="env"></param>
         public static void RestfulExceptionHandling(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
+            if (!env.IsDevelopment())
             {
                 app.UseExceptionHandler(cfg =>
                 {

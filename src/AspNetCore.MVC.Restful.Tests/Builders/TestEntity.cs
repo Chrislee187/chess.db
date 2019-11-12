@@ -7,8 +7,7 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
     public class TestEntity : DbEntity<Guid>
     {
     }
-    public class TestDto : IResourceId<Guid>
+    public class TestDto : Resource<Guid>
     {
-        public Guid Id { get; set; } 
     }
 }
