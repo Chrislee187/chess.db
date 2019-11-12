@@ -5,7 +5,7 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
 {
     public class TestHateoasController : HateoasController<TestEntity, Guid>
     {
-        public TestHateoasController(string entityName) : base()
+        public TestHateoasController()
         {
             Url = new TestUrlHelper();
         }

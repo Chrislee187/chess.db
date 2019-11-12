@@ -14,7 +14,7 @@ namespace AspNetCore.MVC.Restful.Tests
         [SetUp]
         public void Setup()
         {
-            _controller = new TestHateoasController("TestEntity");
+            _controller = new TestHateoasController();
         }
         [Test]
         public void ResourcesGetLinks_returns_current_page_only_for_single_page_lists()

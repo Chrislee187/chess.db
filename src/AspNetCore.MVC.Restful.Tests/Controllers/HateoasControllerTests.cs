@@ -14,7 +14,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         [SetUp]
         public void Setup()
         {
-            _controller = new TestHateoasController("TestEntity");
+            _controller = new TestHateoasController();
         }
 
         [Test]

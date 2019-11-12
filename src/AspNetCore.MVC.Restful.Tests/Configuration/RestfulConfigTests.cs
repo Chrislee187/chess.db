@@ -4,7 +4,7 @@ using Shouldly;
 
 namespace AspNetCore.MVC.Restful.Tests.Configuration
 {
-    public class RestfulConfigTests
+    public class CollectionConfigTests
     {
         private CollectionConfig _cfg;
 
@@ -76,7 +76,7 @@ namespace AspNetCore.MVC.Restful.Tests.Configuration
 
             _cfg.SearchText = "dave";
             _cfg.AppendToUrl("")
-                .ShouldBe(root + $"&search-query=dave");
+                .ShouldBe(root + $"&search=dave");
         }
     }
 }

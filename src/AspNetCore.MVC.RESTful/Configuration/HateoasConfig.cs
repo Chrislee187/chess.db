@@ -9,13 +9,9 @@ namespace AspNetCore.MVC.RESTful.Configuration
     public class HateoasConfig
     {
         /// <summary>
-        /// Whether to add Hateoas links to the collection level resources
-        /// </summary>
-        public bool AddLinksToCollectionResources { get; set; } = true;
-        /// <summary>
         /// Whether to add Hateoas links to individual resources
         /// </summary>
-        public bool AddLinksToIndividualResources { get; set; } = true;
+        public bool AddLinks { get; set; } = true;
 
         /// <summary>
         /// RouteName for <code>GET /{EntityName}s</code>

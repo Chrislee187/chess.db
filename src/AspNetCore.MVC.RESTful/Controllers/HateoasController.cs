@@ -151,7 +151,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <summary>
         /// Factory method to build <see cref="HateoasLink"/>'s for resource delete responses
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="additionalLinks"></param>
         /// <returns></returns>
         public List<HateoasLink> ResourceDeleteLinks(IEnumerable<HateoasLink> additionalLinks = null)

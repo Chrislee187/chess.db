@@ -6,15 +6,14 @@ namespace AspNetCore.MVC.RESTful.Filters
 {
     /// <summary>
     ///  Checks if the controller is a HateoasController and for
-    /// a `nolinks` query string parameter. If found, sets the <see cref="HateoasConfig.AddLinksToCollectionResources"/>
-    /// and <see cref="HateoasConfig.AddLinksToIndividualResources"/> flags to false.
+    /// a `nolinks` query string parameter. If found, sets the
+    /// <see cref="HateoasConfig.AddLinks"/> flag to false.
     ///
     /// Restores original values after action is executed
     /// </summary>
     public class DisableHateoasLinksActionFilter : IActionFilter
     {
-        private bool _collectionSaved;
-        private bool _individualSaved;
+        private bool _originalLinksStatus;
 
         private readonly string _linksArgName;
         public DisableHateoasLinksActionFilter(string linksArgName = "nolinks")
@@ -25,13 +24,12 @@ namespace AspNetCore.MVC.RESTful.Filters
         {
             if (context.Controller is HateoasController contextController)
             {
-                _collectionSaved = contextController.HateoasConfig.AddLinksToCollectionResources;
-                _individualSaved = contextController.HateoasConfig.AddLinksToIndividualResources;
+
+                _originalLinksStatus = contextController.HateoasConfig.AddLinks;
 
                 if (contextController.Request.Query.ContainsKey(_linksArgName))
                 {
-                    contextController.HateoasConfig.AddLinksToCollectionResources = false;
-                    contextController.HateoasConfig.AddLinksToIndividualResources = false;
+                    contextController.HateoasConfig.AddLinks = false;
                 }
             }
         }
@@ -40,8 +38,8 @@ namespace AspNetCore.MVC.RESTful.Filters
         {
             if (context.Controller is HateoasController contextController)
             {
-                contextController.HateoasConfig.AddLinksToCollectionResources = _collectionSaved;
-                contextController.HateoasConfig.AddLinksToIndividualResources = _individualSaved;
+
+                contextController.HateoasConfig.AddLinks = _originalLinksStatus;
             }
         }
     }

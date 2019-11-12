@@ -52,5 +52,8 @@ namespace AspNetCore.MVC.RESTful.Helpers
 
             return result;
         }
+        public static IDictionary<string, object> ToExpandoDict(this object obj) => obj.ToExpando();
+
+        public static IDictionary<string, object> ToExpandoDict(this ExpandoObject obj) => obj;
     }
 }

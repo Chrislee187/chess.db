@@ -1,5 +1,4 @@
-﻿using System.Deployment.Application;
-using AspNetCore.MVC.RESTful.Filters;
+﻿using AspNetCore.MVC.RESTful.Filters;
 
 namespace AspNetCore.MVC.RESTful.Configuration
 {

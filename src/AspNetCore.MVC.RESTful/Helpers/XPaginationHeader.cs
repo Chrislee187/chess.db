@@ -4,7 +4,6 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using AspNetCore.MVC.RESTful.Configuration;
 using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json.Converters;
 
 namespace AspNetCore.MVC.RESTful.Helpers
 {
@@ -15,7 +14,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
     {
         private readonly CollectionConfig _collectionConfig;
 
-        public KeyValuePair<string, StringValues> KVP { get; }
+        public KeyValuePair<string, StringValues> Value { get; }
 
         public XPaginationHeader(
             IPaginationMetadata pagination,
@@ -46,7 +45,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
                     IgnoreNullValues = true
                 });
 
-            KVP = new KeyValuePair<string, StringValues>(key, value);
+            Value = new KeyValuePair<string, StringValues>(key, value);
         }
 
         private string CreatePlayersResourceUri(ResourceUriType type,

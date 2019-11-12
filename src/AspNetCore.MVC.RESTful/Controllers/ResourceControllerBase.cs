@@ -50,7 +50,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
             IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService,
             IEntityUpdater<TEntity, TId> entityUpdater,
             Action<HateoasConfig> config = null)
-                :base()
         {
             ConfigureHateoas(config);
 
@@ -63,7 +62,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <summary>
         /// HTTP GET /{resource}
         /// </summary>
-        protected IActionResult ResourcesGet<TParameters>([NotNull] TParameters parameters,
+        public IActionResult ResourcesGet<TParameters>([NotNull] TParameters parameters,
             [NotNull] IEntityFilter<TEntity> entityFilter,
             [NotNull] IEntitySearch<TEntity> entitySearch,
             IEnumerable<HateoasLink> additionalCollectionLinks = null,
@@ -100,12 +99,12 @@ namespace AspNetCore.MVC.RESTful.Controllers
             var resources = Mapper.Map<IEnumerable<TDto>>(pagedEntities)
                 .ShapeData(CollectionConfig.Shape).ToList();
             
-            if (HateoasConfig.AddLinksToIndividualResources)
+            if (HateoasConfig.AddLinks)
             {
                 AddHateoasLinksToResourceCollection(resources, additionalIndividualLinks);
             }
             
-            if (HateoasConfig.AddLinksToCollectionResources)
+            if (HateoasConfig.AddLinks)
             {
                 additionalCollectionLinks = additionalCollectionLinks == null
                     ? new List<HateoasLink>().ToList()
@@ -145,7 +144,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             var resource = (IDictionary<string, object>) Mapper.Map<TDto>(entity)
                 .ShapeData(CollectionConfig.Shape);
 
-            if (HateoasConfig.AddLinksToIndividualResources)
+            if (HateoasConfig.AddLinks)
             {
                 if (resource.ContainsKey("Id"))
                 {
@@ -176,7 +175,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             IDictionary<string, object> resource = createdResource.ShapeData("");
             
-            if (HateoasConfig.AddLinksToIndividualResources)
+            if (HateoasConfig.AddLinks)
             {
                 dynamic id = createdResource.Id;
                 resource.Add(HateoasConfig.LinksPropertyName, ResourceCreateLinks(id, additionalLinks));
@@ -215,7 +214,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
                 IDictionary<string, object> resource = createdDto.ShapeData("");
 
-                if (HateoasConfig.AddLinksToIndividualResources)
+                if (HateoasConfig.AddLinks)
                 {
                     resource.Add(HateoasConfig.LinksPropertyName, ResourceUpsertLinks(id, additionalLinks));
                 }
@@ -270,7 +269,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             _restResourceRepository.Update(resource);
             _restResourceRepository.Save();
 
-            if (HateoasConfig.AddLinksToIndividualResources)
+            if (HateoasConfig.AddLinks)
             {
                 IDictionary<string, object> resourceForLinks = patchedResource.ShapeData("");
 
@@ -332,7 +331,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 (parameters) => Url.Link(resourcesGetRouteName, parameters),
                 CollectionConfig
             );
-            Response.Headers.Add(xPaginationHeader.KVP);
+            Response.Headers.Add(xPaginationHeader.Value);
         }
     }
 }
