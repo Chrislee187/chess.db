@@ -13,6 +13,7 @@ using AspNetCore.MVC.Restful.Tests.Builders;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Shouldly;
@@ -135,25 +136,38 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
                 .ContainsKey("X-Pagination")
                 .ShouldBeTrue();
 
-            var p = JsonConvert.DeserializeObject<ExpandoObject>(_controller.Response.Headers["X-Pagination"]);
-            var pagination = new Dictionary<string,object>(p);
+            XPaginationHeaderShouldBeCorrect(_controller.Response.Headers["X-Pagination"], 2, 2, 5, 10);
+        }
+
+        private void XPaginationHeaderShouldBeCorrect(StringValues headerValues, int currentPage, int pageSize, int totalPages, int pageCount)
+        {
+            var p = JsonConvert.DeserializeObject<ExpandoObject>(headerValues);
+            var pagination = new Dictionary<string, object>(p);
 
             pagination.ContainsKey("CurrentPage").ShouldBeTrue();
-            int.Parse(pagination["CurrentPage"].ToString()).ShouldBe(2);
-            
+            int.Parse(pagination["CurrentPage"].ToString()).ShouldBe(currentPage);
+
             pagination.ContainsKey("PageSize").ShouldBeTrue();
-            int.Parse(pagination["PageSize"].ToString()).ShouldBe(2);
-            
+            int.Parse(pagination["PageSize"].ToString()).ShouldBe(pageSize);
+
             pagination.ContainsKey("TotalPages").ShouldBeTrue();
-            int.Parse(pagination["TotalPages"].ToString()).ShouldBe(5);
+            int.Parse(pagination["TotalPages"].ToString()).ShouldBe(totalPages);
 
             pagination.ContainsKey("TotalCount").ShouldBeTrue();
-            int.Parse(pagination["TotalCount"].ToString()).ShouldBe(10);
+            int.Parse(pagination["TotalCount"].ToString()).ShouldBe(pageCount);
 
-            pagination.ContainsKey("PreviousPage").ShouldBeTrue();
-            pagination["PreviousPage"].ToString().ShouldNotBeNullOrEmpty();
-            pagination.ContainsKey("NextPage").ShouldBeTrue();
-            pagination["NextPage"].ToString().ShouldNotBeNullOrEmpty();
+            if (totalPages > currentPage)
+            {
+                pagination.ContainsKey("NextPage").ShouldBeTrue();
+                pagination["NextPage"].ToString().ShouldNotBeNullOrEmpty();
+            }
+
+            if (currentPage > 1)
+            {
+                pagination.ContainsKey("PreviousPage").ShouldBeTrue();
+                pagination["PreviousPage"].ToString().ShouldNotBeNullOrEmpty();
+            }
+
         }
 
 
