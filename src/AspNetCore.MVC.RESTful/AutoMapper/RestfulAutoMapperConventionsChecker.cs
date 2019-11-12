@@ -103,7 +103,7 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
             return null;
         }
 
-        private static string ResourceFilter(string entity) => $"Get{entity}sResourceFilter";
+        private static string ResourceFilter(string entity) => $"Get{entity}sEntityFilter";
         private static string Filters(string entity) => $"Get{entity}sFilters";
     }
 }

@@ -17,6 +17,22 @@ namespace AspNetCore.MVC.RESTful.Configuration
     {
         private static RestfulAutoMapperConventionsChecker _mapperChecker;
 
+        /// <summary>
+        /// Setup Restful for the application, calls
+        /// <code>
+        /// 
+        /// app.UseRouting();
+        ///
+        /// app.UseAuthorization();
+        ///
+        /// app.UseEndpoints(endpoints =>
+        /// {
+        ///     endpoints.MapControllers();
+        /// });
+        /// </code>
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public static void UseRestful(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             // NOTE: Order is SPECIFIC!
@@ -33,35 +49,13 @@ namespace AspNetCore.MVC.RESTful.Configuration
             });
         }
 
-        public static void CheckRestfulMappingsFor<TEntity>(
-            [NotNull] this IApplicationBuilder app,
-            bool checkResourceGet = true,
-            bool checkResourcesGet = true,
-            bool checkResourceCreate = true,
-            bool checkResourceUpdate = true)
-        {
-            GetChecker(app).Check<TEntity>(
-                    checkResourceGet, 
-                    checkResourcesGet, 
-                    checkResourceCreate, 
-                    checkResourceUpdate
-                );
-        }
-        
-        public static void CheckRestfulMappingsFor<TEntity>(
-            [NotNull] this IApplicationBuilder app,
-            RestfulEndpointMapping endpoints = RestfulEndpointMapping.Readwrite)
-        {
-            if (endpoints == RestfulEndpointMapping.Readonly)
-            {
-                GetChecker(app).CheckReadonly<TEntity>();
-            }
-            else
-            {
-                GetChecker(app).Check<TEntity>();
-            }
-        }
-
+        /// <summary>
+        /// Add Controllers, NewtonsoftJson, Xml Data Contract Formatters. 
+        /// Configures InvalidModelStateResponseFactory. 
+        /// Adds AutoMapper using <see cref="AppDomain.GetAssemblies"/> from the <see cref="AppDomain.CurrentDomain"/>.
+        /// Configures 406 to be returned for unacceptable Content-types
+        /// </summary>
+        /// <param name="services"></param>
         public static void AddRestful(this IServiceCollection services)
         {
             services
@@ -105,6 +99,11 @@ namespace AspNetCore.MVC.RESTful.Configuration
                 ;
         }
 
+        /// <summary>
+        /// Configure non development mode exception handling to expose no information.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public static void RestfulExceptionHandling(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -129,5 +128,34 @@ namespace AspNetCore.MVC.RESTful.Configuration
             => _mapperChecker ??= new RestfulAutoMapperConventionsChecker(
                     app.ApplicationServices.GetService<IMapper>()
             );
+
+        public static void CheckRestfulMappingsFor<TEntity>(
+            [NotNull] this IApplicationBuilder app,
+            RestfulEndpointMappingChecks endpoints = RestfulEndpointMappingChecks.Readwrite)
+        {
+            if (endpoints == RestfulEndpointMappingChecks.Readonly)
+            {
+                GetChecker(app).CheckReadonly<TEntity>();
+            }
+            else
+            {
+                GetChecker(app).Check<TEntity>();
+            }
+        }
+
+        public static void CheckRestfulMappingsFor<TEntity>(
+            [NotNull] this IApplicationBuilder app,
+            bool checkResourceGet = true,
+            bool checkResourcesGet = true,
+            bool checkResourceCreate = true,
+            bool checkResourceUpdate = true)
+        {
+            GetChecker(app).Check<TEntity>(
+                checkResourceGet, 
+                checkResourcesGet, 
+                checkResourceCreate, 
+                checkResourceUpdate
+            );
+        }
     }
 }

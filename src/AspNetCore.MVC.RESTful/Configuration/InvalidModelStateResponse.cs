@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore.MVC.RESTful.Configuration
 {
+    /// <summary>
+    /// Response factory used to configure MVC Api behaviors to produce invalid model state responses
+    /// that use the proposed standard <see cref="ProblemDetails"/> response format.
+    /// </summary>
     public class InvalidModelStateResponse
     {
         private readonly string _title;
@@ -11,7 +15,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
         private readonly string _details;
         private readonly string _contentType;
         private readonly string _traceIdKey;
-        private string _problemType;
+        private readonly string _problemType;
 
         public InvalidModelStateResponse(
             string title = "One or more model validation errors occurred.",

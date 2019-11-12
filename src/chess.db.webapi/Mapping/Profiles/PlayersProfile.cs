@@ -41,12 +41,12 @@ namespace chess.db.webapi.Mapping.Profiles
 
         private void MapPlayerParameters()
         {
-            CreateMap<GetPlayersFilters, GetPlayersResourceFilter>()
+            CreateMap<GetPlayersFilters, GetPlayersEntityFilter>()
                 .ForMember(m => m.Firstname, o => o.MapFrom(i => i.FirstnameFilter))
                 .ForMember(m => m.Middlename, o => o.MapFrom(i => i.MiddlenameFilter))
                 .ForMember(m => m.Lastname, o => o.MapFrom(i => i.LastnameFilter))
                 ;
-            CreateMap<GetPlayersResourceFilter, GetPlayersFilters>()
+            CreateMap<GetPlayersEntityFilter, GetPlayersFilters>()
                 .ForMember(m => m.FirstnameFilter, o => o.MapFrom(i => i.Firstname))
                 .ForMember(m => m.MiddlenameFilter, o => o.MapFrom(i => i.Middlename))
                 .ForMember(m => m.LastnameFilter, o => o.MapFrom(i => i.Lastname))
@@ -65,10 +65,10 @@ namespace chess.db.webapi.Mapping.Profiles
 
         private void MapPgnPlayerParameters()
         {
-            CreateMap<GetPgnPlayersFilters, GetPgnPlayersResourceFilter>()
+            CreateMap<GetPgnPlayersFilters, GetPgnPlayersEntityFilter>()
                 .ForMember(m => m.Name,
                     o => o.MapFrom(i => i.NameFilter));
-            CreateMap<GetPgnPlayersResourceFilter, GetPgnPlayersFilters>()
+            CreateMap<GetPgnPlayersEntityFilter, GetPgnPlayersFilters>()
                 .ForMember(m => m.NameFilter,
                     o => o.MapFrom(i => i.Name));
 

@@ -19,19 +19,21 @@ using AspNetCore.MVC.RESTful.Services;
 namespace AspNetCore.MVC.RESTful.Controllers
 {
     /// <summary>
-    /// A base class for an MVC Controller that supports default Restful endpoints.
-    /// Uses AutoMapper to map Entities to/from DTO's and for mapping entity specific
-    /// filtering data.
+    /// Abstract implementation of an MVC Controller that supports default standard REST endpoints.
+    /// i.e. HEAD, OPTIONS, GET, POST, PUT, PATCH, DELETE
     /// <list>
     /// See also 
     /// <seealso cref="RestfulAutoMapperConventionsChecker"></seealso>,
-    /// <seealso cref="HateoasController"></seealso>
+    /// <seealso cref="HateoasController"></seealso>.
+    /// <seealso cref="IResourceRepository{TEntity,TId}"></seealso>,
+    /// <seealso cref="IEntityUpdater{TEntity,TId}"></seealso>,
+    /// <seealso cref="IOrderByPropertyMappingService{TEntity,TId}"></seealso>
     /// </list>
     /// </summary>
 
-    /// <typeparam name="TDto">Data Transfer Object that can be "Automapped" from TEntity</typeparam>
+    /// <typeparam name="TDto">Data Transfer Object that can be "Automapped" to and from <see cref="TEntity"/></typeparam>
     /// <typeparam name="TEntity">Underlying Entity for the Resource being represented</typeparam>
-    /// <typeparam name="TId">Underlying type of the primary key "Id" field on the Entity</typeparam>
+    /// <typeparam name="TId">Underlying type of the primary key "Id" field of the <see cref="TEntity"/></typeparam>
     public abstract class ResourceControllerBase<TDto, TEntity, TId> : HateoasController<TEntity, TId>
         where TEntity : class
         where TDto : IResourceId<Guid>
@@ -62,18 +64,18 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// HTTP GET /{resource}
         /// </summary>
         protected IActionResult ResourcesGet<TParameters>([NotNull] TParameters parameters,
-            [NotNull] IResourceFilter<TEntity> resourceFilter,
-            [NotNull] IResourceSearch<TEntity> resourceSearch,
+            [NotNull] IEntityFilter<TEntity> entityFilter,
+            [NotNull] IEntitySearch<TEntity> entitySearch,
             IEnumerable<HateoasLink> additionalCollectionLinks = null,
             IEnumerable<HateoasLink> additionalIndividualLinks = null)
         {
-            if (!typeof(TDto).TypeHasOutputProperties(Restful.Shape))
+            if (!typeof(TDto).TypeHasOutputProperties(CollectionConfig.Shape))
             {
                 return BadRequest("Shape has one or more invalid field names.");
             }
 
             var orderByCheck = _orderByPropertyMappingService
-                .ClauseIsValid(Restful.OrderBy);
+                .ClauseIsValid(CollectionConfig.OrderBy);
 
             if (!orderByCheck.Valid)
             {
@@ -85,18 +87,18 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             var pagedEntities = _restResourceRepository
                 .Load(
-                    Restful.Page,
-                    Restful.PageSize, 
-                    resourceFilter, 
-                    resourceSearch,
-                    Restful.SearchQuery,
-                    Restful.OrderBy, 
+                    CollectionConfig.Page,
+                    CollectionConfig.PageSize, 
+                    entityFilter, 
+                    entitySearch,
+                    CollectionConfig.SearchText,
+                    CollectionConfig.OrderBy, 
                     orderByMappings);
 
             AddPaginationHeader(HateoasConfig.ResourcesGetRouteName, pagedEntities);
 
             var resources = Mapper.Map<IEnumerable<TDto>>(pagedEntities)
-                .ShapeData(Restful.Shape).ToList();
+                .ShapeData(CollectionConfig.Shape).ToList();
             
             if (HateoasConfig.AddLinksToIndividualResources)
             {
@@ -128,7 +130,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         protected ActionResult<TDto> ResourceGet(TId id,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
-            if (!typeof(TDto).TypeHasOutputProperties(Restful.Shape))
+            if (!typeof(TDto).TypeHasOutputProperties(CollectionConfig.Shape))
             {
                 return BadRequest("Shape has one or more invalid field names.");
             }
@@ -141,13 +143,13 @@ namespace AspNetCore.MVC.RESTful.Controllers
             }
 
             var resource = (IDictionary<string, object>) Mapper.Map<TDto>(entity)
-                .ShapeData(Restful.Shape);
+                .ShapeData(CollectionConfig.Shape);
 
             if (HateoasConfig.AddLinksToIndividualResources)
             {
                 if (resource.ContainsKey("Id"))
                 {
-                    resource.Add(HateoasConfig.LinksPropertyName, ResourceGetLinks(id, Restful.Shape, additionalLinks));
+                    resource.Add(HateoasConfig.LinksPropertyName, ResourceGetLinks(id, CollectionConfig.Shape, additionalLinks));
                 }
             }
 
@@ -183,7 +185,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return CreatedAtRoute(
                 HateoasConfig.ResourcesGetRouteName,
                 new {createdResource.Id},
-                resource.ShapeData(Restful.Shape)
+                resource.ShapeData(CollectionConfig.Shape)
             );
         }
 
@@ -221,7 +223,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 result = CreatedAtRoute(
                     HateoasConfig.ResourceGetRouteName,
                     new {id},
-                    resource.ShapeData(Restful.Shape)
+                    resource.ShapeData(CollectionConfig.Shape)
                 );
             }
             else
@@ -273,7 +275,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 IDictionary<string, object> resourceForLinks = patchedResource.ShapeData("");
 
                 resourceForLinks.Add(HateoasConfig.LinksPropertyName, ResourcePatchLinks(id));
-                return Ok(resourceForLinks.ShapeData(Restful.Shape));
+                return Ok(resourceForLinks.ShapeData(CollectionConfig.Shape));
             }
 
             return NoContent();
@@ -328,9 +330,9 @@ namespace AspNetCore.MVC.RESTful.Controllers
             var xPaginationHeader = new XPaginationHeader(
                 pagedEntities,
                 (parameters) => Url.Link(resourcesGetRouteName, parameters),
-                Restful
+                CollectionConfig
             );
-            Response.Headers.Add(xPaginationHeader.Key, xPaginationHeader.Value);
+            Response.Headers.Add(xPaginationHeader.KVP);
         }
     }
 }

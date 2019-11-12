@@ -10,8 +10,9 @@ namespace AspNetCore.MVC.RESTful.Helpers
     {
         /// <summary>
         /// String based sorting using form
-        ///
-        /// 'fieldname [desc|asc], [[fieldname [desc|asc]] ...'
+        /// <code>
+        /// 'fieldname [desc|asc], [...]'
+        /// </code>
         /// </summary>
         /// <remarks>
         /// Uses `System.Linq.Dynamic.Core` for the OrderBy(string) Linq extension

@@ -1,5 +1,8 @@
 ﻿namespace AspNetCore.MVC.RESTful.Helpers
 {
+    /// <summary>
+    /// Represents the pagination metadata placed in the <see cref="XPaginationHeader"/>.
+    /// </summary>
     public interface IPaginationMetadata
     {
         int CurrentPage { get; }

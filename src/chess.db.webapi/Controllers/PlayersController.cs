@@ -41,8 +41,8 @@ namespace chess.db.webapi.Controllers
         {
             return ResourcesGet(
                 filters, 
-                Mapper.Map<GetPlayersResourceFilter>(filters), 
-                new GetPlayersResourceSearch());
+                Mapper.Map<GetPlayersEntityFilter>(filters), 
+                new GetPlayersEntitySearch());
         }
 
         [HttpGet("{id}", Name = GetPlayerRouteName)]

@@ -5,11 +5,11 @@ using chess.games.db.Entities;
 namespace chess.games.db.api.Players
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class GetPlayersResourceSearch : IResourceSearch<Player>
+    public class GetPlayersEntitySearch : IEntitySearch<Player>
     {
-        public IQueryable<Player> Search(IQueryable<Player> resources, string searchText)
+        public IQueryable<Player> Search(IQueryable<Player> entities, string searchText)
         {
-            return resources.Where(p => p.Firstname.Contains(searchText)
+            return entities.Where(p => p.Firstname.Contains(searchText)
                                     || p.Middlenames.Contains(searchText)
                                     || p.Surname.Contains(searchText));
         }

@@ -1,22 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using AspNetCore.MVC.RESTful.Configuration;
+using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json.Converters;
 
 namespace AspNetCore.MVC.RESTful.Helpers
 {
-    public class XPaginationHeader
+    /// <summary>
+    /// 
+    /// </summary>
+    public class XPaginationHeader 
     {
-        private readonly RestfulConfig _restful;
-        public string Key { get; set; }
-        public string Value { get; set; }
+        private readonly CollectionConfig _collectionConfig;
+
+        public KeyValuePair<string, StringValues> KVP { get; }
 
         public XPaginationHeader(
             IPaginationMetadata pagination,
             Func<object, string> urlBuilder, 
-            RestfulConfig restful)
+            CollectionConfig collectionConfig)
         {
-            _restful = restful;
+            _collectionConfig = collectionConfig;
             var metadata = new
             {
                 pagination.TotalCount,
@@ -31,14 +37,16 @@ namespace AspNetCore.MVC.RESTful.Helpers
                     : null
             };
 
-            Key = "X-Pagination";
-            Value = JsonSerializer.Serialize(metadata,
+            var key = "X-Pagination";
+            var value = JsonSerializer.Serialize(metadata,
                 new JsonSerializerOptions()
                 {
                     // NOTE: Stops the '?' & '&' chars in the links being escaped
                     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                     IgnoreNullValues = true
                 });
+
+            KVP = new KeyValuePair<string, StringValues>(key, value);
         }
 
         private string CreatePlayersResourceUri(ResourceUriType type,
@@ -46,7 +54,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
             
             )
         {
-            var originalPage = _restful.Page;
+            var originalPage = _collectionConfig.Page;
             var page = originalPage;
             switch (type)
             {
@@ -61,9 +69,9 @@ namespace AspNetCore.MVC.RESTful.Helpers
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
 
-            _restful.Page = page;
-            var link = _restful.AppendToUrl(urlBuilder(null));
-            _restful.Page = originalPage;
+            _collectionConfig.Page = page;
+            var link = _collectionConfig.AppendToUrl(urlBuilder(null));
+            _collectionConfig.Page = originalPage;
 
             return link;
         }

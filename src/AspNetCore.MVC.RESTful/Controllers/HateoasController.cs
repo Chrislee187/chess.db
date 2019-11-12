@@ -13,12 +13,12 @@ namespace AspNetCore.MVC.RESTful.Controllers
     public class HateoasController : ControllerBase
     {
         public readonly HateoasConfig HateoasConfig;
-        public readonly RestfulConfig Restful;
+        public readonly CollectionConfig CollectionConfig;
 
         protected HateoasController(string entityName)
         {
             HateoasConfig = new HateoasConfig(entityName);
-            Restful = new RestfulConfig();
+            CollectionConfig = new CollectionConfig();
         }
     }
     /// <summary>
@@ -32,12 +32,18 @@ namespace AspNetCore.MVC.RESTful.Controllers
         protected HateoasController() : base(typeof(TEntity).Name) 
         { }
 
-
+        /// <summary>
+        /// Factory method to build <see cref="HateoasLink"/>'s for resource collection responses
+        /// </summary>
+        /// <typeparam name="TParameters"></typeparam>
+        /// <param name="parameters"></param>
+        /// <param name="pagination"></param>
+        /// <returns></returns>
         public List<HateoasLink> ResourcesGetLinks<TParameters>(
             TParameters parameters,
             IPaginationMetadata pagination)
         {
-            var currentPage = Restful.Page;
+            var currentPage = CollectionConfig.Page;
             var links = new List<HateoasLink>
             {
                 ResourcesGetLinkBuilder(HateoasConfig.Relationships.CurrentPage, parameters),
@@ -45,20 +51,27 @@ namespace AspNetCore.MVC.RESTful.Controllers
             
             if (pagination.HasPrevious)
             {
-                Restful.Page = currentPage - 1;
+                CollectionConfig.Page = currentPage - 1;
                 links.Add(ResourcesGetLinkBuilder(HateoasConfig.Relationships.PreviousPage, parameters));
             }
 
             if (pagination.HasNext)
             {
-                Restful.Page = currentPage + 1;
+                CollectionConfig.Page = currentPage + 1;
                 links.Add(ResourcesGetLinkBuilder(HateoasConfig.Relationships.NextPage, parameters));
             }
 
-            Restful.Page = currentPage;
+            CollectionConfig.Page = currentPage;
             return links;
         }
 
+        /// <summary>
+        /// Factory method to build <see cref="HateoasLink"/>'s for individual resource responses
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="shape"></param>
+        /// <param name="additionalLinks"></param>
+        /// <returns></returns>
         public List<HateoasLink> ResourceGetLinks(TId id, string shape,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
@@ -75,6 +88,12 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return links;
         }
 
+        /// <summary>
+        /// Factory method to build <see cref="HateoasLink"/>'s for new resource creation responses
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="additionalLinks"></param>
+        /// <returns></returns>
         public List<HateoasLink> ResourceCreateLinks(TId id,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
@@ -89,6 +108,12 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return links;
         }
 
+        /// <summary>
+        /// Factory method to build <see cref="HateoasLink"/>'s for resource upsert responses
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="additionalLinks"></param>
+        /// <returns></returns>
         public List<HateoasLink> ResourceUpsertLinks(TId id,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
@@ -103,6 +128,12 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return links;
         }
 
+        /// <summary>
+        /// Factory method to build <see cref="HateoasLink"/>'s for resource patch responses
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="additionalLinks"></param>
+        /// <returns></returns>
         public List<HateoasLink> ResourcePatchLinks(TId id,
             IEnumerable<HateoasLink> additionalLinks = null)
         {
@@ -117,6 +148,12 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return links;
         }
 
+        /// <summary>
+        /// Factory method to build <see cref="HateoasLink"/>'s for resource delete responses
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="additionalLinks"></param>
+        /// <returns></returns>
         public List<HateoasLink> ResourceDeleteLinks(IEnumerable<HateoasLink> additionalLinks = null)
         {
             var links = new List<HateoasLink>
@@ -134,7 +171,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         {
             var link = Url.Link(HateoasConfig.ResourcesGetRouteName, parameters);
 
-            link = Restful.AppendToUrl(link);
+            link = CollectionConfig.AppendToUrl(link);
 
             return new HateoasLink(
                 rel,
@@ -200,7 +237,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 {
                     var links = (IEnumerable<HateoasLink>) ResourceGetLinks(
                         (dynamic) idObj,
-                        Restful.Shape,
+                        CollectionConfig.Shape,
                         additionalLinks);
 
                     if (links.Any())

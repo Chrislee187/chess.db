@@ -14,17 +14,18 @@ namespace AspNetCore.MVC.RESTful.Helpers
                                                                   | BindingFlags.Instance;
         /// <summary>
         /// Reshape objects to contain only the fields specified in the <paramref name="shape">shape</paramref>.
+        /// <remarks>
+        /// Because an ExpandoObject is treated as dictionary during serialization,
+        /// default serializer NullValue handling will not be
+        /// used as this functionality is for properties not dictionary
+        /// values.
+        /// https://github.com/JamesNK/Newtonsoft.Json/issues/951
+        /// </remarks>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <param name="shape">Comma separated list of property names to placed in the expando object</param>
         /// <param name="ignoreNulls">When true, do not add any any properties whose value is NULL to the resulting ExpandoObject 
-        ///<remarks>
-        /// Because an ExpandoObject is treated as dictionary during serialization, default serializer NullValue handling will not be
-        /// used as this functionality is for properties not dictionary
-        /// values.
-        /// https://github.com/JamesNK/Newtonsoft.Json/issues/951
-        /// </remarks>
         /// </param>
         /// <returns>List of ExpandoObjects with only the properties specified by <paramref name="shape"/> on them</returns>
         public static IEnumerable<ExpandoObject> ShapeData<T>(
@@ -44,7 +45,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
                 var expandoObject = shapeProperties
                     .ToDictionary(k => k.Name, v => v.GetValue(sourceObject))
                     .Where(d => ignoreNulls && d.Value != null) 
-                    .ToExpandObject();
+                    .ToExpando();
 
                 expandoObjectList.Add(expandoObject);
             }
@@ -52,6 +53,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
             return expandoObjectList;
         }
 
+        /// <inheritdoc cref="ShapeData{T}(System.Collections.Generic.IEnumerable{T},string,bool)"/>
         public static ExpandoObject ShapeData<T>(this T source,
             string shape,
             bool ignoreNulls = true)
@@ -62,7 +64,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
             var expando = GetProperties<T>(propertyNames).ToList()
                 .ToDictionary(k => k.Name, v => v.GetValue(source))
                 .Where(d => ignoreNulls && d.Value != null)
-                .ToExpandObject();
+                .ToExpando();
 
             return expando;
         }

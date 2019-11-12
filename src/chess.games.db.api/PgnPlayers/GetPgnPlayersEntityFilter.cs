@@ -5,7 +5,7 @@ using chess.games.db.Entities;
 namespace chess.games.db.api.PgnPlayers
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class GetPgnPlayersResourceFilter : ResourceFilter<PgnPlayer>
+    public class GetPgnPlayersEntityFilter : EntityFilter<PgnPlayer>
     {
         public string Name { get; set; }
 

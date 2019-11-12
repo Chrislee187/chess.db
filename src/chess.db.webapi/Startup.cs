@@ -55,8 +55,8 @@ namespace chess.db.webapi
             // TODO: We could automate this further by finding all types in assembly that inherit from
             // ResourceControllerBase, determine there generic types and automatically call CheckRestfulMappingsFor<TEntity>
             // How to cater for RW/RO ?????
-            app.CheckRestfulMappingsFor<Player>(RestfulEndpointMapping.Readwrite);
-            app.CheckRestfulMappingsFor<PgnPlayer>(RestfulEndpointMapping.Readonly);
+            app.CheckRestfulMappingsFor<Player>(RestfulEndpointMappingChecks.Readwrite);
+            app.CheckRestfulMappingsFor<PgnPlayer>(RestfulEndpointMappingChecks.Readonly);
         }
     }
 }

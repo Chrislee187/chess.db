@@ -7,7 +7,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
     {
         /// <summary>
         /// Checks the supplied type contains the supplied fields and those fields
-        /// are not marked with a JsonIgnore attribute
+        /// are not marked with a serialization ignore attributes
         /// </summary>
         /// <param name="type"></param>
         /// <param name="fields"></param>

@@ -7,6 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCore.MVC.RESTful.Repositories
 {
+    /// <summary>
+    /// Abstract Entity Framework Resource Repository
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <typeparam name="TId"></typeparam>
     public abstract class EntityFrameworkResourceRepository<TEntity, TId> : IResourceRepository<TEntity, TId> where TEntity : class
     {
         private readonly DbContext _dbContext;
@@ -22,8 +27,8 @@ namespace AspNetCore.MVC.RESTful.Repositories
 
         public PagedList<TEntity> Load(int page = 1,
             int pageSize = 20,
-            IResourceFilter<TEntity> filter = null,
-            IResourceSearch<TEntity> search = null,
+            IEntityFilter<TEntity> filter = null,
+            IEntitySearch<TEntity> search = null,
             string searchString = "",
             string orderBy = "",
             IDictionary<string, OrderByPropertyMappingValue> orderByMappings = null)
@@ -32,8 +37,8 @@ namespace AspNetCore.MVC.RESTful.Repositories
             
             var filtered = Reduce(
                 Resource, 
-                filter ?? ResourceFilter<TEntity>.Default, 
-                search ?? new DefaultResourceSearch<TEntity>(), 
+                filter ?? EntityFilter<TEntity>.Default, 
+                search ?? new DefaultEntitySearch<TEntity>(), 
                 searchString);
 
             var sorted = filtered.ApplySort(orderBy, orderByMappings);
@@ -49,8 +54,8 @@ namespace AspNetCore.MVC.RESTful.Repositories
         
         private IQueryable<TEntity> Reduce(
             IQueryable<TEntity> resources, 
-            IResourceFilter<TEntity> filter, 
-            IResourceSearch<TEntity> search,
+            IEntityFilter<TEntity> filter, 
+            IEntitySearch<TEntity> search,
             string searchText)
         {
             if (filter.Empty && string.IsNullOrEmpty(searchText))

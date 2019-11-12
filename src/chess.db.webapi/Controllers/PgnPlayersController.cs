@@ -39,12 +39,12 @@ namespace chess.db.webapi.Controllers
             [FromQuery] GetPgnPlayersFilters filters
             )
         {
-            var filter = Mapper.Map<GetPgnPlayersResourceFilter>(filters);
+            var filter = Mapper.Map<GetPgnPlayersEntityFilter>(filters);
 
             return ResourcesGet(
                 filters,
                 filter,
-                new GetPgnPlayersResourceSearch());
+                new GetPgnPlayersEntitySearch());
         }
 
         [HttpGet("{name}", Name=GetPgnPlayerRouteName)]

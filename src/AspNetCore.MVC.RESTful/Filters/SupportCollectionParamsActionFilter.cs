@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace AspNetCore.MVC.RESTful.Filters
 {    /// <summary>
      ///  Checks if the controller is a HateoasController and for
-     /// a `pagesize`, `page` and `orderby` query string parameter. If found, sets 
-     /// <see cref="RestfulConfig.PageSize"/>, <see cref="RestfulConfig.Page"/> and <see cref="RestfulConfig.OrderBy"/>
+     /// a `pagesize`, `page`, 'search' and `orderby` query string parameter. If found, sets the
+     /// <see cref="CollectionConfig.PageSize"/>,
+     /// <see cref="CollectionConfig.Page"/> and
+     /// <see cref="CollectionConfig.OrderBy"/>
+     /// <see cref="CollectionConfig.SearchText"/> respectively
      /// </summary>
     public class SupportCollectionParamsActionFilter : ActionFilterAttribute
     {
@@ -22,6 +25,7 @@ namespace AspNetCore.MVC.RESTful.Filters
                 GetPageSize(queryCollection, contextController);
                 GetCurrentPage(queryCollection, contextController);
                 GetOrderBy(queryCollection, contextController);
+                GetSearchQuery(queryCollection, contextController);
             }
         }
 
@@ -31,7 +35,7 @@ namespace AspNetCore.MVC.RESTful.Filters
 
             if (int.TryParse(val, out var pageSize))
             {
-                contextController.Restful.PageSize = pageSize;
+                contextController.CollectionConfig.PageSize = pageSize;
             }
         }
 
@@ -41,15 +45,18 @@ namespace AspNetCore.MVC.RESTful.Filters
 
             if (int.TryParse(val, out var page))
             {
-                contextController.Restful.Page = page;
+                contextController.CollectionConfig.Page = page;
             }
         }
-
-
         private static void GetOrderBy(IQueryCollection queryCollection, HateoasController contextController)
         {
             var val = queryCollection.GetByAlias("orderby", "order-by");
-            contextController.Restful.OrderBy = val;
+            contextController.CollectionConfig.OrderBy = val;
+        }
+        private static void GetSearchQuery(IQueryCollection queryCollection, HateoasController contextController)
+        {
+            var val = queryCollection.GetByAlias("search", "search-query","search-text");
+            contextController.CollectionConfig.SearchText = val;
         }
     }
 }

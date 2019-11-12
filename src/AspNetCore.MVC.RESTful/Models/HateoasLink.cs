@@ -1,5 +1,8 @@
 ﻿namespace AspNetCore.MVC.RESTful.Models
 {
+    /// <summary>
+    /// Model for a Hateoas link
+    /// </summary>
     public class HateoasLink
     {
 

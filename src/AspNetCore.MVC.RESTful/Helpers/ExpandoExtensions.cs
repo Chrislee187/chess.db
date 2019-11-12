@@ -5,8 +5,16 @@ using System.Reflection;
 
 namespace AspNetCore.MVC.RESTful.Helpers
 {
+    /// <summary>
+    /// Extension methods to assist with using <see cref="ExpandoObject"/> objects.
+    /// </summary>
     public static class ExpandoExtensions
     {
+        /// <summary>
+        /// Converts any <see cref="object"/> to an <see cref="ExpandoObject"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static ExpandoObject ToExpando(this object obj)
         {
             var expando = new ExpandoObject();
@@ -18,10 +26,22 @@ namespace AspNetCore.MVC.RESTful.Helpers
             return expando;
         }
 
-        public static ExpandoObject ToExpandObject(this IEnumerable<KeyValuePair<string, object>> dictionary)
-            => ToExpandObject(dictionary.ToDictionary(k => k.Key, v => v.Value));
-        
-        public static ExpandoObject ToExpandObject(this IDictionary<string, object> dictionary)
+        /// <summary>
+        /// Converts an <see cref="IEnumerable{T}"/> of <see cref="KeyValuePair{TKey,TValue}"/>
+        /// of <see cref="string"/> and <see cref="object"/> to an <see cref="ExpandoObject"/>
+        /// </summary>
+        /// <param name="dictionary"></param>
+        /// <returns></returns>
+        public static ExpandoObject ToExpando(this IEnumerable<KeyValuePair<string, object>> dictionary)
+            => ToExpando(dictionary.ToDictionary(k => k.Key, v => v.Value));
+
+        /// <summary>
+        /// Converts an <see cref="IDictionary{TKey,TValue}"/>
+        /// of <see cref="string"/> and <see cref="object"/> to an <see cref="ExpandoObject"/>
+        /// </summary>
+        /// <param name="dictionary"></param>
+        /// <returns></returns>
+        public static ExpandoObject ToExpando(this IDictionary<string, object> dictionary)
         {
             var result = new ExpandoObject();
             var resultDict = (IDictionary<string, object>) result;

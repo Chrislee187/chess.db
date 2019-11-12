@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AspNetCore.MVC.RESTful.Services
 {
     /// <summary>
-    /// Simple service that maps property names to field names
+    /// Service that maps <see cref="TDto"/> property names to one or
+    /// more <see cref="TEntity"/> property names
     /// </summary>
     public class OrderByPropertyMappingService<TDto, TEntity> 
         : IOrderByPropertyMappingService<TDto, TEntity>

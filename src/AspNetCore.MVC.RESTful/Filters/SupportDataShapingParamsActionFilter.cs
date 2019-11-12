@@ -8,8 +8,8 @@ namespace AspNetCore.MVC.RESTful.Filters
 {   
     /// <summary>
     ///  Checks if the controller is a HateoasController and for
-    /// a `shape`query string parameter. If found, sets 
-    /// <see cref="RestfulConfig.Shape"/>
+    /// a `shape` query string parameter. If found, sets 
+    /// <see cref="CollectionConfig.Shape"/> property
     /// </summary>
     public class SupportDataShapingParamsActionFilter : ActionFilterAttribute
     {
@@ -27,7 +27,7 @@ namespace AspNetCore.MVC.RESTful.Filters
         private static void GetShape(IQueryCollection queryCollection, HateoasController contextController)
         {
             var val = queryCollection.GetByAlias("shape", "data-shape");
-            contextController.Restful.Shape = val;
+            contextController.CollectionConfig.Shape = val;
         }
     }
 }
