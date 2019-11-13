@@ -7,6 +7,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
@@ -50,11 +52,47 @@ namespace AspNetCore.MVC.RESTful.Configuration
         }
 
         /// <summary>
-        /// Add Controllers, NewtonsoftJson, Xml Data Contract Formatters. 
-        /// Configures InvalidModelStateResponseFactory. 
-        /// Adds AutoMapper using <see cref="AppDomain.GetAssemblies"/> from the <see cref="AppDomain.CurrentDomain"/>.
-        /// Configures 406 to be returned for unacceptable Content-types
-        /// Set Null value handling to ignore nulls when serializing output
+        /// Configures
+        /// <list type="bullet">
+        ///     <item> 
+        ///         AddControllers(), AddXmlDataContractSerializerFormatters(). 
+        ///     </item>
+        ///     <item>
+        ///         Configures 406 to be returned for unacceptable Content-types
+        ///         <code>
+        ///             i.e.
+        ///             cfg.ReturnHttpNotAcceptable = true;
+        ///         </code>
+        ///     </item>
+        ///     <item> 
+        ///         AddNewtonsoftJson() to not return properties with null value and
+        ///         is required to use <see cref="JsonPatchDocument{TModel}"/>.
+        ///         <code>
+        ///             i.e.
+        ///             cfg.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+        ///         </code>
+        ///     </item>
+        ///     <item>
+        ///         Configures <see cref="ApiBehaviorOptions.InvalidModelStateResponseFactory"/> to use
+        ///         <see cref="InvalidModelStateResponse"/>
+        ///     </item>
+        ///     <item>
+        ///         Adds AutoMapper using <see cref="AppDomain.GetAssemblies"/> from the <see cref="AppDomain.CurrentDomain"/>.
+        ///         <code>
+        ///             i.e.
+        ///             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
+        ///         </code>
+        ///     </item>
+        ///     <item>
+        ///         Adds a default <see cref="IOrderByPropertyMappingService{TDto,TEntity}"/> from the <see cref="AppDomain.CurrentDomain"/>
+        ///         that assume resource and property names match.
+        ///     </item>
+        ///     <item>
+        ///         Adds Action Filters to support pagination (<see cref="SupportCollectionParamsActionFilter"/>),
+        ///         Data shaping (<see cref="SupportDataShapingParamsActionFilter"/>) and
+        ///         Hateoas link disabling (<see cref="DisableHateoasLinksActionFilter"/>.
+        ///     </item>
+        /// </list>
         /// </summary>
         /// <param name="services"></param>
         public static void AddRestful(this IServiceCollection services)
@@ -79,7 +117,8 @@ namespace AspNetCore.MVC.RESTful.Configuration
                 .ConfigureApiBehaviorOptions(setupAction =>
                 {
                     // NOTE: Setup custom response for model (typically from query params etc.) validation errors
-                    setupAction.InvalidModelStateResponseFactory = new InvalidModelStateResponse().SetupInvalidModelStateResponse;
+                    setupAction.InvalidModelStateResponseFactory 
+                        = new InvalidModelStateResponse().SetupInvalidModelStateResponse;
                 }
             );
 
@@ -103,8 +142,8 @@ namespace AspNetCore.MVC.RESTful.Configuration
         /// <summary>
         /// Configure non development mode exception handling to expose no information.
         /// </summary>
-        /// <param name="app"></param>
-        /// <param name="env"></param>
+        /// <param name="app">Value from Startup</param>
+        /// <param name="env">Value from Startup</param>
         public static void RestfulExceptionHandling(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (!env.IsDevelopment())

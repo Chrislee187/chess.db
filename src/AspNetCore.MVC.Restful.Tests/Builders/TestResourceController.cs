@@ -16,7 +16,7 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
             IOrderByPropertyMappingService<TestDto, TestEntity> orderByPropertyMappingService, 
             IEntityUpdater<TestEntity, Guid> entityUpdater, 
             Action<HateoasConfig> config = null) 
-            : base(mapper, resourceRepository, orderByPropertyMappingService, entityUpdater, config)
+            : base(mapper, resourceRepository, entityUpdater, orderByPropertyMappingService, config)
         {
         }
     }

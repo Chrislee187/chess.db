@@ -6,7 +6,7 @@ using System.Linq;
 namespace AspNetCore.MVC.RESTful.Helpers
 {
     /// <summary>
-    /// Gets the current page from the supplied items
+    /// Paginates the supplied items
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class PagedList<T> : List<T>, IPaginationMetadata

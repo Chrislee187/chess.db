@@ -14,13 +14,13 @@ namespace AspNetCore.MVC.RESTful.Helpers
                                                                   | BindingFlags.Instance;
         /// <summary>
         /// Reshape objects to contain only the fields specified in the <paramref name="shape">shape</paramref>.
-        /// <remarks>
-        /// Because an ExpandoObject is treated as dictionary during serialization,
-        /// default serializer NullValue handling will not be
+        /// <para>
+        /// Because an ExpandoObject is treated as dictionary during serialization, 
+        /// default serializer NullValue handling will not be 
         /// used as this functionality is for properties not dictionary
         /// values.
-        /// https://github.com/JamesNK/Newtonsoft.Json/issues/951
-        /// </remarks>
+        /// </para>
+        /// <see href="https://github.com/JamesNK/Newtonsoft.Json/issues/951">Newtonsoft Issue 951</see>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>

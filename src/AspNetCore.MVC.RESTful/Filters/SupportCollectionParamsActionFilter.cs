@@ -5,14 +5,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace AspNetCore.MVC.RESTful.Filters
-{    /// <summary>
-     ///  Checks if the controller is a HateoasController and for
-     /// a `pagesize`, `page`, 'search' and `orderby` query string parameter. If found, sets the
-     /// <see cref="CollectionConfig.PageSize"/>,
-     /// <see cref="CollectionConfig.Page"/> and
-     /// <see cref="CollectionConfig.OrderBy"/>
-     /// <see cref="CollectionConfig.SearchText"/> respectively
-     /// </summary>
+{
+    /// <summary>
+    ///  Checks if the controller is a HateoasController and for
+    /// a `pagesize`, `page`, 'search' and `orderby` (and some similar aliases) query string parameter.
+    /// If found, sets the
+    /// <see cref="CollectionConfig.PageSize"/>,
+    /// <see cref="CollectionConfig.Page"/> and
+    /// <see cref="CollectionConfig.OrderBy"/>
+    /// <see cref="CollectionConfig.SearchText"/> properties respectively
+    /// </summary>
     public class SupportCollectionParamsActionFilter : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)

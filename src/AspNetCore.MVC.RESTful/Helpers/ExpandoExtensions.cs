@@ -52,8 +52,21 @@ namespace AspNetCore.MVC.RESTful.Helpers
 
             return result;
         }
+
+        /// <summary>
+        /// Converts any <see cref="object"/> to a <see cref="IDictionary{TKey,TValue}"/>
+        /// of <see cref="string"/> and <see cref="object"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static IDictionary<string, object> ToExpandoDict(this object obj) => obj.ToExpando();
 
+        /// <summary>
+        /// Converts an <see cref="ExpandoObject"/> to a <see cref="IDictionary{TKey,TValue}"/>
+        /// of <see cref="string"/> and <see cref="object"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static IDictionary<string, object> ToExpandoDict(this ExpandoObject obj) => obj;
     }
 }

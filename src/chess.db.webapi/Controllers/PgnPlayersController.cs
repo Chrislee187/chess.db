@@ -26,7 +26,7 @@ namespace chess.db.webapi.Controllers
             IPgnPlayersRepository pgnPlayersRepository,
             IOrderByPropertyMappingService<PgnPlayerDto, PgnPlayer> orderByPropertyMappingService,
             IEntityUpdater<PgnPlayer, Guid> entityUpdater)
-                : base(mapper, pgnPlayersRepository, orderByPropertyMappingService, entityUpdater)
+                : base(mapper, pgnPlayersRepository, entityUpdater, orderByPropertyMappingService)
         {
              _pgnPlayersRepository = NullX.Throw(pgnPlayersRepository, nameof(pgnPlayersRepository));
         }

@@ -10,17 +10,6 @@ using AspNetCore.MVC.RESTful.Models;
 
 namespace AspNetCore.MVC.RESTful.Controllers
 {
-    public class HateoasController : ControllerBase
-    {
-        public readonly HateoasConfig HateoasConfig;
-        public readonly CollectionConfig CollectionConfig;
-
-        protected HateoasController(string entityName)
-        {
-            HateoasConfig = new HateoasConfig(entityName);
-            CollectionConfig = new CollectionConfig();
-        }
-    }
     /// <summary>
     /// Base functionality required for Hateoas links support.
     /// Links can be enabled/disabled at Controller level (see <see cref="Configuration.HateoasConfig"/>)
@@ -189,5 +178,20 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
         protected void ConfigureHateoas(Action<HateoasConfig> config) 
             => config?.Invoke(HateoasConfig);
+    }
+
+    /// <summary>
+    /// Base Controller containing default call configuration options
+    /// </summary>
+    public abstract class HateoasController : ControllerBase
+    {
+        public readonly HateoasConfig HateoasConfig;
+        public readonly CollectionConfig CollectionConfig;
+
+        protected HateoasController(string entityName)
+        {
+            HateoasConfig = new HateoasConfig(entityName);
+            CollectionConfig = new CollectionConfig();
+        }
     }
 }

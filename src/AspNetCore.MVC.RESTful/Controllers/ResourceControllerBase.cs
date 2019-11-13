@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using AutoMapper;
 using AspNetCore.MVC.RESTful.AutoMapper;
 using AspNetCore.MVC.RESTful.Configuration;
+using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Models;
 using AspNetCore.MVC.RESTful.Repositories;
@@ -44,11 +45,10 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
         protected IMapper Mapper { get; }
 
-        protected ResourceControllerBase(
-            [NotNull] IMapper mapper,
+        protected ResourceControllerBase([NotNull] IMapper mapper,
             [NotNull] IResourceRepository<TEntity, TId> resourceRepository,
-            IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService,
             IEntityUpdater<TEntity, TId> entityUpdater,
+            IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService = null,
             Action<HateoasConfig> config = null)
         {
             ConfigureHateoas(config);
@@ -60,8 +60,24 @@ namespace AspNetCore.MVC.RESTful.Controllers
         }
 
         /// <summary>
-        /// HTTP GET /{resource}
+        /// Typically used to support a HTTP GET on a resource collection
+        /// <code>
+        /// HTTP GET /{resources}
+        /// </code>
+        /// like call.
+        ///
+        /// Response is paginated based on values in <see cref="CollectionConfig"/> which are set via
+        /// querystring parameters, see <seealso cref="SupportCollectionParamsActionFilter"/>
         /// </summary>
+        /// <returns>
+        /// <see cref="BadRequestResult"/> if the shape is invalid.
+        /// <see cref="BadRequestResult"/> if the order-by clause is invalid.
+        ///
+        /// other wise
+        /// 
+        /// <see cref="OkResult"/> with response body containing the serialized representation
+        /// of the resources. 
+        /// </returns>
         public IActionResult ResourcesGet<TParameters>([NotNull] TParameters parameters,
             [NotNull] IEntityFilter<TEntity> entityFilter,
             [NotNull] IEntitySearch<TEntity> entitySearch)
@@ -117,10 +133,22 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
 
         /// <summary>
-        /// HTTP GET /{resource}/{id}
+        /// Typically used to support a HTTP GET on an individual resource within a collection
+        /// <code>
+        /// HTTP GET /{resources}/{id}
+        /// </code>
+        /// like call.
         /// </summary>
-        protected ActionResult<TDto> ResourceGet(TId id,
-            IEnumerable<HateoasLink> additionalLinks = null)
+        /// <returns>
+        /// <see cref="BadRequestResult"/> if the shape is invalid.
+        /// <see cref="NotFoundResult"/> if the resource specified cannot be found.
+        ///
+        /// other wise
+        /// 
+        /// <see cref="OkResult"/> with response body containing the serialized representation
+        /// of the resource.
+        /// </returns>
+        protected ActionResult<TDto> ResourceGet(TId id)
         {
             if (!typeof(TDto).TypeHasOutputProperties(CollectionConfig.Shape))
             {
@@ -149,14 +177,23 @@ namespace AspNetCore.MVC.RESTful.Controllers
         }
 
         /// <summary>
-        /// HTTP POST - returns CreatedAtRoute (201 - Created) and places a 'Location' entry in
-        /// the response header containing the uri to retrieve the newly added resource
-        /// created from the supplied args, also returns the newly created resource in
-        /// the body
+        /// Typically used to support a HTTP POST on an individual resource within a collection
+        /// <code>
+        /// HTTP POST /{resources}
+        /// {
+        ///     ...
+        /// }
+        /// </code>
+        /// like call.
         /// </summary>
+        /// <typeparam name="TCreationDto">Model containing data used for creation, requires an
+        /// <see cref="AutoMapper"/> mapping between <typeparamref name="TCreationDto"/>-><typeparamref name="TDto"/></typeparam>
+        /// <param name="model">New instance of the resource to create</param>
+        /// <returns>
+        /// <see cref="CreatedAtRouteResult"/> with the newly created resource in the body.
+        /// </returns>
         protected ActionResult<TDto> ResourceCreate<TCreationDto>(
-            [NotNull] TCreationDto model,
-            IEnumerable<HateoasLink> additionalLinks = null
+            [NotNull] TCreationDto model
         )
         {
             var entity = Mapper.Map<TEntity>(model);
@@ -182,12 +219,27 @@ namespace AspNetCore.MVC.RESTful.Controllers
         }
 
         /// <summary>
-        /// HTTP PUT
+        /// Typically used to support a HTTP PUT on an individual resource within a collection
+        /// <code>
+        /// HTTP PUT /{resources}/{id}
+        /// </code>
+        /// <code>
+        /// body contains serialized <typeparamref name="TCreationDto"/>
+        /// </code>
+        /// like call.
         /// </summary>
+        /// <typeparam name="TUpdateDto">Model containing data used for update, requires bi-directional
+        /// <see cref="AutoMapper"/> mappings between <typeparamref name="TDto"/> i.e.
+        /// <typeparamref name="TCreationDto"/>-><typeparamref name="TDto"/> and
+        /// <typeparamref name="TDto"/>-><typeparamref name="TCreationDto"/></typeparam>
+        /// <param name="model">New instance of the resource to create</param>
+        /// <returns>
+        /// <see cref="NotFoundResult"/> if the resource specified cannot be found.
+        /// <see cref="CreatedAtRouteResult"/> with the newly created resource in the body.
+        /// </returns>
         protected ActionResult ResourceUpsert<TUpdateDto>(
             TId id,
-            [NotNull] TUpdateDto model,
-            IEnumerable<HateoasLink> additionalLinks = null)
+            [NotNull] TUpdateDto model)
         {
             if (id.Equals(Guid.Empty))
             {
@@ -230,9 +282,31 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return result;
         }
 
+
         /// <summary>
-        /// HTTP PATCH
+        /// Typically used to support a HTTP PATCH on an individual resource within a collection.
+        /// MVC Model Validation is performed using <see cref="ControllerBase.TryValidateModel(object)"/>
+        /// and <seealso cref="System.ComponentModel.DataAnnotations"/>
+        /// <code>
+        /// HTTP PATCH /{resources}/{id}
+        /// </code>
+        /// <code>
+        /// body contains serialized <see cref="JsonPatchDocument{TModel}"/>
+        /// </code>
         /// </summary>
+        /// <typeparam name="TUpdateDto"></typeparam>
+        /// <param name="id"></param>
+        /// <param name="patchDocument"></param>
+        /// <returns>
+        /// <see cref="NotFoundResult"/> if the resource specified cannot be found.
+        /// <see cref="UnprocessableEntityObjectResult"/> containing a serialized <see cref="ValidationProblem"/>
+        /// if model validation fails.
+        /// 
+        /// other wise
+        /// 
+        /// <see cref="OkResult"/> with response body containing the serialized representation
+        /// of the resource.
+        /// </returns>
         protected ActionResult ResourcePatch<TUpdateDto>(TId id,
             [NotNull] JsonPatchDocument<TUpdateDto> patchDocument)
             where TUpdateDto : class
@@ -274,8 +348,20 @@ namespace AspNetCore.MVC.RESTful.Controllers
         }
 
         /// <summary>
-        /// HTTP DELETE
+        /// Typically used to support a HTTP DELEETE on an individual resource within a collection.
+        /// <code>
+        /// HTTP DELETE /{resources}/{id}
+        /// </code>
         /// </summary>
+        /// <param name="id"></param>
+        /// <returns>
+        /// 
+        /// <see cref="NotFoundResult"/> if the resource specified cannot be found.
+        ///
+        /// otherwise returns
+        /// 
+        /// <see cref="NoContentResult"/>
+        /// </returns>
         protected ActionResult ResourceDelete(TId id)
         {
             if (id.Equals(Guid.Empty))
@@ -296,18 +382,34 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return NoContent();
         }
 
+
         /// <summary>
+        /// Typically used to support a HTTP OPTIONS call on an resource collection.
+        /// <code>
         /// HTTP OPTIONS
+        /// </code>
         /// </summary>
+        /// <param name="httpMethods">List of HTTP methods supported by this resource.</param>
+        /// <returns>
+        /// otherwise returns
+        /// 
+        /// <see cref="OkResult"/> with no content.
+        /// </returns>
         protected IActionResult ResourceOptions(params string[] httpMethods)
         {
             Response.Headers.Add("Allow", string.Join(',', httpMethods));
             return Ok();
         }
 
+
         /// <summary>
-        /// Creates an <seealso cref="ActionResult"></seealso> generated by the default invalid model state response handler.
+        /// Creates an <see cref="ActionResult"></see> generated by the default invalid model state response handler.
         /// </summary>
+        /// <param name="modelStateDictionary">Model State to validate</param>
+        /// <returns>
+        /// <see cref="UnprocessableEntityResult"/> containing a serialized <see cref="ProblemDetails"/>
+        /// which in turn contains the validation errors.
+        /// </returns>
         public override ActionResult ValidationProblem(
             [ActionResultObjectValue] ModelStateDictionary modelStateDictionary)
         {

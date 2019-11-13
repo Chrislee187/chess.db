@@ -8,7 +8,6 @@ namespace AspNetCore.MVC.RESTful.Filters
     ///  Checks if the controller is a HateoasController and for
     /// a `nolinks` query string parameter. If found, sets the
     /// <see cref="HateoasConfig.AddLinks"/> flag to false.
-    ///
     /// Restores original values after action is executed
     /// </summary>
     public class DisableHateoasLinksActionFilter : IActionFilter
