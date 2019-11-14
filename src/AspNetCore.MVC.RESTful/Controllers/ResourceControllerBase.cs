@@ -13,7 +13,6 @@ using AspNetCore.MVC.RESTful.AutoMapper;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Helpers;
-using AspNetCore.MVC.RESTful.Models;
 using AspNetCore.MVC.RESTful.Repositories;
 using AspNetCore.MVC.RESTful.Services;
 
@@ -31,7 +30,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
     /// <seealso cref="IOrderByPropertyMappingService{TEntity,TId}"></seealso>
     /// </list>
     /// </summary>
-
     /// <typeparam name="TDto">Data Transfer Object that can be "Automapped" to and from <see cref="TEntity"/></typeparam>
     /// <typeparam name="TEntity">Underlying Entity for the Resource being represented</typeparam>
     /// <typeparam name="TId">Underlying type of the primary key "Id" field of the <see cref="TEntity"/></typeparam>
@@ -78,9 +76,9 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <see cref="OkResult"/> with response body containing the serialized representation
         /// of the resources. 
         /// </returns>
-        public IActionResult ResourcesGet<TParameters>([NotNull] TParameters parameters,
-            [NotNull] IEntityFilter<TEntity> entityFilter,
-            [NotNull] IEntitySearch<TEntity> entitySearch)
+        public IActionResult ResourcesGet<TParameters>(TParameters parameters,
+            IEntityFilter<TEntity> entityFilter,
+            IEntitySearch<TEntity> entitySearch)
         {
             if (!typeof(TDto).TypeHasOutputProperties(CollectionConfig.Shape))
             {
@@ -148,7 +146,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <see cref="OkResult"/> with response body containing the serialized representation
         /// of the resource.
         /// </returns>
-        protected ActionResult<TDto> ResourceGet(TId id)
+        public IActionResult ResourceGet(TId id)
         {
             if (!typeof(TDto).TypeHasOutputProperties(CollectionConfig.Shape))
             {
@@ -192,7 +190,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <returns>
         /// <see cref="CreatedAtRouteResult"/> with the newly created resource in the body.
         /// </returns>
-        protected ActionResult<TDto> ResourceCreate<TCreationDto>(
+        public IActionResult ResourceCreate<TCreationDto>(
             [NotNull] TCreationDto model
         )
         {
@@ -224,20 +222,21 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// HTTP PUT /{resources}/{id}
         /// </code>
         /// <code>
-        /// body contains serialized <typeparamref name="TCreationDto"/>
+        /// body contains serialized <typeparamref name="TUpdateDto"/>
         /// </code>
         /// like call.
         /// </summary>
         /// <typeparam name="TUpdateDto">Model containing data used for update, requires bi-directional
         /// <see cref="AutoMapper"/> mappings between <typeparamref name="TDto"/> i.e.
-        /// <typeparamref name="TCreationDto"/>-><typeparamref name="TDto"/> and
-        /// <typeparamref name="TDto"/>-><typeparamref name="TCreationDto"/></typeparam>
+        /// <typeparamref name="TUpdateDto"/>-><typeparamref name="TDto"/> and
+        /// <typeparamref name="TDto"/>-><typeparamref name="TUpdateDto"/></typeparam>
+        /// <param name="id">id of the resource</param>
         /// <param name="model">New instance of the resource to create</param>
         /// <returns>
         /// <see cref="NotFoundResult"/> if the resource specified cannot be found.
         /// <see cref="CreatedAtRouteResult"/> with the newly created resource in the body.
         /// </returns>
-        protected ActionResult ResourceUpsert<TUpdateDto>(
+        public ActionResult ResourceUpsert<TUpdateDto>(
             TId id,
             [NotNull] TUpdateDto model)
         {
@@ -307,9 +306,9 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <see cref="OkResult"/> with response body containing the serialized representation
         /// of the resource.
         /// </returns>
-        protected ActionResult ResourcePatch<TUpdateDto>(TId id,
-            [NotNull] JsonPatchDocument<TUpdateDto> patchDocument)
-            where TUpdateDto : class
+        public ActionResult ResourcePatch<TDto>(TId id,
+            [NotNull] JsonPatchDocument<TDto> patchDocument)
+            where TDto : class
         {
             if (id.Equals(Guid.Empty))
             {
@@ -323,7 +322,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 return NotFound();
             }
 
-            var patchedResource = Mapper.Map<TUpdateDto>(resource);
+            var patchedResource = Mapper.Map<TDto>(resource);
             patchDocument.ApplyTo(patchedResource);
 
             if (!TryValidateModel(patchedResource))
@@ -362,7 +361,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// 
         /// <see cref="NoContentResult"/>
         /// </returns>
-        protected ActionResult ResourceDelete(TId id)
+        public ActionResult ResourceDelete(TId id)
         {
             if (id.Equals(Guid.Empty))
             {
@@ -395,7 +394,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// 
         /// <see cref="OkResult"/> with no content.
         /// </returns>
-        protected IActionResult ResourceOptions(params string[] httpMethods)
+        public IActionResult ResourceOptions(params string[] httpMethods)
         {
             Response.Headers.Add("Allow", string.Join(',', httpMethods));
             return Ok();
@@ -413,9 +412,16 @@ namespace AspNetCore.MVC.RESTful.Controllers
         public override ActionResult ValidationProblem(
             [ActionResultObjectValue] ModelStateDictionary modelStateDictionary)
         {
-            var options = HttpContext.RequestServices
+            var options = HttpContext?.RequestServices?
                 .GetRequiredService<IOptions<ApiBehaviorOptions>>();
-            return (ActionResult) options.Value.InvalidModelStateResponseFactory(ControllerContext);
+
+            if (options == null)
+            {
+                return (ActionResult) new InvalidModelStateResponse().SetupInvalidModelStateResponse(ControllerContext);
+            }
+
+
+            return (ActionResult) options?.Value.InvalidModelStateResponseFactory(ControllerContext);
         }
 
         private void AddPaginationHeader(string resourcesGetRouteName,

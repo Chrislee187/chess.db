@@ -68,5 +68,17 @@ namespace AspNetCore.MVC.RESTful.Helpers
         /// <param name="obj"></param>
         /// <returns></returns>
         public static IDictionary<string, object> ToExpandoDict(this ExpandoObject obj) => obj;
+
+        public static T ExtractProperty<T>(this ExpandoObject obj, string propertyName)
+        {
+            var resourcesDict = (IDictionary<string, object>)obj;
+
+            if (resourcesDict.TryGetValue(propertyName, out var linksObject))
+            {
+                return (T)linksObject;
+            }
+
+            return default;
+        }
     }
 }

@@ -46,11 +46,11 @@ namespace chess.db.webapi.Controllers
         }
 
         [HttpGet("{id}", Name = GetPlayerRouteName)]
-        public ActionResult<PlayerDto> GetPlayer(Guid id)
+        public IActionResult GetPlayer(Guid id)
             => ResourceGet(id);
 
         [HttpPost(Name = CreatePlayerRouteName)]
-        public ActionResult<PlayerDto> CreatePlayer(
+        public IActionResult CreatePlayer(
             [FromBody] PlayerCreationDto model)
             => ResourceCreate(model);
 

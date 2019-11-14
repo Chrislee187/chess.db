@@ -58,8 +58,11 @@ namespace AspNetCore.MVC.RESTful.Helpers
             string shape,
             bool ignoreNulls = true)
         {
+            if (string.IsNullOrWhiteSpace(shape)) return source.ToExpando();
+
             string[] propertyNames = shape.Split(',')
                 .Where(s => !string.IsNullOrEmpty(s.Trim())).ToArray();
+
 
             var expando = GetProperties<T>(propertyNames).ToList()
                 .ToDictionary(k => k.Name, v => v.GetValue(source))

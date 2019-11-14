@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Linq;
@@ -7,13 +8,23 @@ using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Repositories;
 using AspNetCore.MVC.RESTful.Services;
+using AspNetCore.MVC.Restful.Tests.Controllers;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Moq;
+using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 
 namespace AspNetCore.MVC.Restful.Tests.Builders
 {
+    /// <summary>
+    /// A "Mockery" is a test pattern designed for objects with multiple or complex dependencies.
+    ///
+    /// Similar to the "Builder" pattern conceptually, the Mockery builds and manages all the Mocks
+    /// and interactions with them, this allows the tests themselves to be more concise and easy to read
+    /// and understand. 
+    /// </summary>
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class TestResourceControllerMockery
     {
@@ -34,6 +45,7 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
             WithValidShape().
             WithUrlHelperLinkReturning("https://example.com/testresources").
             WithEmptyResourceList();
+            WithExistingResource();
         }
 
         public TestResourceController BuildController(Action<HateoasConfig> config = null)
@@ -56,10 +68,64 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
             _testResourceController.CollectionConfig.Page = _currentPage;
             _testResourceController.HateoasConfig.AddLinks = !_disableLinks;
 
+            SetupModelValidation();
+
             return _testResourceController;
         }
 
+        delegate void ObjectValidatorDelegate(ActionContext actionContext, ValidationStateDictionary validationState, string prefix, object model); 
+
+        private ObjectValidatorDelegate _objectValidatorDelegate;
+        private void ObjectValidatorExecutor(ActionContext actionContext, ValidationStateDictionary validationState, string prefix, object model)
+        {
+            var validationResults = new List<ValidationResult>();
+            bool b = Validator.TryValidateObject(model, new ValidationContext(model), validationResults); 
+
+            foreach (var result in validationResults)
+            {
+                _testResourceController.ModelState.AddModelError(result.MemberNames.FirstOrDefault(), result.ErrorMessage);
+            }
+        }
+        private void SetupModelValidation()
+        {
+            _objectValidatorDelegate += ObjectValidatorExecutor; 
+
+            var objectValidator = new Mock<IObjectModelValidator>();
+            objectValidator.Setup(x => x.Validate(It.IsAny<ActionContext>(),
+                    It.IsAny<ValidationStateDictionary>(),
+                    It.IsAny<string>(),
+                    It.IsAny<object>()))
+                .Callback(_objectValidatorDelegate);
+
+            _testResourceController.ObjectValidator = objectValidator.Object;
+        }
+
         public TestResourceControllerMockery WithEmptyResourceList()
+        {
+            SetResourcesGetEntities(new List<TestEntity>().AsQueryable());
+
+            Mapper.Setup(m => m.Map<TestDto>(It.IsAny<TestEntity>()))
+                .Returns(new TestDto {Id = Guid.NewGuid()});
+
+            return this;
+        }
+        /// <summary>
+        /// This uses other values set via "With" methods so we terminate
+        /// the chain by returning void
+        /// </summary>
+        public void WithResourceList()
+        {
+
+            var testEntities = Enumerable.Range(1, 10).Select(i =>
+                {
+                    var e = new TestEntity() { Id = Guid.NewGuid() };
+
+                    return e;
+                })
+                ;
+            SetResourcesGetEntities(testEntities.AsQueryable());
+        }
+        private void SetResourcesGetEntities(IQueryable<TestEntity> entities)
         {
             ResourceRepository.Setup(r => r.Load(
                     It.IsAny<int>(),
@@ -71,54 +137,46 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
                     It.IsAny<IDictionary<string, OrderByPropertyMappingValue>>()
                 ))
                 .Returns(new PagedList<TestEntity>(
-                    new List<TestEntity>().AsQueryable(),
-                    20, 1));
+                    entities,
+                    _pageSize, _currentPage));
 
-            Mapper.Setup(m => m.Map<TestDto>(It.IsAny<TestEntity>()))
-                .Returns(new TestDto {Id = Guid.NewGuid()});
-
-            return this;
-        }
-        public TestResourceControllerMockery WithResourceList()
-        {
-
-            var testEntities = Enumerable.Range(1, 10).Select(i =>
-            {
-                var e = new TestEntity() { Id= Guid.NewGuid()};
-
-                return e;
-            }).ToList();
-
-            ResourceRepository.Setup(r => r.Load(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<IEntityFilter<TestEntity>>(),
-                    It.IsAny<IEntitySearch<TestEntity>>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<IDictionary<string, OrderByPropertyMappingValue>>()
-                ))
-                .Returns((
-                        int pageSize, 
-                        int page, 
-                        IEntityFilter<TestEntity> ef, 
-                        IEntitySearch<TestEntity> es, string ss, string ob, IDictionary<string, OrderByPropertyMappingValue> om) =>
-                    new PagedList<TestEntity>(
-                        testEntities.AsQueryable(),
-                        pageSize,
-                        page
-                        ));
+            // NOTE: Fake the mapping, we only use Id for tests
+            Mapper.Setup(m => m.Map<IEnumerable<TestDto>>(It.IsAny<IEnumerable<TestEntity>>()))
+                .Returns((IEnumerable<TestEntity> e) 
+                    => e.Select(ent => new TestDto() { Id = ent.Id }));
 
             Mapper.Setup(m => m.Map<IEnumerable<TestDto>>(It.IsAny<IEnumerable<TestEntity>>()))
-                .Returns((IEnumerable<TestEntity> e) => e.Select(ent => new TestDto() {Id = ent.Id}));
+                .Returns((IEnumerable<TestEntity> e) => e.Select(ent => new TestDto() { Id = ent.Id }));
+
+
+            Mapper.Setup(m => m.Map<TestEntity>(It.IsAny<TestDto>()))
+                .Returns( (TestDto d) => new TestEntity {Id = d.Id});
+
+            Mapper.Setup(m => m.Map<TestDto>(It.IsAny<TestEntity>()))
+                .Returns( (TestEntity e)  => new TestDto() { Id = e.Id});
+
+        }
+        
+        public TestResourceControllerMockery WithExistingResource(TestEntity entity = null)
+        {
+            var testEntity = entity ?? new TestEntity();
+
+
+
+            ResourceRepository.Setup(r => r.Load(
+                    It.IsAny<Guid>()
+                ))
+                .Returns(testEntity);
+
+
             return this;
         }
-        private TestResourceControllerMockery WithUrlHelperLinkReturning(string link)
+        public TestResourceControllerMockery WithNoExistingResource()
         {
-            UrlHelper = new Mock<IUrlHelper>();
-            UrlHelper
-                .Setup(h => h.Link(It.IsAny<string>(), It.IsAny<object>()))
-                .Returns(link);
+            ResourceRepository.Setup(r => r.Load(
+                    It.IsAny<Guid>()
+                ))
+                .Returns((TestEntity) null);
 
             return this;
         }
@@ -164,28 +222,22 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
             return this;
         }
 
-        public TestResourceControllerMockery NoLinks()
+        public TestResourceControllerMockery WithInvalidModelState()
         {
-            _disableLinks = true;
-
-            if (_testResourceController != null)
-            {
-                _testResourceController.HateoasConfig.AddLinks = false;
-            }
-
+            return WithInvalidField("Value");
+        }
+        public TestResourceControllerMockery WithValidModelState()
+        {
+            _testResourceController.ModelState.Clear();
             return this;
         }
-
-        public T ExtractProperty<T>(ExpandoObject obj, string propertyName)
+        public TestResourceControllerMockery WithInvalidField(string fieldName, string errorMessage="invalid-field")
         {
-            var resourcesDict = (IDictionary<string, object>)obj;
+            _testResourceController
+                .ModelState
+                .AddModelError(fieldName, errorMessage);
 
-            if (resourcesDict.TryGetValue(propertyName, out var linksObject))
-            {
-                return (T)linksObject;
-            }
-
-            return default;
+            return this;
         }
 
         public TestResourceControllerMockery WithCurrentPage(int page)
@@ -198,6 +250,7 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
 
             return this;
         }
+
         public TestResourceControllerMockery WithPageSize(int pageSize)
         {
             _pageSize = pageSize;
@@ -208,5 +261,62 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
 
             return this;
         }
+
+        public TestResourceControllerMockery AndResourceWasDeleted(Guid guid)
+        {
+            ResourceRepository
+                .Verify(r => 
+                    r.Delete(It.Is<TestEntity>(e => e.Id.Equals(guid))), 
+                    Times.Once);
+            return this;
+        }
+        public TestResourceControllerMockery AndChangesWhereSaved()
+        {
+            ResourceRepository.Verify(r => r.Save(), Times.Once);
+            return this;
+        }
+
+        public TestResourceControllerMockery AndResourceWasUpdated(Guid guid)
+        {
+            ResourceRepository
+                .Verify(r =>
+                        r.Update(It.Is<TestEntity>(e => e.Id.Equals(guid))),
+                    Times.Once);
+            return this;
+        }
+
+        public TestResourceControllerMockery AndResourceWasCreated()
+        {
+            ResourceRepository
+                .Verify(r =>
+                        r.Add(It.IsAny<TestEntity>()),
+                    Times.Once);
+            return this;
+        }
+
+        public T ExtractProperty<T>(ExpandoObject obj, string propertyName) => obj.ExtractProperty<T>(propertyName);
+
+        private TestResourceControllerMockery WithUrlHelperLinkReturning(string link)
+        {
+            UrlHelper = new Mock<IUrlHelper>();
+            UrlHelper
+                .Setup(h => h.Link(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(link);
+
+            return this;
+        }
+
+        public TestResourceControllerMockery WithNoLinks()
+        {
+            _disableLinks = true;
+
+            if (_testResourceController != null)
+            {
+                _testResourceController.HateoasConfig.AddLinks = false;
+            }
+
+            return this;
+        }
+
     }
 }
