@@ -304,7 +304,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
 
             var resourcesResult = _controller.ResourceDelete(_anyGuid);
             resourcesResult
-                .ShouldBeOfType<NotFoundResult>();
+                .ShouldBeOfType<NoContentResult>();
 
             _mockery
                 .AndResourceWasDeleted(_anyGuid)
@@ -334,7 +334,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         [Test]
         public void ResourceCreate_Location_Header_is_added_to_Response_on_successful_resource_creation()
         {
-            Assert.Fail("Header is only added to when the action result is formatted, " +
+            Assert.Inconclusive("Header is only added to when the action result is formatted, " +
                         "so can't test here as formatting is handled elsewhere (ActionFilters?)");
             _mockery.WithValidModelState();
 
@@ -347,7 +347,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         [Test]
         public void ResourceOptions_adds_to_header()
         {
-            Assert.Fail("Header is only added to when the action result is formatted, " +
+            Assert.Inconclusive("Header is only added to when the action result is formatted, " +
                         "so can't test here as formatting is handled elsewhere (ActionFilters?)");
             var resourcesResult = _controller.ResourceOptions();
 
@@ -362,11 +362,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         [Test]
         public void ResourceCreate_UnprocessableEntityObjectResult_should_be_returned_for_validation_errors()
         {
-            Assert.Fail("ActionFilters trigger validation and can be directly unit-tested via the controller");
-
-            // TODO: Setup integration tests for this
-            // Implicit model validation on actions parameters is called from action filters, so can't be
-            // tested with simple Unit-Tests
+            Assert.Inconclusive("ActionFilters pre-execution triggers handle model validation, so cannot be directly unit-tested");
 
             _mockery.WithInvalidModelState();
 

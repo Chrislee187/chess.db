@@ -78,6 +78,7 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
         private ObjectValidatorDelegate _objectValidatorDelegate;
         private void ObjectValidatorExecutor(ActionContext actionContext, ValidationStateDictionary validationState, string prefix, object model)
         {
+            // NOTE: Wire up the object validator to DataAnnotation validations
             var validationResults = new List<ValidationResult>();
             bool b = Validator.TryValidateObject(model, new ValidationContext(model), validationResults); 
 
@@ -266,7 +267,7 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
         {
             ResourceRepository
                 .Verify(r => 
-                    r.Delete(It.Is<TestEntity>(e => e.Id.Equals(guid))), 
+                    r.Delete(It.IsAny<TestEntity>()), 
                     Times.Once);
             return this;
         }

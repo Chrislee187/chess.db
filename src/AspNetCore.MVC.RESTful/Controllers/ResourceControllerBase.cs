@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -15,12 +16,32 @@ using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Repositories;
 using AspNetCore.MVC.RESTful.Services;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace AspNetCore.MVC.RESTful.Controllers
 {
     /// <summary>
-    /// Abstract implementation of an MVC Controller that supports default standard REST endpoints.
-    /// i.e. HEAD, OPTIONS, GET, POST, PUT, PATCH, DELETE
+    /// Abstract implementation of an MVC Controller that has support for standard "CRUD" Resource operations, namely
+    /// <list type="bullet">
+    ///     <item><see cref="ResourceGet"/> typically called from <c>HTTP GET</c> actions that return collections/lists of resources</item>
+    ///     <item><see cref="ResourcesGet{TParameters}"/> typically called from <c>HTTP GET</c> actions that return individual resources</item>
+    ///     <item><see cref="ResourceCreate{TCreationDto}"/> typically called from <c>HTTP POST</c> actions create new resources</item>
+    ///     <item><see cref="ResourceDelete"/> typically called from <c>HTTP DELETE</c> actions that delete resources</item>
+    ///     <item><see cref="ResourceUpsert{TUpdateDto}"/> typically called from <c>HTTP PUT</c> actions that upsert (update if exists, create otherwise) resources</item>
+    ///     <item><see cref="ResourcePatch{TDto}"/> typically called from <c>HTTP PATCH</c> actions that patch (partially update a resource)</item>
+    ///     <item><see cref="ResourceOptions"/>
+    ///         typically called from a <c>HTTP OPTIONS</c> action and returns the HTTP METHODS by the Controller, an empty resource (for template/informational purposes) and
+    ///         some details on the query string parameters. (Authors Note: Couldn't find a standard for handling this kind of discovery, here seemed reasonable)
+    ///     </item>
+    /// </list>
+    /// <para>
+    /// Each of these operations has built-in support (where appropriate for the operation) for
+    /// pagination, filtering, sorting, searching and data-shaping. Note filtering and searching
+    /// currently require small custom implementations per resource.
+    /// </para>
+    /// <para>
+    /// Correctly implemented, calls to Resource methods can be executed in a single line in your controllers.
+    /// </para>
     /// <list>
     /// See also 
     /// <seealso cref="RestfulAutoMapperConventionsChecker"></seealso>,
@@ -28,21 +49,29 @@ namespace AspNetCore.MVC.RESTful.Controllers
     /// <seealso cref="IResourceRepository{TEntity,TId}"></seealso>,
     /// <seealso cref="IEntityUpdater{TEntity,TId}"></seealso>,
     /// <seealso cref="IOrderByPropertyMappingService{TEntity,TId}"></seealso>
-    /// </list>
+    /// </list>    
     /// </summary>
     /// <typeparam name="TDto">Data Transfer Object that can be "Automapped" to and from <see cref="TEntity"/></typeparam>
     /// <typeparam name="TEntity">Underlying Entity for the Resource being represented</typeparam>
     /// <typeparam name="TId">Underlying type of the primary key "Id" field of the <see cref="TEntity"/></typeparam>
     public abstract class ResourceControllerBase<TDto, TEntity, TId> : HateoasController<TEntity, TId>
         where TEntity : class
-        where TDto : IResourceId<Guid>
+        where TDto : class, IResourceId<Guid>
     {
         private readonly IResourceRepository<TEntity, TId> _restResourceRepository;
         private readonly IOrderByPropertyMappingService<TDto, TEntity> _orderByPropertyMappingService;
         private readonly IEntityUpdater<TEntity, TId> _entityUpdater;
+        private readonly IEnumerable<string> _httpOptions;
 
         protected IMapper Mapper { get; }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mapper">AutoMapper instance</param>
+        /// <param name="resourceRepository">Resource repository instance</param>
+        /// <param name="entityUpdater">Entity ID Updater required for Upserts </param>
+        /// <param name="orderByPropertyMappingService">Optional services to map resource property names to entity property names</param>
+        /// <param name="config">Optional configuration overides.</param>
         protected ResourceControllerBase([NotNull] IMapper mapper,
             [NotNull] IResourceRepository<TEntity, TId> resourceRepository,
             IEntityUpdater<TEntity, TId> entityUpdater,
@@ -55,6 +84,12 @@ namespace AspNetCore.MVC.RESTful.Controllers
             _restResourceRepository = NullX.Throw(resourceRepository, nameof(resourceRepository));
             _orderByPropertyMappingService = NullX.Throw(orderByPropertyMappingService, nameof(orderByPropertyMappingService));
             _entityUpdater = NullX.Throw(entityUpdater, nameof(entityUpdater));
+
+            _httpOptions = GetType()
+                .GetMembers(BindingFlags.Public | BindingFlags.Instance)
+                .SelectMany(m => m.GetCustomAttributes<HttpMethodAttribute>())
+                .Select(a => a.HttpMethods.First())
+                .Distinct();
         }
 
         /// <summary>
@@ -62,8 +97,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <code>
         /// HTTP GET /{resources}
         /// </code>
-        /// like call.
-        ///
         /// Response is paginated based on values in <see cref="CollectionConfig"/> which are set via
         /// querystring parameters, see <seealso cref="SupportCollectionParamsActionFilter"/>
         /// </summary>
@@ -128,14 +161,12 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             return Ok(resources);
         }
-
-
+        
         /// <summary>
         /// Typically used to support a HTTP GET on an individual resource within a collection
         /// <code>
         /// HTTP GET /{resources}/{id}
         /// </code>
-        /// like call.
         /// </summary>
         /// <returns>
         /// <see cref="BadRequestResult"/> if the shape is invalid.
@@ -182,17 +213,14 @@ namespace AspNetCore.MVC.RESTful.Controllers
         ///     ...
         /// }
         /// </code>
-        /// like call.
-        /// </summary>
+         /// </summary>
         /// <typeparam name="TCreationDto">Model containing data used for creation, requires an
         /// <see cref="AutoMapper"/> mapping between <typeparamref name="TCreationDto"/>-><typeparamref name="TDto"/></typeparam>
         /// <param name="model">New instance of the resource to create</param>
         /// <returns>
         /// <see cref="CreatedAtRouteResult"/> with the newly created resource in the body.
         /// </returns>
-        public IActionResult ResourceCreate<TCreationDto>(
-            [NotNull] TCreationDto model
-        )
+        public IActionResult ResourceCreate<TCreationDto>(TCreationDto model) 
         {
             var entity = Mapper.Map<TEntity>(model);
 
@@ -212,7 +240,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             return CreatedAtRoute(
                 HateoasConfig.ResourcesGetRouteName,
                 new {createdResource.Id},
-                resource.ShapeData(CollectionConfig.Shape)
+                createdResource.ShapeData(CollectionConfig.Shape)
             );
         }
 
@@ -224,7 +252,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <code>
         /// body contains serialized <typeparamref name="TUpdateDto"/>
         /// </code>
-        /// like call.
         /// </summary>
         /// <typeparam name="TUpdateDto">Model containing data used for update, requires bi-directional
         /// <see cref="AutoMapper"/> mappings between <typeparamref name="TDto"/> i.e.
@@ -280,8 +307,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             return result;
         }
-
-
+        
         /// <summary>
         /// Typically used to support a HTTP PATCH on an individual resource within a collection.
         /// MVC Model Validation is performed using <see cref="ControllerBase.TryValidateModel(object)"/>
@@ -293,7 +319,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// body contains serialized <see cref="JsonPatchDocument{TModel}"/>
         /// </code>
         /// </summary>
-        /// <typeparam name="TUpdateDto"></typeparam>
         /// <param name="id"></param>
         /// <param name="patchDocument"></param>
         /// <returns>
@@ -306,9 +331,8 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <see cref="OkResult"/> with response body containing the serialized representation
         /// of the resource.
         /// </returns>
-        public ActionResult ResourcePatch<TDto>(TId id,
+        public ActionResult ResourcePatch(TId id,
             [NotNull] JsonPatchDocument<TDto> patchDocument)
-            where TDto : class
         {
             if (id.Equals(Guid.Empty))
             {
@@ -347,7 +371,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         }
 
         /// <summary>
-        /// Typically used to support a HTTP DELEETE on an individual resource within a collection.
+        /// Typically used to support a HTTP DELETE on an individual resource within a collection.
         /// <code>
         /// HTTP DELETE /{resources}/{id}
         /// </code>
@@ -380,27 +404,44 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             return NoContent();
         }
-
-
+        
         /// <summary>
         /// Typically used to support a HTTP OPTIONS call on an resource collection.
         /// <code>
         /// HTTP OPTIONS
         /// </code>
+        ///
+        /// Automatically generates a list of supported options by reflecting on the <see cref="HttpMethodAttribute"/>'s
+        /// that adorn the actions of the implementing Controller class.
+        ///
         /// </summary>
-        /// <param name="httpMethods">List of HTTP methods supported by this resource.</param>
+        /// <param name="customQueryStringOptions">Simple 'help' texts for any custom implemented parameters
+        /// that the resource supports.</param>
         /// <returns>
-        /// otherwise returns
-        /// 
-        /// <see cref="OkResult"/> with no content.
+        /// <see cref="OkResult"/>With an empty resource represented by <typeparamref name="TDto"/>
+        /// that can be used as a template for other requests
         /// </returns>
-        public IActionResult ResourceOptions(params string[] httpMethods)
+        public IActionResult ResourceOptions(IReadOnlyList<string> customQueryStringOptions = null)
         {
-            Response.Headers.Add("Allow", string.Join(',', httpMethods));
-            return Ok();
+            Response.Headers.Add("Allow", string.Join(',', _httpOptions));
+
+            customQueryStringOptions ??= new List<string>();
+            var response = new
+            {
+                example_resource = Activator.CreateInstance<TDto>(),
+                query_string_parameters = new []
+                {
+                    "?page=x&page-size=y                                                // Resource Collections Gets",
+                    "?order-by=resource_property_name1, resource_property_name2...      // Resource Collections Gets",
+                    "?shape=resource_property_name1, resource_property_name2...         // All calls with resource outputs",
+                    "?search=string                                                     // Resource Collections Gets",
+                    "?nolinks                                                           // All"
+                }.Concat(customQueryStringOptions)
+            };
+
+            return Ok(response);
         }
-
-
+        
         /// <summary>
         /// Creates an <see cref="ActionResult"></see> generated by the default invalid model state response handler.
         /// </summary>
@@ -421,7 +462,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             }
 
 
-            return (ActionResult) options?.Value.InvalidModelStateResponseFactory(ControllerContext);
+            return (ActionResult) options.Value.InvalidModelStateResponseFactory(ControllerContext);
         }
 
         private void AddPaginationHeader(string resourcesGetRouteName,
