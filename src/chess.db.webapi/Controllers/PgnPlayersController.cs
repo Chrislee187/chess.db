@@ -63,7 +63,7 @@ namespace chess.db.webapi.Controllers
 
         [HttpOptions]
         public IActionResult GetOptions()
-            => ResourceOptions("OPTIONS,HEAD,GET");
+            => ResourceOptions();
 
         [HttpGet("{id:Guid}", Name = GetPgnPlayerByIdRouteName)]
         public ActionResult<PgnPlayerDto> GetPgnPlayer(Guid id)

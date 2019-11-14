@@ -103,7 +103,8 @@ namespace AspNetCore.MVC.RESTful.Configuration
                     cfg.ReturnHttpNotAcceptable = true;     // NOTE: Configures to return 406 for unsupported "Accept" header content-types
                 })
                 
-                .AddNewtonsoftJson()  // NOTE: Newtonsoft needed for JsonPatchDocument support otherwise would use System.Text.Json
+                .AddNewtonsoftJson(
+                    )  // NOTE: Newtonsoft needed for JsonPatchDocument support otherwise would use System.Text.Json
                 // NOTE: system.text.json doesn't support JsonPatchDocument yet so use NewtonSoft through out
                 // to make sure it's clear whats doing the serialisation.
                 // .AddJsonOptions()

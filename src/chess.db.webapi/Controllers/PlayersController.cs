@@ -69,6 +69,6 @@ namespace chess.db.webapi.Controllers
 
         [HttpOptions]
         public IActionResult GetOptions()
-            => ResourceOptions("HEAD", "OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE");
+            => ResourceOptions();
     }
 }

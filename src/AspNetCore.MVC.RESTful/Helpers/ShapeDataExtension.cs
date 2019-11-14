@@ -12,6 +12,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
         private const BindingFlags ShapeablePropertyBindingFlags = BindingFlags.IgnoreCase
                                                                   | BindingFlags.Public 
                                                                   | BindingFlags.Instance;
+
         /// <summary>
         /// Reshape objects to contain only the fields specified in the <paramref name="shape">shape</paramref>.
         /// <para>
@@ -25,13 +26,10 @@ namespace AspNetCore.MVC.RESTful.Helpers
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <param name="shape">Comma separated list of property names to placed in the expando object</param>
-        /// <param name="ignoreNulls">When true, do not add any any properties whose value is NULL to the resulting ExpandoObject 
-        /// </param>
         /// <returns>List of ExpandoObjects with only the properties specified by <paramref name="shape"/> on them</returns>
         public static IEnumerable<ExpandoObject> ShapeData<T>(
             [NotNull] this IEnumerable<T> source,
-            string shape,
-            bool ignoreNulls = true)
+            string shape)
         {
             var expandoObjectList = new List<ExpandoObject>();
 
@@ -44,7 +42,6 @@ namespace AspNetCore.MVC.RESTful.Helpers
             {
                 var expandoObject = shapeProperties
                     .ToDictionary(k => k.Name, v => v.GetValue(sourceObject))
-                    .Where(d => ignoreNulls && d.Value != null) 
                     .ToExpando();
 
                 expandoObjectList.Add(expandoObject);
@@ -55,8 +52,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
 
         /// <inheritdoc cref="ShapeData{T}(System.Collections.Generic.IEnumerable{T},string,bool)"/>
         public static ExpandoObject ShapeData<T>(this T source,
-            string shape,
-            bool ignoreNulls = true)
+            string shape)
         {
             if (string.IsNullOrWhiteSpace(shape)) return source.ToExpando();
 
@@ -66,7 +62,6 @@ namespace AspNetCore.MVC.RESTful.Helpers
 
             var expando = GetProperties<T>(propertyNames).ToList()
                 .ToDictionary(k => k.Name, v => v.GetValue(source))
-                .Where(d => ignoreNulls && d.Value != null)
                 .ToExpando();
 
             return expando;
