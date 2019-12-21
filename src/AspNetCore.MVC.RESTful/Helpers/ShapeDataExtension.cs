@@ -50,7 +50,6 @@ namespace AspNetCore.MVC.RESTful.Helpers
             return expandoObjectList;
         }
 
-        /// <inheritdoc cref="ShapeData{T}(System.Collections.Generic.IEnumerable{T},string,bool)"/>
         public static ExpandoObject ShapeData<T>(this T source,
             string shape)
         {

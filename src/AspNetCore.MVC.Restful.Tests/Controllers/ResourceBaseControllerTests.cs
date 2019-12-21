@@ -24,8 +24,8 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
     {
         private ResourceControllerBase<TestDto, TestEntity, Guid> _controller;
         private TestResourceControllerMockery _mockery;
-        private static readonly Guid _anyGuid = Guid.NewGuid();
-        private readonly TestEntity AnyEntity = new TestEntity() { Id= _anyGuid};
+        private static readonly Guid AnyGuid = Guid.NewGuid();
+        private static readonly TestEntity AnyEntity = new TestEntity() { Id= AnyGuid};
 
         [SetUp]
         public void Setup()
@@ -148,7 +148,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             _mockery.WithInvalidShape();
 
             _controller
-                .ResourceGet(_anyGuid)
+                .ResourceGet(AnyGuid)
                 .ShouldBeOfType<BadRequestObjectResult>();
         }
 
@@ -157,7 +157,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         {
 
             var resourcesResult = _controller
-                .ResourceGet(_anyGuid);
+                .ResourceGet(AnyGuid);
 
             resourcesResult.ShouldBeOfType<OkObjectResult>();
         }
@@ -166,7 +166,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         public void ResourceGet_valid_request_contains_links()
         {
             var resourcesResult = (OkObjectResult)_controller
-                .ResourceGet(_anyGuid);
+                .ResourceGet(AnyGuid);
 
             ((IDictionary<string, object>) resourcesResult.Value)
                 .ContainsKey(_controller.HateoasConfig.LinksPropertyName)
@@ -179,7 +179,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             _mockery.WithNoLinks();
 
             var resourcesResult = (OkObjectResult)_controller
-                .ResourceGet(_anyGuid);
+                .ResourceGet(AnyGuid);
 
             ((IDictionary<string, object>)resourcesResult.Value)
                 .ContainsKey(_controller.HateoasConfig.LinksPropertyName)
@@ -208,7 +208,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         public void ResourceUpsert_CreatedAtRoute_is_returned_for_new_resource_creation()
         {
             _mockery.WithNoExistingResource();
-            var resourcesResult = _controller.ResourceUpsert(_anyGuid, new TestCreationDto());
+            var resourcesResult = _controller.ResourceUpsert(AnyGuid, new TestCreationDto());
 
             resourcesResult
                 .ShouldBeOfType<CreatedAtRouteResult>();
@@ -239,7 +239,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         {
             _mockery.WithNoExistingResource();
 
-            var resourcesResult = _controller.ResourcePatch(_anyGuid, new JsonPatchDocument<TestDto>());
+            var resourcesResult = _controller.ResourcePatch(AnyGuid, new JsonPatchDocument<TestDto>());
 
             resourcesResult
                 .ShouldBeOfType<NotFoundResult>();
@@ -251,7 +251,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
 
             _mockery.WithInvalidModelState();
 
-            var resourcesResult = _controller.ResourcePatch(_anyGuid, new JsonPatchDocument<TestDto>());
+            var resourcesResult = _controller.ResourcePatch(AnyGuid, new JsonPatchDocument<TestDto>());
 
             resourcesResult
                 .ShouldBeOfType<UnprocessableEntityObjectResult>();
@@ -291,7 +291,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         {
             _mockery.WithNoExistingResource();
 
-            var resourcesResult = _controller.ResourceDelete(_anyGuid);
+            var resourcesResult = _controller.ResourceDelete(AnyGuid);
             resourcesResult
                 .ShouldBeOfType<NotFoundResult>();
 
@@ -302,12 +302,12 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         {
             _mockery.WithExistingResource();
 
-            var resourcesResult = _controller.ResourceDelete(_anyGuid);
+            var resourcesResult = _controller.ResourceDelete(AnyGuid);
             resourcesResult
                 .ShouldBeOfType<NoContentResult>();
 
             _mockery
-                .AndResourceWasDeleted(_anyGuid)
+                .AndResourceWasDeleted(AnyGuid)
                 .AndChangesWhereSaved();
         }
 
@@ -335,7 +335,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         public void ResourceCreate_Location_Header_is_added_to_Response_on_successful_resource_creation()
         {
             Assert.Inconclusive("Header is only added to when the action result is formatted, " +
-                        "so can't test here as formatting is handled elsewhere (ActionFilters?)");
+                        "so can't test here as formatting is PostAction");
             _mockery.WithValidModelState();
 
             var resourceCreate = _controller.ResourceCreate(new TestCreationDto());
@@ -348,7 +348,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         public void ResourceOptions_adds_to_header()
         {
             Assert.Inconclusive("Header is only added to when the action result is formatted, " +
-                        "so can't test here as formatting is handled elsewhere (ActionFilters?)");
+                                "so can't test here as formatting is PostAction");
             var resourcesResult = _controller.ResourceOptions();
 
             resourcesResult

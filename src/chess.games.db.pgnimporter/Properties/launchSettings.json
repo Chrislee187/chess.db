@@ -2,7 +2,7 @@
   "profiles": {
     "chess.games.db.pgnimporter": {
       "commandName": "Project",
-      "commandLineArgs": "\"D:\\PGN Uploads\""
+      "commandLineArgs": "\"D:\\PGN Master\\Adams\""
     }
   }
 }

@@ -28,7 +28,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
     ///     <item><see cref="ResourceCreate{TCreationDto}"/> typically called from <c>HTTP POST</c> actions create new resources</item>
     ///     <item><see cref="ResourceDelete"/> typically called from <c>HTTP DELETE</c> actions that delete resources</item>
     ///     <item><see cref="ResourceUpsert{TUpdateDto}"/> typically called from <c>HTTP PUT</c> actions that upsert (update if exists, create otherwise) resources</item>
-    ///     <item><see cref="ResourcePatch{TDto}"/> typically called from <c>HTTP PATCH</c> actions that patch (partially update a resource)</item>
     ///     <item><see cref="ResourceOptions"/>
     ///         typically called from a <c>HTTP OPTIONS</c> action and returns the HTTP METHODS by the Controller, an empty resource (for template/informational purposes) and
     ///         some details on the query string parameters. (Authors Note: Couldn't find a standard for handling this kind of discovery, here seemed reasonable)

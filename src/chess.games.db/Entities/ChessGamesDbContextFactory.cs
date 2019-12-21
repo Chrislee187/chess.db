@@ -17,5 +17,6 @@ namespace chess.games.db.Entities
 
             return new ChessGamesDbContext(optionsBuilder.Options);
         }
+
     }
 }

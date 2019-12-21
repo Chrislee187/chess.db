@@ -78,9 +78,8 @@ namespace AspNetCore.MVC.Restful.Tests.Builders
         private ObjectValidatorDelegate _objectValidatorDelegate;
         private void ObjectValidatorExecutor(ActionContext actionContext, ValidationStateDictionary validationState, string prefix, object model)
         {
-            // NOTE: Wire up the object validator to DataAnnotation validations
             var validationResults = new List<ValidationResult>();
-            bool b = Validator.TryValidateObject(model, new ValidationContext(model), validationResults); 
+            Validator.TryValidateObject(model, new ValidationContext(model), validationResults); 
 
             foreach (var result in validationResults)
             {
