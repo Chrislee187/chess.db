@@ -26,7 +26,7 @@ namespace chess.games.db.pgnimporter.unit.tests
         {
             var pgnGame = new PgnGameBuilder().Build();
 
-            var actual = _mapper.Map<PgnImportQueue>(pgnGame);
+            var actual = _mapper.Map<PgnImport>(pgnGame);
 
             actual.Site.ShouldBe(pgnGame.Site);
             actual.Event.ShouldBe(pgnGame.Event);
@@ -47,7 +47,7 @@ namespace chess.games.db.pgnimporter.unit.tests
                 .WithDay("??")
                 .Build();
 
-            var actual = _mapper.Map<PgnImportQueue>(pgnGame);
+            var actual = _mapper.Map<PgnImport>(pgnGame);
 
             actual.Date.ShouldBe("????.??.??");
         }
@@ -61,7 +61,7 @@ namespace chess.games.db.pgnimporter.unit.tests
                 .WithBlackElo(2222)
                 .Build();
 
-            var actual = _mapper.Map<PgnImportQueue>(pgnGame);
+            var actual = _mapper.Map<PgnImport>(pgnGame);
 
             actual.Eco.ShouldBe("C03");
             actual.WhiteElo.ShouldBe("1111");
@@ -76,7 +76,7 @@ namespace chess.games.db.pgnimporter.unit.tests
                 .WithCustomTag("eCo", "D04")
                 .Build();
 
-            var actual = _mapper.Map<PgnImportQueue>(pgnGame);
+            var actual = _mapper.Map<PgnImport>(pgnGame);
 
             actual.Eco.ShouldBe("D04");
         }
@@ -88,7 +88,7 @@ namespace chess.games.db.pgnimporter.unit.tests
                 .WithCustomTag("wHiTeElO", "1234")
                 .Build();
 
-            var actual = _mapper.Map<PgnImportQueue>(pgnGame);
+            var actual = _mapper.Map<PgnImport>(pgnGame);
 
             actual.WhiteElo.ShouldBe("1234");
         }
@@ -99,7 +99,7 @@ namespace chess.games.db.pgnimporter.unit.tests
                 .WithCustomTag("BlaCkELO", "1234")
                 .Build();
 
-            var actual = _mapper.Map<PgnImportQueue>(pgnGame);
+            var actual = _mapper.Map<PgnImport>(pgnGame);
 
             actual.BlackElo.ShouldBe("1234");
         }
@@ -111,7 +111,7 @@ namespace chess.games.db.pgnimporter.unit.tests
                 .WithCustomTag("Custom", "value")
                 .Build();
 
-            var actual = _mapper.Map<PgnImportQueue>(pgnGame);
+            var actual = _mapper.Map<PgnImport>(pgnGame);
 
             var customTags = JsonSerializer.Deserialize<Dictionary<string,string>>(actual.CustomTagsJson);
             customTags.ContainsKey("Custom").ShouldBeTrue();

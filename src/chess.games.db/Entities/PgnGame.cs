@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace chess.games.db.Entities
 {
-    public class PgnImportQueue : DbEntity<Guid>
+    public class PgnGame : DbEntity<Guid>
     {
         // The mandatory seven PGN tags
         [Required]

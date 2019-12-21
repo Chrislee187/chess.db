@@ -6,7 +6,8 @@ namespace chess.games.db.Entities
 {
     public class ChessGamesDbContext : DbContext
     {
-        public DbSet<PgnImportQueue> PgnImportQueue { get; set; }
+        public DbSet<PgnGame> PgnGames { get; set; }
+        public DbSet<PgnImport> PgnImports { get; set; }
 
 //        public DbSet<Event> Events { get; set; }
 //        public DbSet<Site> Sites { get; set; }
@@ -24,15 +25,6 @@ namespace chess.games.db.Entities
         public ChessGamesDbContext(string connectionString)
             : base(new DbContextOptionsBuilder().UseSqlServer(connectionString).Options)
         {
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<PgnImportQueue>()
-                .HasAlternateKey(p => new { p.Event, p.Site, p.White, p.Black, p.Date, p.Result, p.Round, p.MoveList })
-                .HasName("XX")
-                ;
-//                .IsUnique();
         }
 
         public void RunWithExtendedTimeout(Action action, TimeSpan timeout)

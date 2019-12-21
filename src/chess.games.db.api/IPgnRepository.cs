@@ -3,9 +3,9 @@ using chess.games.db.Entities;
 
 namespace chess.games.db.api
 {
-    public interface IPgnImportQueueRepository
+    public interface IPgnRepository
     {
         long ImportQueueSize { get; }
-        int AddGamesToPgnImportQueue(IEnumerable<PgnImportQueue> games);
+        int QueuePgnGames(IEnumerable<PgnImport> games);
     }
 }

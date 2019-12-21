@@ -6,24 +6,24 @@ using AutoMapper;
 using chess.games.db.api;
 using chess.games.db.Entities;
 using chess.games.db.pgnimporter.Extensions;
-using PgnReader;
+using PgnGame = PgnReader.PgnGame;
 
 namespace chess.games.db.pgnimporter.Mapping
 {
     // ReSharper disable once UnusedMember.Global - Discovered dynamically by AutoMapper
-    public class PgnImportQueueMappingProfile : Profile
+    public class PgnMappingProfile : Profile
     {
         private static readonly List<string> MandatoryTags = new List<string>(
             new[] { "event", "site", "round", "date", "black", "white", "result" });
 
-        public PgnImportQueueMappingProfile()
+        public PgnMappingProfile()
         {
-            CreateMap<PgnGame, PgnImportQueue>().ConvertUsing((g, q) => MapToPgnImportQueue(g));
+            CreateMap<PgnGame, PgnImport>().ConvertUsing((g, q) => MapToPgnDeDupeQueue(g));
         }
 
-        private PgnImportQueue MapToPgnImportQueue(PgnGame pgnGame)
+        private PgnImport MapToPgnDeDupeQueue(PgnGame pgnGame)
         {
-            var game = new PgnImportQueue
+            var game = new PgnImport
             {
                 Event = pgnGame.Event,
                 Black = pgnGame.Black,
