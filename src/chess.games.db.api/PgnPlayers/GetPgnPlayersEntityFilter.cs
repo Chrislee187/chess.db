@@ -12,6 +12,6 @@ namespace chess.games.db.api.PgnPlayers
         public override bool Empty => string.IsNullOrEmpty(Name);
 
         protected override IQueryable<PgnPlayer> FilterImpl(IQueryable<PgnPlayer> resources) 
-            => resources.Where(p => p.Name.ToLower().Contains(Name.ToLower()));
+            => resources.Where(p => p.Player.LastName.ToLower().Contains(Name.ToLower()));
     }
 }

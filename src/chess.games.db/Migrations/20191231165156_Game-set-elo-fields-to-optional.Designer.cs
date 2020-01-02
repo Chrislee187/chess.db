@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using chess.games.db.Entities;
 
 namespace chess.games.db.Migrations
 {
     [DbContext(typeof(ChessGamesDbContext))]
-    partial class ChessGamesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191231165156_Game-set-elo-fields-to-optional")]
+    partial class Gamesetelofieldstooptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,17 +88,6 @@ namespace chess.games.db.Migrations
                     b.ToTable("Games");
                 });
 
-            modelBuilder.Entity("chess.games.db.Entities.ImportedPgnGameIds", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ImportedPgnGameIds");
-                });
-
             modelBuilder.Entity("chess.games.db.Entities.PgnEvent", b =>
                 {
                     b.Property<string>("Id")
@@ -140,6 +131,9 @@ namespace chess.games.db.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)")
                         .HasMaxLength(450);
+
+                    b.Property<bool>("ImportNormalisationComplete")
+                        .HasColumnType("bit");
 
                     b.Property<string>("MoveList")
                         .IsRequired()
@@ -224,23 +218,6 @@ namespace chess.games.db.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PgnImports");
-                });
-
-            modelBuilder.Entity("chess.games.db.Entities.PgnImportError", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Error")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PgnGameId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PgnImportErrors");
                 });
 
             modelBuilder.Entity("chess.games.db.Entities.PgnPlayer", b =>

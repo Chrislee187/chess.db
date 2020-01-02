@@ -10,7 +10,7 @@ namespace chess.games.db.api.PgnPlayers
         : base(dbContext) { }
 
         public new PgnPlayer Load(Guid id)
-            => throw new NotSupportedException($"PgnPlayers do not have GUID primary key, use the Name instead.");
+            => throw new NotSupportedException($"PlayerLookup do not have GUID primary key, use the Name instead.");
 
         public PgnPlayer Get(string name)
             => Resource.Find(name);

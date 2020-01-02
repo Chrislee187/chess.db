@@ -9,22 +9,32 @@ namespace chess.games.db.Entities
         public DbSet<PgnGame> PgnGames { get; set; }
         public DbSet<PgnImport> PgnImports { get; set; }
 
-//        public DbSet<Event> Events { get; set; }
-//        public DbSet<Site> Sites { get; set; }
-//        public DbSet<PgnPlayer> PgnPlayers { get; set; }
-//        public DbSet<Player> Players { get; set; }
-//        public DbSet<Game> Games { get; set; }
-//        public DbSet<GameImport> GameImports { get; set; }
+        public DbSet<PgnSite> SiteLookup { get; set; }
+        public DbSet<PgnPlayer> PlayerLookup { get; set; }
+        public DbSet<PgnEvent> EventLookup { get; set; }
+
+        public DbSet<Site> Sites { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Player> Players { get; set; }
+
+        public DbSet<Game> Games { get; set; }
+        public DbSet<ImportedPgnGameIds> ImportedPgnGameIds { get; set; }
+        public DbSet<PgnImportError> PgnImportErrors { get; set; }
 
         public ChessGamesDbContext(DbContextOptions options) : base(options)
         {
             // NOTE: Used by .NET Core IoC/MVC Startup
-
         }
 
         public ChessGamesDbContext(string connectionString)
             : base(new DbContextOptionsBuilder().UseSqlServer(connectionString).Options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+         
+            base.OnModelCreating(modelBuilder);
         }
 
         public void RunWithExtendedTimeout(Action action, TimeSpan timeout)

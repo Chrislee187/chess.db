@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using chess.games.db.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,38 +9,198 @@ namespace chess.games.db.api
 {
     public class PgnRepository : IPgnRepository
     {
-        private readonly ChessGamesDbContext _chessGamesDbContext;
-
-        public PgnRepository(ChessGamesDbContext chessGamesDbContext)
+        private readonly ChessGamesDbContext _database;
+        public event Action<string> Status;
+        public bool ContainsGame(Game game)
         {
-            _chessGamesDbContext = chessGamesDbContext;
+            if (!_database.Games.Any(g => g.MoveText == game.MoveText)) return false;
+
+            return _database.Games.Any(g =>
+                g.Event == game.Event
+                && g.Site == game.Site
+                && g.White == game.White
+                && g.Black == game.Black
+                && g.Result == game.Result
+                && g.Round == game.Round
+                && g.Date == game.Date
+                && g.WhiteElo == game.WhiteElo
+                && g.BlackElo == game.BlackElo
+                && g.Eco == game.Eco
+                );
         }
 
-        public long ImportQueueSize => _chessGamesDbContext.PgnGames.Count();
+        public void SaveChanges()
+        {
+            _database.SaveChanges();
+        }
+
+        private void RaiseStatus(string status) => Status?.Invoke(status);
+
+        public PgnRepository(ChessGamesDbContext database)
+        {
+            _database = database;
+        }
+
+        public long ImportQueueSize => _database.PgnGames.Count();
 
         public int QueuePgnGames(IEnumerable<PgnImport> games)
         {
             var gamesList = games.ToArray();
 
-            _chessGamesDbContext.PgnImports.AttachRange(gamesList);
-			_chessGamesDbContext.SaveChanges();
+            _database.PgnImports.AttachRange(gamesList);
+			_database.SaveChanges();
 
-			// NOTE: Merge new games in to main PgnGame store, we use raw SQL here as it's exponentially quicker
-			// than per rows scans with EF Core DbSets
-            var mergedGamesCount = _chessGamesDbContext.Database.ExecuteSqlRaw(MergeNewGamesSql);
+            // NOTE: Merge new games in to main PgnGame store, we use raw SQL here as it's exponentially quicker
+            // than per rows scans with EF Core DbSets
+            int mergedGamesCount = 0;
+            _database.RunWithExtendedTimeout(() =>
+            {
+                mergedGamesCount = _database.Database.ExecuteSqlRaw(MergeNewGamesSql);
+            }, TimeSpan.FromSeconds(300));
 
 			// Clean the import queue
-            _chessGamesDbContext.PgnImports.RemoveRange(gamesList);
-            _chessGamesDbContext.SaveChanges();
+            _database.PgnImports.RemoveRange(gamesList);
+            _database.SaveChanges();
 
 			return mergedGamesCount;
         }
+
+        public IEnumerable<PgnGame> ValidationBatch(int batchSize = 1000) 
+            => _database.PgnGames
+                .Where(g => !_database.ImportedPgnGameIds.Any(i => i.Id == g.Id)
+                            && !_database.PgnImportErrors.Any(e => e.PgnGameId == g.Id))
+                .Take(batchSize);
+
+        public int PgnGameCount() 
+            => _database.PgnGames
+            .Count(g => !_database.ImportedPgnGameIds.Any(i => i.Id == g.Id)
+                        && !_database.PgnImportErrors.Any(e => e.PgnGameId == g.Id));
+
+        public void AddNewGame(Game game) 
+            => _database.Games.Add(game);
+
+        public PgnPlayer FindOrCreatePlayer(string pgnName)
+        {
+            var lookup = _database.PlayerLookup.Find(pgnName);
+
+            if (lookup != null)
+            {
+                LoadChildren(lookup);
+
+                return lookup;
+            }
+
+            return MatchPlayer(pgnName);
+        }
+
+        private PgnPlayer MatchPlayer(string pgnPlayerName)
+        {
+            if (!PersonName.TryParse(pgnPlayerName, out var personName)) return null;
+
+            var pgnPlayer = _database.PlayerLookup.Find(pgnPlayerName);
+            if (pgnPlayer != null)
+            {
+                LoadChildren(pgnPlayer);
+                return pgnPlayer;
+            }
+
+            var matcher = new PersonNameMatcher();
+
+            var surnameRelations = _database.Players
+                .Where(p => p.LastName == personName.Lastname)
+                .ToList();
+
+            var match = matcher.Match(personName, surnameRelations);
+
+            if(match != null)
+            {
+                return CreatePlayerLookup(pgnPlayerName, match);
+            }
+
+            return CreatePlayerLookup(pgnPlayerName, personName);
+        }
+        private PgnPlayer CreatePlayerLookup(string pgnName, Player player)
+        {
+            var matchPlayer = new PgnPlayer()
+            {
+                Id = pgnName,
+                Player = player
+            };
+
+            _database.PlayerLookup.Add(matchPlayer);
+            return matchPlayer;
+        }
+        private PgnPlayer CreatePlayerLookup(string pgnName, PersonName personName)
+        {
+            var player = new Player()
+            {
+                Id = Guid.NewGuid(),
+                Firstname = personName.Firstname,
+                LastName = personName.Lastname,
+                OtherNames = personName.Middlename
+            };
+            _database.Players.Add(player);
+            var lookup = new PgnPlayer()
+            {
+                Id = pgnName,
+                Player = player
+            };
+            _database.PlayerLookup.Add(lookup);
+            return lookup;
+        }
+        public PgnSite FindOrCreateSite(PgnGame pgnGame)
+        {
+            var lookup = _database.SiteLookup.Find(pgnGame.Site);
+            if (lookup == null)
+            {
+                lookup = new PgnSite()
+                {
+                    Id = pgnGame.Site,
+                    Site = new Site() { Id = Guid.NewGuid(), Name = pgnGame.Site }
+                };
+
+                _database.SiteLookup.Add(lookup);
+            }
+            else
+            {
+                LoadChildren(lookup);
+            }
+
+            return lookup;
+        }
+
+        public void MarkGameImported(Guid id) 
+            => _database.ImportedPgnGameIds.Add(new ImportedPgnGameIds(id));
+
+        public void MarkGameImportFailed(Guid errorGameId, string errorMessage) 
+            => _database.PgnImportErrors.Add(new PgnImportError(errorGameId, errorMessage));
+
+        public PgnEvent FindOrCreateEvent(PgnGame pgnGame)
+        {
+            var lookup = _database.EventLookup.Find(pgnGame.Event);
+            if (lookup == null)
+            {
+                lookup = new PgnEvent
+                {
+                    Id = pgnGame.Event,
+                    Event = new Event {Id = Guid.NewGuid(), Name = pgnGame.Event}
+                };
+                _database.EventLookup.Add(lookup);
+            }
+            else
+            {
+                LoadChildren(lookup);
+            }
+
+            return lookup;
+        }
+
         private static readonly string MergeNewGamesSql = $@"INSERT {nameof(ChessGamesDbContext.PgnGames)} (
 		Id, [Event], [Site], White, Black, [Date], [Round], 
-		Result, MoveList, ECO, WhiteElo, BlackElo, CustomTagsJson, ImportNormalisationComplete
+		Result, MoveList, ECO, WhiteElo, BlackElo, CustomTagsJson
 	) 
 SELECT newid(), [Event], [Site], White, Black, [Date], [Round], 
-		Result, MoveList, ECO, WhiteElo, BlackElo, CustomTagsJson, 0
+		Result, MoveList, ECO, WhiteElo, BlackElo, CustomTagsJson
 	FROM 	{nameof(ChessGamesDbContext.PgnImports)} import 
 	WHERE NOT EXISTS (
 			SELECT Id
@@ -71,5 +233,19 @@ SELECT newid(), [Event], [Site], White, Black, [Date], [Round],
 		);
 ";
 
+        private void LoadChildren(PgnPlayer entity) 
+            => _database.Entry(entity)
+                .Reference(p => p.Player)
+                .Load();
+
+        private void LoadChildren(PgnSite entity)
+            => _database.Entry(entity)
+                .Reference(p => p.Site)
+                .Load();
+
+        private void LoadChildren(PgnEvent entity)
+            => _database.Entry(entity)
+                .Reference(p => p.Event)
+                .Load();
     }
 }

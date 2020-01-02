@@ -8,6 +8,6 @@ namespace chess.games.db.api.PgnPlayers
     public class GetPgnPlayersEntitySearch : IEntitySearch<PgnPlayer>
     {
         public IQueryable<PgnPlayer> Search(IQueryable<PgnPlayer> entities, string searchText)
-            => entities.Where(p => p.Name.Contains(searchText));
+            => entities.Where(p => p.Player.LastName.Contains(searchText));
     }
 }

@@ -20,10 +20,10 @@ namespace chess.games.db.api.Players
                 result = resources.Where(p => p.Firstname.ToLower().Contains(Firstname.ToLower()));
 
             if (!string.IsNullOrEmpty(Middlename))
-                result = resources.Where(p => p.Middlenames.ToLower().Contains(Middlename.ToLower()));
+                result = resources.Where(p => p.OtherNames.ToLower().Contains(Middlename.ToLower()));
             
             if (!string.IsNullOrEmpty(Lastname))
-                result = resources.Where(p => p.Surname.ToLower().Contains(Lastname.ToLower()));
+                result = resources.Where(p => p.LastName.ToLower().Contains(Lastname.ToLower()));
 
             return result;
         }

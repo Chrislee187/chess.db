@@ -15,26 +15,30 @@ namespace chess.games.db.pgnimporter
         private static readonly PgnFileFinder Finder = new PgnFileFinder();
         private static IConfiguration _config;
         private static IMapper _mapper;
-
+        private static PgnImportService _svc;
+        private static void RaiseStatus(string status) => Console.Write(status);
         static void Main(string[] args)
         {
             Startup();
 
-            var connectionString = _config["chess-games-db"];
-
-            Console.WriteLine("Initialising DB Connection...");
-            _dbContext = new ChessGamesDbContext(connectionString);
-
-            Console.WriteLine("Performing any DB migrations...");
+            RaiseStatus("Performing any DB migrations...\n");
             _dbContext.UpdateDatabase();
             
-            var scanPath = args.Any() ? args[0] : @".\";
+            var scanPath = args.Any() ? args[0] : @"";
 
-            var pgnFiles = Finder.FindFiles(scanPath);
+            if (scanPath != "")
+            {
+                RaiseStatus($"Starting import from: {scanPath}\n");
+                var pgnFiles = Finder.FindFiles(scanPath);
 
-            Console.WriteLine("Starting import...");
-            ImportGames(pgnFiles);
-            
+                _svc.ImportGames(pgnFiles);
+            }
+            else
+            {
+                RaiseStatus("No pgn files/folders specified for input.\n");
+            }
+
+            _svc.ProcessUnvalidatedGames();
         }
 
         private static void Startup()
@@ -42,21 +46,16 @@ namespace chess.games.db.pgnimporter
             _config = new ConfigurationBuilder()
                 .AddJsonFile("appSettings.json", false, false)
                 .Build();
-            
+
+            var connectionString = _config["chess-games-db"];
+
+            _dbContext = new ChessGamesDbContext(connectionString);
             _mapper = AutoMapperFactory.Create();
+            var pgnRepository = new PgnRepository(_dbContext);
+            pgnRepository.Status += RaiseStatus;
+            _svc = new PgnImportService(pgnRepository, _mapper);
+            _svc.Status += RaiseStatus;
         }
 
-        private static void Status(string msg) => Console.WriteLine(msg);
-
-        private static void ImportGames(string[] pgnFiles)
-        {
-            // TODO: Setup IOC with a global static reference to the container
-            var svc = new PgnImportService(new PgnRepository(_dbContext), _mapper);
-
-            svc.Status += Status;
-
-            svc.ImportGames(pgnFiles);
-            
-        }
     }
 }

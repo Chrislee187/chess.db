@@ -68,7 +68,7 @@ namespace chess.db.webapi.Controllers
         [HttpGet("{id:Guid}", Name = GetPgnPlayerByIdRouteName)]
         public ActionResult<PgnPlayerDto> GetPgnPlayer(Guid id)
             => Problem(
-                "PgnPlayers are referenced by name, not Id.", 
+                "PlayerLookup are referenced by name, not Id.", 
                 Url.Link(GetPgnPlayerByIdRouteName, new {id}),
                 (int) HttpStatusCode.Forbidden,
                 $"Invalid route parameter {id}"

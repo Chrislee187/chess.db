@@ -39,7 +39,7 @@ namespace chess.db.webapi
                         new OrderByPropertyMappingService<PlayerDto, Player>(
                             new Dictionary<string, OrderByPropertyMappingValue>(StringComparer.OrdinalIgnoreCase)
                             {
-                                { nameof(PlayerDto.Lastname), new OrderByPropertyMappingValue(new List<string>() { nameof(Player.Surname) } ) }
+                                { nameof(PlayerDto.Lastname), new OrderByPropertyMappingValue(new List<string>() { nameof(Player.LastName) } ) }
                             })
                     )
                 .AddTransient(typeof(IEntityUpdater<,>), typeof(EntityUpdater<,>))

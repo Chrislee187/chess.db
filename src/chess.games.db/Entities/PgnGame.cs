@@ -6,13 +6,16 @@ namespace chess.games.db.Entities
     public class PgnGame : DbEntity<Guid>
     {
         // The mandatory seven PGN tags
-        [Required]
+        [Required][MaxLength(450)]
         public string Event { get; set; }
         [Required]
+        [MaxLength(450)]
         public string Site { get; set; }
         [Required]
+        [MaxLength(450)]
         public string White { get; set; }
         [Required]
+        [MaxLength(450)]
         public string Black { get; set; }
         [Required]
         public string Date { get; set; }
@@ -31,9 +34,5 @@ namespace chess.games.db.Entities
 
         // Any additional tags are stored as Json
         public string CustomTagsJson { get; set; }
-
-        public bool ImportNormalisationComplete { get; set; } = false;
     }
-
-
 }
