@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using chess.games.db.api;
 using chess.games.db.Entities;
 using NUnit.Framework;

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using chess.games.db.Entities;
+using chess.games.db.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace chess.games.db.api
@@ -10,7 +10,7 @@ namespace chess.games.db.api
     public class PgnRepository : IPgnRepository
     {
         private readonly ChessGamesDbContext _database;
-        public event Action<string> Status;
+
         public bool ContainsGame(Game game)
         {
             if (!_database.Games.Any(g => g.MoveText == game.MoveText)) return false;
@@ -34,14 +34,25 @@ namespace chess.games.db.api
             _database.SaveChanges();
         }
 
-        private void RaiseStatus(string status) => Status?.Invoke(status);
-
         public PgnRepository(ChessGamesDbContext database)
         {
             _database = database;
         }
 
-        public long ImportQueueSize => _database.PgnGames.Count();
+        public int ImportQueueSize
+            => _database.PgnGames.AsNoTracking()
+                .Count(g => !_database.ImportedPgnGameIds.AsNoTracking()
+                                .Any(i => i.Id == g.Id)
+                            && !_database.PgnImportErrors.AsNoTracking()
+                                .Any(e => e.PgnGameId == g.Id));
+
+        public IEnumerable<PgnGame> ValidationBatch(int batchSize = 1000)
+            => _database.PgnGames.AsNoTracking()
+                .Where(g => !_database.ImportedPgnGameIds.AsNoTracking()
+                                .Any(i => i.Id == g.Id)
+                            && !_database.PgnImportErrors.AsNoTracking()
+                                .Any(e => e.PgnGameId == g.Id))
+                .Take(batchSize);
 
         public int QueuePgnGames(IEnumerable<PgnImport> games)
         {
@@ -56,7 +67,7 @@ namespace chess.games.db.api
             _database.RunWithExtendedTimeout(() =>
             {
                 mergedGamesCount = _database.Database.ExecuteSqlRaw(MergeNewGamesSql);
-            }, TimeSpan.FromSeconds(300));
+            }, TimeSpan.FromMinutes(5));
 
 			// Clean the import queue
             _database.PgnImports.RemoveRange(gamesList);
@@ -65,33 +76,56 @@ namespace chess.games.db.api
 			return mergedGamesCount;
         }
 
-        public IEnumerable<PgnGame> ValidationBatch(int batchSize = 1000) 
-            => _database.PgnGames
-                .Where(g => !_database.ImportedPgnGameIds.Any(i => i.Id == g.Id)
-                            && !_database.PgnImportErrors.Any(e => e.PgnGameId == g.Id))
-                .Take(batchSize);
-
-        public int PgnGameCount() 
-            => _database.PgnGames
-            .Count(g => !_database.ImportedPgnGameIds.Any(i => i.Id == g.Id)
-                        && !_database.PgnImportErrors.Any(e => e.PgnGameId == g.Id));
-
         public void AddNewGame(Game game) 
             => _database.Games.Add(game);
 
-        public PgnPlayer FindOrCreatePlayer(string pgnName)
+        public Game CreateGame(PgnGame pgnGame)
         {
-            var lookup = _database.PlayerLookup.Find(pgnName);
+            var pgnEvent = FindOrCreateEvent(pgnGame);
+            var pgnSite = FindOrCreateSite(pgnGame);
+            var black = FindOrCreatePlayer(pgnGame.Black);
+            var white = FindOrCreatePlayer(pgnGame.White);
 
-            if (lookup != null)
+            if (black != null && white != null)
             {
-                LoadChildren(lookup);
+                var game = new Game
+                {
+                    Id = Guid.NewGuid(),
+                    Event = pgnEvent.Event,
+                    Site = pgnSite.Site,
+                    White = white.Player,
+                    Black = black.Player,
+                    Date = pgnGame.Date,
+                    Round = pgnGame.Round,
+                    Result = pgnGame.Result.ToGameResult(),
+                    WhiteElo = SafeElo(pgnGame.WhiteElo),
+                    BlackElo = SafeElo(pgnGame.BlackElo),
+                    Eco = pgnGame.Eco,
+                    MoveText = pgnGame.MoveList,
+                };
 
-                return lookup;
+                return game;
+            }
+            int? SafeElo(string value)
+            {
+                if (string.IsNullOrEmpty(value)) return null;
+
+                if (int.TryParse(value, out int v))
+                {
+                    return v;
+                }
+
+                return null;
             }
 
-            return MatchPlayer(pgnName);
+            return null;
         }
+
+        public void MarkGameImported(Guid id) 
+            => _database.ImportedPgnGameIds.Add(new ImportedPgnGameIds(id));
+
+        public void MarkGameImportFailed(Guid errorGameId, string errorMessage) 
+            => _database.PgnImportErrors.Add(new PgnImportError(errorGameId, errorMessage));
 
         private PgnPlayer MatchPlayer(string pgnPlayerName)
         {
@@ -119,6 +153,7 @@ namespace chess.games.db.api
 
             return CreatePlayerLookup(pgnPlayerName, personName);
         }
+
         private PgnPlayer CreatePlayerLookup(string pgnName, Player player)
         {
             var matchPlayer = new PgnPlayer()
@@ -130,6 +165,7 @@ namespace chess.games.db.api
             _database.PlayerLookup.Add(matchPlayer);
             return matchPlayer;
         }
+
         private PgnPlayer CreatePlayerLookup(string pgnName, PersonName personName)
         {
             var player = new Player()
@@ -148,7 +184,42 @@ namespace chess.games.db.api
             _database.PlayerLookup.Add(lookup);
             return lookup;
         }
-        public PgnSite FindOrCreateSite(PgnGame pgnGame)
+
+        private PgnPlayer FindOrCreatePlayer(string pgnName)
+        {
+            var lookup = _database.PlayerLookup.Find(pgnName);
+
+            if (lookup != null)
+            {
+                LoadChildren(lookup);
+
+                return lookup;
+            }
+
+            return MatchPlayer(pgnName);
+        }
+
+        private PgnEvent FindOrCreateEvent(PgnGame pgnGame)
+        {
+            var lookup = _database.EventLookup.Find(pgnGame.Event);
+            if (lookup == null)
+            {
+                lookup = new PgnEvent
+                {
+                    Id = pgnGame.Event,
+                    Event = new Event {Id = Guid.NewGuid(), Name = pgnGame.Event}
+                };
+                _database.EventLookup.Add(lookup);
+            }
+            else
+            {
+                LoadChildren(lookup);
+            }
+
+            return lookup;
+        }
+
+        private PgnSite FindOrCreateSite(PgnGame pgnGame)
         {
             var lookup = _database.SiteLookup.Find(pgnGame.Site);
             if (lookup == null)
@@ -169,31 +240,14 @@ namespace chess.games.db.api
             return lookup;
         }
 
-        public void MarkGameImported(Guid id) 
-            => _database.ImportedPgnGameIds.Add(new ImportedPgnGameIds(id));
+        private void LoadChildren(PgnPlayer entity) 
+            => _database.LoadChildren(entity,"Player");
 
-        public void MarkGameImportFailed(Guid errorGameId, string errorMessage) 
-            => _database.PgnImportErrors.Add(new PgnImportError(errorGameId, errorMessage));
+        private void LoadChildren(PgnSite entity)
+            => _database.LoadChildren(entity, "Site");
 
-        public PgnEvent FindOrCreateEvent(PgnGame pgnGame)
-        {
-            var lookup = _database.EventLookup.Find(pgnGame.Event);
-            if (lookup == null)
-            {
-                lookup = new PgnEvent
-                {
-                    Id = pgnGame.Event,
-                    Event = new Event {Id = Guid.NewGuid(), Name = pgnGame.Event}
-                };
-                _database.EventLookup.Add(lookup);
-            }
-            else
-            {
-                LoadChildren(lookup);
-            }
-
-            return lookup;
-        }
+        private void LoadChildren(PgnEvent entity)
+            => _database.LoadChildren(entity, "Event");
 
         private static readonly string MergeNewGamesSql = $@"INSERT {nameof(ChessGamesDbContext.PgnGames)} (
 		Id, [Event], [Site], White, Black, [Date], [Round], 
@@ -232,20 +286,5 @@ SELECT newid(), [Event], [Site], White, Black, [Date], [Round],
 					)
 		);
 ";
-
-        private void LoadChildren(PgnPlayer entity) 
-            => _database.Entry(entity)
-                .Reference(p => p.Player)
-                .Load();
-
-        private void LoadChildren(PgnSite entity)
-            => _database.Entry(entity)
-                .Reference(p => p.Site)
-                .Load();
-
-        private void LoadChildren(PgnEvent entity)
-            => _database.Entry(entity)
-                .Reference(p => p.Event)
-                .Load();
     }
 }

@@ -15,7 +15,7 @@ namespace chess.games.db.pgnimporter
         private static readonly PgnFileFinder Finder = new PgnFileFinder();
         private static IConfiguration _config;
         private static IMapper _mapper;
-        private static PgnImportService _svc;
+        private static IPgnImportService _svc;
         private static void RaiseStatus(string status) => Console.Write(status);
         static void Main(string[] args)
         {
@@ -52,7 +52,6 @@ namespace chess.games.db.pgnimporter
             _dbContext = new ChessGamesDbContext(connectionString);
             _mapper = AutoMapperFactory.Create();
             var pgnRepository = new PgnRepository(_dbContext);
-            pgnRepository.Status += RaiseStatus;
             _svc = new PgnImportService(pgnRepository, _mapper);
             _svc.Status += RaiseStatus;
         }

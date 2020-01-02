@@ -7,12 +7,12 @@ namespace chess.games.db.pgnimporter.Extensions
 
         public static string RevertDateToText(this PgnDate date)
         {
-            return $"{FixValue(date.Year, "????")}." +
-                   $"{FixValue(date.Month, "??")}." +
-                   $"{FixValue(date.Day, "??")}";
+            return $"{DefaultDateValue(date.Year, "????")}." +
+                   $"{DefaultDateValue(date.Month, "??")}." +
+                   $"{DefaultDateValue(date.Day, "??")}";
         }
 
-        private static string FixValue(int? v, string def)
+        private static string DefaultDateValue(int? v, string def)
         {
             if (v.HasValue && v != 0)
             {
@@ -22,4 +22,5 @@ namespace chess.games.db.pgnimporter.Extensions
             return def;
         }
     }
+
 }
