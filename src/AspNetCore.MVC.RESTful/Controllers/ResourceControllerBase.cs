@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -83,11 +82,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
             _orderByPropertyMappingService = NullX.Throw(orderByPropertyMappingService, nameof(orderByPropertyMappingService));
             _entityUpdater = NullX.Throw(entityUpdater, nameof(entityUpdater));
 
-            HttpOptions = GetType()
-                .GetMembers(BindingFlags.Public | BindingFlags.Instance)
-                .SelectMany(m => m.GetCustomAttributes<HttpMethodAttribute>())
-                .Select(a => a.HttpMethods.First())
-                .Distinct();
         }
 
         /// <summary>

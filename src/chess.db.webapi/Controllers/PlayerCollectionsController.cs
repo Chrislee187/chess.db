@@ -6,7 +6,7 @@ using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Services;
 using AutoMapper;
 using chess.db.webapi.Models;
-using chess.games.db.api.Players;
+using chess.games.db.api.Repositories;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Mvc;
 

@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Models;
 using AspNetCore.MVC.Restful.Tests.Builders;
@@ -22,7 +21,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
     // anything handled by result formatting (post execution action filter code I believe)
     public class ResourceBaseControllerTests 
     {
-        private ResourceControllerBase<TestDto, TestEntity, Guid> _controller;
+        private TestResourceController _controller;
         private TestResourceControllerMockery _mockery;
         private static readonly Guid AnyGuid = Guid.NewGuid();
         private static readonly TestEntity AnyEntity = new TestEntity() { Id= AnyGuid};
@@ -41,7 +40,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             _mockery.WithInvalidShape();
 
             _controller
-                .ResourcesGet((object) null, null, null)
+                .ResourcesGet(null, null, null)
                 .ShouldBeOfType<BadRequestObjectResult>();
         }
 
@@ -51,7 +50,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             _mockery.WithInvalidOrderByClause();
 
             _controller
-                .ResourcesGet((object)null, null, null)
+                .ResourcesGet(null, null, null)
                 .ShouldBeOfType<BadRequestObjectResult>();
         }
 
@@ -60,7 +59,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         {
 
             var resourcesResult = _controller
-                .ResourcesGet((object)null, null, null);
+                .ResourcesGet(null, null, null);
 
             resourcesResult.ShouldBeOfType<OkObjectResult>();
         }
@@ -71,7 +70,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             _mockery.WithResourceList();
 
             var resourcesResult = (OkObjectResult) _controller
-                .ResourcesGet((object)null, null, null);
+                .ResourcesGet(null, null, null);
 
             var resources = resourcesResult.Value as ExpandoObject;
             var dict = (IDictionary<string, object>) resources ?? new ConcurrentDictionary<string, object>();
@@ -107,7 +106,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
             _mockery.WithNoLinks();
 
             var resourcesResult = (OkObjectResult)_controller
-                .ResourcesGet((object)null, null, null);
+                .ResourcesGet(null, null, null);
 
 
             var dictCollection = ((IEnumerable<ExpandoObject>) resourcesResult.Value)
@@ -131,7 +130,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
                 .WithResourceList();
 
             _controller
-                .ResourcesGet((object)null, null, null);
+                .ResourcesGet(null, null, null);
 
             _controller.Response.Headers
                 .ContainsKey("X-Pagination")

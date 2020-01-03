@@ -1,12 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using chess.games.db.api.Services;
 using chess.games.db.Entities;
 using chess.games.db.Extensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace chess.games.db.api
+namespace chess.games.db.api.Repositories
 {
+    public interface IPgnRepository
+    {
+        int ImportQueueSize { get; }
+        int QueuePgnGames(IEnumerable<PgnImport> games);
+        IEnumerable<PgnGame> ValidationBatch(int batchSize = int.MaxValue);
+        void AddNewGame(Game game);
+
+        bool ContainsGame(Game game);
+        void SaveChanges();
+        void MarkGameImported(Guid id);
+        void MarkGameImportFailed(Guid errorGameId, string errorMessage);
+        Game CreateGame(PgnGame pgnGame);
+    }
+    
     public class PgnRepository : IPgnRepository
     {
         private readonly ChessGamesDbContext _database;
@@ -138,7 +153,7 @@ namespace chess.games.db.api
                 return pgnPlayer;
             }
 
-            var matcher = new PersonNameMatcher();
+            var matcher = new PlayerMatchingService();
 
             var surnameRelations = _database.Players
                 .Where(p => p.LastName == personName.Lastname)

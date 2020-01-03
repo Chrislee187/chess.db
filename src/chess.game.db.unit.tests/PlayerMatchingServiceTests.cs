@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using chess.games.db.api;
+using chess.games.db.api.Services;
 using chess.games.db.Entities;
 using NUnit.Framework;
 using Shouldly;
@@ -8,9 +8,9 @@ using Shouldly;
 namespace chess.game.db.unit.tests
 {
     [TestFixture]
-    public class PersonNameMatcherTests
+    public class PlayerMatchingServiceTests
     {
-        private PersonNameMatcher _matcher;
+        private PlayerMatchingService _matcher;
 
         private const string AnyFirstName = "first";
         private const string AnyMiddleName = "middle";
@@ -23,7 +23,7 @@ namespace chess.game.db.unit.tests
         [SetUp]
         public void SetUp()
         {
-            _matcher = new PersonNameMatcher();
+            _matcher = new PlayerMatchingService();
         }
 
         [Test]

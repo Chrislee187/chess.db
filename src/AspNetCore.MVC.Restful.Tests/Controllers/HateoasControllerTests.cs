@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using AspNetCore.MVC.RESTful.Configuration;
-using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.Restful.Tests.Builders;
 using NUnit.Framework;
 using Shouldly;
@@ -10,7 +9,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
 {
     public class HateoasControllerTests
     {
-        private HateoasController<TestEntity, Guid> _controller;
+        private TestHateoasController _controller;
 
         [SetUp]
         public void Setup()
@@ -80,29 +79,42 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
 
 
         [Test]
-        public void ResourceGetLinks_returns_current_standard_four_relationships()
+        public void ResourceGetLinks_returns_get_only_when_no_other_endpoints_implemented()
         {
             var resourceGetLinks = _controller.ResourceGetLinks(Guid.NewGuid(), "");
 
             resourceGetLinks
-                .ShouldContain(l 
+                .ShouldContain(l
                     => l.Rel.Equals(HateoasConfig.Relationships.Self))
                 ;
+        }
 
-            resourceGetLinks
-                .ShouldContain(l 
-                    => l.Rel.Equals(HateoasConfig.Relationships.Upsert))
-                ;
-
-            resourceGetLinks
-                .ShouldContain(l 
-                    => l.Rel.Equals(HateoasConfig.Relationships.Patch))
-                ;
-
-            resourceGetLinks
-                .ShouldContain(l 
-                    => l.Rel.Equals(HateoasConfig.Relationships.Delete))
-                ;
+        [Test]
+        public void ResourceGetLinks_returns_implemented_endpoints()
+        {
+            //TODO: Create a suitable test controller
+            Assert.Inconclusive("TODO");
+//            var resourceGetLinks = _controller.ResourceGetLinks(Guid.NewGuid(), "");
+//
+//            resourceGetLinks
+//                .ShouldContain(l
+//                    => l.Rel.Equals(HateoasConfig.Relationships.Self))
+//                ;
+//
+//            resourceGetLinks
+//                .ShouldContain(l
+//                    => l.Rel.Equals(HateoasConfig.Relationships.Upsert))
+//                ;
+//
+//            resourceGetLinks
+//                .ShouldContain(l
+//                    => l.Rel.Equals(HateoasConfig.Relationships.Patch))
+//                ;
+//
+//            resourceGetLinks
+//                .ShouldContain(l
+//                    => l.Rel.Equals(HateoasConfig.Relationships.Delete))
+//                ;
         }
 
         [Test]

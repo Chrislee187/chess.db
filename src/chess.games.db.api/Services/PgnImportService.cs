@@ -6,10 +6,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using chess.games.db.api.Repositories;
 using PgnGame = PgnReader.PgnGame;
 
 namespace chess.games.db.api.Services
 {
+    public interface IPgnImportService
+    {
+        event Action<string> Status;
+        void ImportGames(string[] pgnFiles);
+        void ProcessUnvalidatedGames();
+    }
+    
     /// <summary>
     /// Import raw PGN files, has logic to ignore duplicate PGN entries
     /// </summary>

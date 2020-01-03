@@ -1,4 +1,4 @@
-using chess.games.db.api;
+using chess.games.db.api.Services;
 using NUnit.Framework;
 using Shouldly;
 

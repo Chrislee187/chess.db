@@ -6,6 +6,7 @@ using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
 using chess.games.db.api.Players;
+using chess.games.db.api.Repositories;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +17,6 @@ namespace chess.db.webapi.Controllers
     [Route("api/players")]
     public class PlayersController : ResourceControllerBase<PlayerDto, Player, Guid>
     {
-        // NOTE: The ResourceControllerBase needs to know the names of the supported
-        // routes. By default is assumes names based based on `nameof(TEntity)` that follow the pattern below
-        // override with `ResourceControllerBase.HateoasConfig.XXXXRouteName.Set()` calls in the ctor or ctor
-        // params if a different convention is required
         private const string GetPlayerRouteName = "GetPlayer";
         private const string GetPlayersRouteName = "GetPlayers";
         private const string CreatePlayerRouteName = "CreatePlayer";

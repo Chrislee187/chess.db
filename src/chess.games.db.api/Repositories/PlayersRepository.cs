@@ -4,8 +4,13 @@ using System.Linq;
 using AspNetCore.MVC.RESTful.Repositories;
 using chess.games.db.Entities;
 
-namespace chess.games.db.api.Players
+namespace chess.games.db.api.Repositories
 {
+    public interface IPlayersRepository : IResourceRepository<Player, Guid>
+    {
+        IEnumerable<Player> Load(IEnumerable<Guid> ids);
+    }
+
     public class PlayersRepository : EntityFrameworkResourceRepository<Player, Guid>, IPlayersRepository
     {
         public PlayersRepository(

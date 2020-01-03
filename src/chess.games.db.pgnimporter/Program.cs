@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using AutoMapper;
-using chess.games.db.api;
+using chess.games.db.api.Repositories;
 using chess.games.db.api.Services;
 using chess.games.db.Entities;
 using chess.games.db.pgnimporter.Mapping;

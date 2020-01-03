@@ -4,7 +4,7 @@ using AspNetCore.MVC.RESTful.Repositories;
 using chess.games.db.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace chess.games.db.api.Players
+namespace chess.games.db.api.Repositories
 {
     public interface IGamesRepository : IResourceRepository<Game, Guid>
     {

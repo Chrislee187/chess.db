@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Net.Http;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Models;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace AspNetCore.MVC.RESTful.Controllers
 {
@@ -18,10 +19,16 @@ namespace AspNetCore.MVC.RESTful.Controllers
     /// </summary>
     public abstract class HateoasController<TEntity, TId> : HateoasController
     {
-        protected IEnumerable<string> HttpOptions;
+        protected readonly IEnumerable<string> HttpOptions;
 
-        protected HateoasController() : base(typeof(TEntity).Name) 
-        { }
+        protected HateoasController() : base(typeof(TEntity).Name)
+        {
+            HttpOptions = GetType()
+                .GetMembers(BindingFlags.Public | BindingFlags.Instance)
+                .SelectMany(m => m.GetCustomAttributes<HttpMethodAttribute>())
+                .Select(a => a.HttpMethods.First())
+                .Distinct();
+        }
 
         /// <summary>
         /// Factory method to build <see cref="HateoasLink"/>'s for resource collection responses

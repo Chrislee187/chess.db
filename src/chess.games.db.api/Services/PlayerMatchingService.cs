@@ -1,13 +1,12 @@
-using chess.games.db.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using chess.games.db.Entities;
 
-namespace chess.games.db.api
+namespace chess.games.db.api.Services
 {
-    public class PersonNameMatcher
+    public class PlayerMatchingService
     {
-
         public Player Match(PersonName personName, IReadOnlyList<Player> players)
         {
             if (!players.Any()) return null;
@@ -47,7 +46,6 @@ namespace chess.games.db.api
                 else
                 {
                     // TODO: Use middlename to further disambiguate
-                    Console.WriteLine();
                     return null;
                 }
             }

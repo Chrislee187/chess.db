@@ -1,7 +1,5 @@
-using System;
 using System.Linq;
 using AspNetCore.MVC.RESTful.Configuration;
-using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.Restful.Tests.Builders;
 using NUnit.Framework;
 using Shouldly;
@@ -10,7 +8,7 @@ namespace AspNetCore.MVC.Restful.Tests
 {
     public class Spikes
     {
-        private HateoasController<TestEntity, Guid> _controller;
+        private TestHateoasController _controller;
 
         [SetUp]
         public void Setup()

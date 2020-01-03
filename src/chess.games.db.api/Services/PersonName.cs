@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace chess.games.db.api
+namespace chess.games.db.api.Services
 {
     public class PersonName
     {
