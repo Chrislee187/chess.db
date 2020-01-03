@@ -60,7 +60,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
         private readonly IResourceRepository<TEntity, TId> _restResourceRepository;
         private readonly IOrderByPropertyMappingService<TDto, TEntity> _orderByPropertyMappingService;
         private readonly IEntityUpdater<TEntity, TId> _entityUpdater;
-        private readonly IEnumerable<string> _httpOptions;
 
         protected IMapper Mapper { get; }
         /// <summary>
@@ -84,7 +83,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             _orderByPropertyMappingService = NullX.Throw(orderByPropertyMappingService, nameof(orderByPropertyMappingService));
             _entityUpdater = NullX.Throw(entityUpdater, nameof(entityUpdater));
 
-            _httpOptions = GetType()
+            HttpOptions = GetType()
                 .GetMembers(BindingFlags.Public | BindingFlags.Instance)
                 .SelectMany(m => m.GetCustomAttributes<HttpMethodAttribute>())
                 .Select(a => a.HttpMethods.First())
@@ -422,7 +421,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// </returns>
         public IActionResult ResourceOptions(IReadOnlyList<string> customQueryStringOptions = null)
         {
-            Response.Headers.Add("Allow", string.Join(',', _httpOptions));
+            Response.Headers.Add("Allow", string.Join(',', HttpOptions));
 
             customQueryStringOptions ??= new List<string>();
             var response = new

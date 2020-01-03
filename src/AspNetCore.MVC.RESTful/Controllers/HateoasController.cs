@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Filters;
@@ -17,6 +18,8 @@ namespace AspNetCore.MVC.RESTful.Controllers
     /// </summary>
     public abstract class HateoasController<TEntity, TId> : HateoasController
     {
+        protected IEnumerable<string> HttpOptions;
+
         protected HateoasController() : base(typeof(TEntity).Name) 
         { }
 
@@ -61,13 +64,27 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <returns></returns>
         public List<HateoasLink> ResourceGetLinks(TId id, string shape)
         {
+            
+
             var links = new List<HateoasLink>
             {
                 ResourceGetLinkBuilder(id, shape: shape, rel: HateoasConfig.Relationships.Self),
-                ResourceUpsertLinkBuilder(id),
-                ResourcePatchLinkBuilder(id),
-                ResourceDeleteLinkBuilder(id)
             };
+
+            if (HttpOptions.Contains("PUT"))
+            {
+                links.Add(ResourceUpsertLinkBuilder(id));
+            }
+
+            if (HttpOptions.Contains("PATCH"))
+            {
+                links.Add(ResourcePatchLinkBuilder(id));
+            }
+
+            if (HttpOptions.Contains("DELETE"))
+            {
+                links.Add(ResourceDeleteLinkBuilder(id));
+            }
 
             return links;
         }

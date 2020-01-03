@@ -14,14 +14,14 @@ namespace AspNetCore.MVC.RESTful.Repositories
     /// <typeparam name="TId"></typeparam>
     public abstract class EntityFrameworkResourceRepository<TEntity, TId> : IResourceRepository<TEntity, TId> where TEntity : class
     {
-        private readonly DbContext _dbContext;
+        protected readonly DbContext DbContext;
 
-        protected  DbSet<TEntity> Resource => _dbContext.Set<TEntity>();
+        protected virtual IQueryable<TEntity> Resource => DbContext.Set<TEntity>();
 
         protected EntityFrameworkResourceRepository(DbContext dbContext) 
-            => _dbContext = dbContext;
+            => DbContext = dbContext;
 
-        public void Add(TEntity entity) => _dbContext.Set<TEntity>().Add(entity);
+        public void Add(TEntity entity) => DbContext.Set<TEntity>().Add(entity);
         public bool Exists(TId id) => Load(id) != null;
         public void Update(TEntity player) { } // NOTE: No code needed, EF tracking handles it
 
@@ -46,11 +46,11 @@ namespace AspNetCore.MVC.RESTful.Repositories
             return new PagedList<TEntity>(sorted, pageSize, page);
         }
 
-        public TEntity Load(TId id) => _dbContext.Set<TEntity>().Find(id);
+        public TEntity Load(TId id) => DbContext.Set<TEntity>().Find(id);
         
-        public void Delete(TEntity entity) => _dbContext.Set<TEntity>().Remove(entity);
+        public void Delete(TEntity entity) => DbContext.Set<TEntity>().Remove(entity);
         
-        public bool Save() => (_dbContext.SaveChanges() >= 0);
+        public bool Save() => (DbContext.SaveChanges() >= 0);
         
         private IQueryable<TEntity> Reduce(
             IQueryable<TEntity> resources, 
