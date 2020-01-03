@@ -45,12 +45,6 @@ namespace chess.db.webapi.Controllers
         public IActionResult GetEvent(Guid id)
             => ResourceGet(id);
 
-
-        [HttpPatch("{id}", Name = PatchEventRouteName)]
-        public ActionResult PatchPlayer([FromRoute] Guid id,
-            [FromBody]JsonPatchDocument<EventDto> patchDocument)
-            => ResourcePatch(id, patchDocument);
-
         [HttpOptions]
         public IActionResult GetOptions()
             => ResourceOptions();
