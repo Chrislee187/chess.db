@@ -9,4 +9,5 @@ namespace chess.games.db.api.Players
     {
         IEnumerable<Player> Load(IEnumerable<Guid> ids);
     }
+
 }

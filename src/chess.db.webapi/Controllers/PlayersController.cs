@@ -61,7 +61,6 @@ namespace chess.db.webapi.Controllers
         [HttpPatch("{id}", Name = PatchPlayerRouteName)]
         public ActionResult PatchPlayer([FromRoute] Guid id,
             [FromBody]JsonPatchDocument<PlayerDto> patchDocument)
-        
             => ResourcePatch(id, patchDocument);
 
         [HttpDelete("{id}", Name= DeletePlayerRouteName)]

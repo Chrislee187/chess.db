@@ -10,7 +10,7 @@ namespace chess.games.db.api.Players
     {
         public PlayersRepository(
             ChessGamesDbContext dbContext
-            )
+        )
             : base(dbContext) { }
 
         public IEnumerable<Player> Load(IEnumerable<Guid> ids)

@@ -74,4 +74,34 @@ namespace chess.db.webapi.Mapping.Profiles
 
         }
     }
+
+    public class GamesProfile : Profile
+    {
+        public GamesProfile()
+        {
+            MapGames();
+        }
+
+        private void MapGames()
+        {
+            CreateMap<Game, GameDto>()
+                .ForMember(d => d.Black, o => o.MapFrom(s => s.Black.ToString()))
+                .ForMember(d => d.BlackId, o => o.MapFrom(s => s.Black.Id))
+                .ForMember(d => d.White, o => o.MapFrom(s => s.White.ToString()))
+                .ForMember(d => d.WhiteId, o => o.MapFrom(s => s.White.Id))
+                .ForMember(d => d.Event, o => o.MapFrom(s => s.Event.Name))
+                .ForMember(d => d.EventId, o => o.MapFrom(s => s.Event.Id))
+                .ForMember(d => d.Site, o => o.MapFrom(s => s.Site.Name))
+                .ForMember(d => d.SiteId, o => o.MapFrom(s => s.Site.Id))
+                .ForMember(d => d.Date, o => o.MapFrom(s => s.Date))
+                .ForMember(d => d.Moves, o => o.MapFrom(s => s.MoveText))
+                .ForMember(d => d.Result, o => o.MapFrom(s => s.Result.RevertToText()))
+                .ForMember(d => d.Round, o => o.MapFrom(s => s.Round))
+                ;
+
+            CreateMap<Site, SiteDto>();
+            CreateMap<Event, EventDto>();
+        }
+    }
+
 }

@@ -14,7 +14,9 @@ namespace chess.games.db.api
         public static IServiceCollection AddChessRepositories(this IServiceCollection services)
         {
             services.AddScoped<IPlayersRepository, PlayersRepository>();
-            services.AddScoped<IPgnPlayersRepository, PgnPlayersRepository>();
+            services.AddScoped<IGamesRepository, GamesRepository>();
+            services.AddScoped<ISitesRepository, SitesRepository>();
+            services.AddScoped<IEventsRepository, EventsRepository>();
 
             return services;
         }
