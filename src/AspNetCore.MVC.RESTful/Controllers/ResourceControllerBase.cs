@@ -107,7 +107,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <see cref="OkResult"/> with response body containing the serialized representation
         /// of the resources. 
         /// </returns>
-        public IActionResult ResourcesGet<TParameters>(TParameters parameters,
+        protected IActionResult ResourcesGet<TParameters>(TParameters parameters,
             IEntityFilter<TEntity> entityFilter,
             IEntitySearch<TEntity> entitySearch)
         {
@@ -159,7 +159,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             return Ok(resources);
         }
-        
+
         /// <summary>
         /// Typically used to support a HTTP GET on an individual resource within a collection
         /// <code>
@@ -175,7 +175,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <see cref="OkResult"/> with response body containing the serialized representation
         /// of the resource.
         /// </returns>
-        public IActionResult ResourceGet(TId id)
+        protected IActionResult ResourceGet(TId id)
         {
             if (!typeof(TDto).TypeHasOutputProperties(CollectionConfig.Shape))
             {
@@ -211,14 +211,14 @@ namespace AspNetCore.MVC.RESTful.Controllers
         ///     ...
         /// }
         /// </code>
-         /// </summary>
+        /// </summary>
         /// <typeparam name="TCreationDto">Model containing data used for creation, requires an
         /// <see cref="AutoMapper"/> mapping between <typeparamref name="TCreationDto"/>-><typeparamref name="TDto"/></typeparam>
         /// <param name="model">New instance of the resource to create</param>
         /// <returns>
         /// <see cref="CreatedAtRouteResult"/> with the newly created resource in the body.
         /// </returns>
-        public IActionResult ResourceCreate<TCreationDto>(TCreationDto model) 
+        protected IActionResult ResourceCreate<TCreationDto>(TCreationDto model) 
         {
             var entity = Mapper.Map<TEntity>(model);
 
@@ -261,7 +261,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <see cref="NotFoundResult"/> if the resource specified cannot be found.
         /// <see cref="CreatedAtRouteResult"/> with the newly created resource in the body.
         /// </returns>
-        public ActionResult ResourceUpsert<TUpdateDto>(
+        protected ActionResult ResourceUpsert<TUpdateDto>(
             TId id,
             [NotNull] TUpdateDto model)
         {
@@ -305,7 +305,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             return result;
         }
-        
+
         /// <summary>
         /// Typically used to support a HTTP PATCH on an individual resource within a collection.
         /// MVC Model Validation is performed using <see cref="ControllerBase.TryValidateModel(object)"/>
@@ -329,7 +329,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <see cref="OkResult"/> with response body containing the serialized representation
         /// of the resource.
         /// </returns>
-        public ActionResult ResourcePatch(TId id,
+        protected ActionResult ResourcePatch(TId id,
             [NotNull] JsonPatchDocument<TDto> patchDocument)
         {
             if (id.Equals(Guid.Empty))
@@ -383,7 +383,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// 
         /// <see cref="NoContentResult"/>
         /// </returns>
-        public ActionResult ResourceDelete(TId id)
+        protected ActionResult ResourceDelete(TId id)
         {
             if (id.Equals(Guid.Empty))
             {
@@ -402,7 +402,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             return NoContent();
         }
-        
+
         /// <summary>
         /// Typically used to support a HTTP OPTIONS call on an resource collection.
         /// <code>
@@ -419,7 +419,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <see cref="OkResult"/>With an empty resource represented by <typeparamref name="TDto"/>
         /// that can be used as a template for other requests
         /// </returns>
-        public IActionResult ResourceOptions(IReadOnlyList<string> customQueryStringOptions = null)
+        protected IActionResult ResourceOptions(IReadOnlyList<string> customQueryStringOptions = null)
         {
             Response.Headers.Add("Allow", string.Join(',', HttpOptions));
 

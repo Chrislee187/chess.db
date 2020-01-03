@@ -30,7 +30,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <param name="parameters"></param>
         /// <param name="pagination"></param>
         /// <returns></returns>
-        public List<HateoasLink> ResourcesGetLinks<TParameters>(
+        protected List<HateoasLink> ResourcesGetLinks<TParameters>(
             TParameters parameters,
             IPaginationMetadata pagination)
         {
@@ -62,7 +62,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <param name="id"></param>
         /// <param name="shape"></param>
         /// <returns></returns>
-        public List<HateoasLink> ResourceGetLinks(TId id, string shape)
+        protected List<HateoasLink> ResourceGetLinks(TId id, string shape)
         {
             
 
@@ -94,7 +94,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public List<HateoasLink> ResourceCreateLinks(TId id)
+        protected List<HateoasLink> ResourceCreateLinks(TId id)
         {
             var links = new List<HateoasLink>
             {
@@ -110,7 +110,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public List<HateoasLink> ResourceUpsertLinks(TId id)
+        protected List<HateoasLink> ResourceUpsertLinks(TId id)
         {
             var links = new List<HateoasLink>
             {
@@ -125,7 +125,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// Factory method to build <see cref="HateoasLink"/>'s for resource patch responses
         /// </summary>
         /// <param name="id"></param>
-        public List<HateoasLink> ResourcePatchLinks(TId id)
+        protected List<HateoasLink> ResourcePatchLinks(TId id)
         {
             var links = new List<HateoasLink>
             {
@@ -140,7 +140,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// Factory method to build <see cref="HateoasLink"/>'s for resource delete responses
         /// </summary>
         /// <returns></returns>
-        public List<HateoasLink> ResourceDeleteLinks()
+        protected List<HateoasLink> ResourceDeleteLinks()
         {
             var links = new List<HateoasLink>
             {

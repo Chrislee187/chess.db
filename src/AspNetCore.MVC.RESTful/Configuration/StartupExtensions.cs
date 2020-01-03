@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+
 
 namespace AspNetCore.MVC.RESTful.Configuration
 {
@@ -39,6 +41,13 @@ namespace AspNetCore.MVC.RESTful.Configuration
             // NOTE: Order is SPECIFIC!
             // i.e. Authorisation `UseAuthorization()` comes after a Route endpoint is chosen `UseRouting()` but before
             // the endpoint is actually executed `UseEndPoints()`
+
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ChessDB API V1");
+            });
 
             app.UseRouting();
 
@@ -96,12 +105,17 @@ namespace AspNetCore.MVC.RESTful.Configuration
         /// <param name="services"></param>
         public static void AddRestful(this IServiceCollection services)
         {
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ChessDB API", Version = "v1" });
+            });
+
             services
                 .AddControllers(cfg =>
                 {
                     cfg.ReturnHttpNotAcceptable = true;     // NOTE: Configures to return 406 for unsupported "Accept" header content-types
                 })
-                
                 .AddNewtonsoftJson(
                     )  // NOTE: Newtonsoft needed for JsonPatchDocument support otherwise would use System.Text.Json
                 // NOTE: system.text.json doesn't support JsonPatchDocument yet so use NewtonSoft through out
@@ -113,8 +127,10 @@ namespace AspNetCore.MVC.RESTful.Configuration
                     // NOTE: Setup custom response for model (typically from query params etc.) validation errors
                     setupAction.InvalidModelStateResponseFactory 
                         = new InvalidModelStateResponse().SetupInvalidModelStateResponse;
-                }
-            );
+                })
+                ;
+
+
 
             services.AddMvc(opts =>
             {
