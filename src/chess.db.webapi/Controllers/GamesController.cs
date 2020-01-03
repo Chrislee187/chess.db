@@ -29,15 +29,11 @@ namespace chess.db.webapi.Controllers
         [HttpHead]
         public IActionResult GetGames()
         {
-            return ResourcesGet<object>(null, null, null);
+            return ResourcesGet<object>();
         }
 
         [HttpGet("{id}", Name = GetGameRouteName)]
         public IActionResult GetGame(Guid id)
             => ResourceGet(id);
-
-        [HttpOptions]
-        public IActionResult GetOptions()
-            => ResourceOptions();
     }
 }

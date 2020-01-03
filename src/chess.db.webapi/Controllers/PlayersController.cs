@@ -63,9 +63,5 @@ namespace chess.db.webapi.Controllers
         [HttpDelete("{id}", Name= DeletePlayerRouteName)]
         public ActionResult DeletePlayer([FromRoute]Guid id)
             => ResourceDelete(id);
-
-        [HttpOptions]
-        public IActionResult GetOptions()
-            => ResourceOptions();
     }
 }

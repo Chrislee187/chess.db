@@ -101,9 +101,9 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <see cref="OkResult"/> with response body containing the serialized representation
         /// of the resources. 
         /// </returns>
-        protected IActionResult ResourcesGet<TParameters>(TParameters parameters,
-            IEntityFilter<TEntity> entityFilter,
-            IEntitySearch<TEntity> entitySearch)
+        protected IActionResult ResourcesGet<TParameters>(TParameters parameters = null,
+            IEntityFilter<TEntity> entityFilter = null,
+            IEntitySearch<TEntity> entitySearch = null) where TParameters : class
         {
             if (!typeof(TDto).TypeHasOutputProperties(CollectionConfig.Shape))
             {
@@ -402,25 +402,22 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <code>
         /// HTTP OPTIONS
         /// </code>
-        ///
+        /// 
         /// Automatically generates a list of supported options by reflecting on the <see cref="HttpMethodAttribute"/>'s
         /// that adorn the actions of the implementing Controller class.
-        ///
+        /// 
         /// </summary>
-        /// <param name="customQueryStringOptions">Simple 'help' texts for any custom implemented parameters
-        /// that the resource supports.</param>
         /// <returns>
         /// <see cref="OkResult"/>With an empty resource represented by <typeparamref name="TDto"/>
         /// that can be used as a template for other requests
         /// </returns>
-        protected IActionResult ResourceOptions(IReadOnlyList<string> customQueryStringOptions = null)
+        [HttpOptions]
+        public IActionResult ResourceOptions()
         {
             Response.Headers.Add("Allow", string.Join(',', HttpOptions));
 
-            customQueryStringOptions ??= new List<string>();
             var response = new
             {
-                example_resource = Activator.CreateInstance<TDto>(),
                 query_string_parameters = new []
                 {
                     "?page=x&page-size=y                                                // Resource Collections Gets",
@@ -428,7 +425,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                     "?shape=resource_property_name1, resource_property_name2...         // All calls with resource outputs",
                     "?search=string                                                     // Resource Collections Gets",
                     "?nolinks                                                           // All"
-                }.Concat(customQueryStringOptions)
+                }
             };
 
             return Ok(response);

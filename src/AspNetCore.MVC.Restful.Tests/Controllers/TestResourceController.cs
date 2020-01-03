@@ -62,10 +62,5 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         {
             return base.ResourceDelete(anyGuid);
         }
-
-        internal IActionResult ResourceOptions()
-        {
-            return base.ResourceOptions();
-        }
     }
 }
