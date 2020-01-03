@@ -29,7 +29,7 @@ namespace chess.db.webapi.Controllers
         [HttpHead]
         public IActionResult GetEvents()
         {
-            return ResourcesGet<object>();
+            return ResourcesGet();
         }
 
         [HttpGet("{id}", Name = GetEventRouteName)]

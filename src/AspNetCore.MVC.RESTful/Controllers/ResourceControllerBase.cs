@@ -101,9 +101,14 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <see cref="OkResult"/> with response body containing the serialized representation
         /// of the resources. 
         /// </returns>
-        protected IActionResult ResourcesGet<TParameters>(TParameters parameters = null,
-            IEntityFilter<TEntity> entityFilter = null,
-            IEntitySearch<TEntity> entitySearch = null) where TParameters : class
+        protected IActionResult ResourcesGet()
+        {
+            return ResourcesGet<object>(null,null,null);
+        }
+
+        protected IActionResult ResourcesGet<TParameters>(TParameters parameters,
+            IEntityFilter<TEntity> entityFilter,
+            IEntitySearch<TEntity> entitySearch) where TParameters : class
         {
             if (!typeof(TDto).TypeHasOutputProperties(CollectionConfig.Shape))
             {
