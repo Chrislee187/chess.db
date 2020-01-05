@@ -156,7 +156,7 @@ namespace chess.games.db.api.Repositories
             var matcher = new PlayerMatchingService();
 
             var surnameRelations = _database.Players
-                .Where(p => p.LastName == personName.Lastname)
+                .Where(p => p.LastName.Equals(personName.Lastname, StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
 
             var match = matcher.Match(personName, surnameRelations);
