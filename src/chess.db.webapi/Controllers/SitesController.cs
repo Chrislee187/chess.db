@@ -7,6 +7,7 @@ using chess.db.webapi.Models;
 using chess.games.db.api.Repositories;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace chess.db.webapi.Controllers
 {
@@ -20,8 +21,9 @@ namespace chess.db.webapi.Controllers
         public SitesController(IMapper mapper,
             ISitesRepository gamesRepository,
             IOrderByPropertyMappingService<SiteDto, Site> orderByPropertyMappingService,
-            IEntityUpdater<Site, Guid> entityUpdater)
-            : base(mapper, gamesRepository, entityUpdater, orderByPropertyMappingService)
+            IEntityUpdater<Site, Guid> entityUpdater,
+            ILogger<SitesController> logger)
+            : base(mapper, gamesRepository, entityUpdater, orderByPropertyMappingService, logger: logger)
         {
         }
 

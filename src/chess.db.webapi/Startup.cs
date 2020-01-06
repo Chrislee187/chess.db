@@ -63,12 +63,5 @@ namespace chess.db.webapi
             app.CheckRestfulMappingsFor<Player>(RestfulEndpointMappingChecks.Readwrite);
             app.CheckRestfulMappingsFor<PgnPlayer>(RestfulEndpointMappingChecks.Readonly);
         }
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-
     }
 }
