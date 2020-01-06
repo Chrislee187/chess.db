@@ -21,11 +21,8 @@ namespace chess.db.webapi
             .Build();
         public static void Main(string[] args)
         {
-            var logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration)
-                .WriteTo.Console();
-
-            Log.Logger = logger.CreateLogger();
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration).CreateLogger();
             var host = CreateHostBuilder(args)
                 .Build();
             
