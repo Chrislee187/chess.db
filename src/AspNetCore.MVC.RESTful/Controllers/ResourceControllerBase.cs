@@ -16,6 +16,7 @@ using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Repositories;
 using AspNetCore.MVC.RESTful.Services;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Logging;
 
 namespace AspNetCore.MVC.RESTful.Controllers
 {
@@ -56,6 +57,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         where TEntity : class
         where TDto : class, IResourceId<Guid>
     {
+        private readonly ILogger<ResourceControllerBase<TDto, TEntity, TId>> _logger;
         private readonly IResourceRepository<TEntity, TId> _restResourceRepository;
         private readonly IOrderByPropertyMappingService<TDto, TEntity> _orderByPropertyMappingService;
         private readonly IEntityUpdater<TEntity, TId> _entityUpdater;
@@ -69,12 +71,15 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <param name="entityUpdater">Entity ID Updater required for Upserts </param>
         /// <param name="orderByPropertyMappingService">Optional services to map resource property names to entity property names</param>
         /// <param name="config">Optional configuration overides.</param>
+        /// <param name="logger">Optional logger.</param>
         protected ResourceControllerBase([NotNull] IMapper mapper,
             [NotNull] IResourceRepository<TEntity, TId> resourceRepository,
             IEntityUpdater<TEntity, TId> entityUpdater,
             IOrderByPropertyMappingService<TDto, TEntity> orderByPropertyMappingService = null,
-            Action<HateoasConfig> config = null)
+            Action<HateoasConfig> config = null,
+            ILogger<ResourceControllerBase<TDto, TEntity, TId>> logger = null)
         {
+            _logger = logger;
             ConfigureHateoas(config);
 
             Mapper = NullX.Throw(mapper, nameof(mapper));
