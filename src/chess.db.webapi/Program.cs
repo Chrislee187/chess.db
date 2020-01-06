@@ -21,15 +21,29 @@ namespace chess.db.webapi
             .Build();
         public static void Main(string[] args)
         {
-
-            Log.Logger = new LoggerConfiguration()
+            var logFile = Configuration["Serilog:Logfile"];
+            var logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)
-                .WriteTo.Console()
-//                .WriteTo.File(new JsonFormatter(), @"D\logs\chess.db.webapi.log.json", shared: true)
-                .CreateLogger();
+                .WriteTo.Console();
 
+            var logToFileConfigured = !string.IsNullOrEmpty(logFile);
+            if (logToFileConfigured)
+            {
+                logger.WriteTo.File(new JsonFormatter(), logFile, shared: true);
+            }
+
+            Log.Logger = logger.CreateLogger();
             var host = CreateHostBuilder(args)
                 .Build();
+
+            if (logToFileConfigured)
+            {
+                Log.Information($"Logging to '{logFile}'");
+            }
+            else
+            {
+                Log.Warning("No 'Logfile' configured, console logging only.");
+            }
             
             using (var scoped = host.Services.CreateScope())
             {
