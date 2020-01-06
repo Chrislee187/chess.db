@@ -4,15 +4,17 @@ using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Services;
 using chess.db.webapi.Helpers;
+using chess.db.webapi.Middleware;
 using chess.db.webapi.Models;
 using chess.games.db;
 using chess.games.db.api;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace chess.db.webapi
 {
@@ -49,19 +51,29 @@ namespace chess.db.webapi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
             app.RestfulExceptionHandling(env);
-            
+            app.UseGlobalExceptionHandler(options =>
+            {
+                options.AddResponseDetails = UpdateApiErrorResponse;
+            });
+
             app.UseRestful(env);
 
             // TODO: We could automate this further by finding all types in assembly that inherit from
             // ResourceControllerBase, determine there generic types and automatically call CheckRestfulMappingsFor<TEntity>
             // How to cater for RW/RO ?????
             app.CheckRestfulMappingsFor<Player>(RestfulEndpointMappingChecks.Readwrite);
-            app.CheckRestfulMappingsFor<PgnPlayer>(RestfulEndpointMappingChecks.Readonly);
+        }
+
+        private void UpdateApiErrorResponse(
+            HttpContext context, 
+            Exception ex, 
+            ApiError error)
+        {
+            if (ex.GetType().Name == typeof(SqlException).Name)
+            {
+                error.Title = "The was a problem!";
+            }
         }
     }
 }

@@ -34,7 +34,7 @@ namespace AspNetCore.MVC.RESTful.Repositories
             IDictionary<string, OrderByPropertyMappingValue> orderByMappings = null)
         {
             orderByMappings ??= new Dictionary<string, OrderByPropertyMappingValue>();
-            
+
             var filtered = Reduce(
                 Resource, 
                 filter ?? EntityFilter<TEntity>.Default, 

@@ -1,8 +1,6 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using chess.db.webapi.Models;
 using chess.db.webapi.ResourceParameters;
-using chess.games.db.api.PgnPlayers;
 using chess.games.db.api.Players;
 using chess.games.db.Entities;
 
@@ -14,10 +12,6 @@ namespace chess.db.webapi.Mapping.Profiles
     {
         public PlayersProfile()
         {
-            MapPgnPlayers();
-            MapPgnPlayerParameters();
-
-
             MapPlayers();
             MapPlayerParameters();
         }
@@ -25,12 +19,12 @@ namespace chess.db.webapi.Mapping.Profiles
         private void MapPlayers()
         {
             CreateMap<Player, PlayerDto>()
-                .ForMember(m => m.Lastname, o =>o.MapFrom(i => i.LastName))
+                .ForMember(m => m.Lastname, o => o.MapFrom(i => i.LastName))
                 ;
             CreateMap<PlayerCreationDto, Player>()
                 .ForMember(m => m.LastName, o => o.MapFrom(i => i.Lastname))
                 ;
-            
+
             CreateMap<PlayerUpdateDto, Player>()
                 .ForMember(m => m.LastName, o => o.MapFrom(i => i.Lastname))
                 ;
@@ -51,26 +45,6 @@ namespace chess.db.webapi.Mapping.Profiles
                 .ForMember(m => m.MiddlenameFilter, o => o.MapFrom(i => i.Middlename))
                 .ForMember(m => m.LastnameFilter, o => o.MapFrom(i => i.Lastname))
                 ;
-
-        }
-
-        private void MapPgnPlayers()
-        {
-            CreateMap<PgnPlayer, PgnPlayerDto>()
-                .ForMember(p => p.PlayerId,
-                    o => o.MapFrom(i => i.Player.Id == Guid.Empty ? (Guid?) null : i.Player.Id))
-                ;
-
-        }
-
-        private void MapPgnPlayerParameters()
-        {
-            CreateMap<GetPgnPlayersFilters, GetPgnPlayersEntityFilter>()
-                .ForMember(m => m.Name,
-                    o => o.MapFrom(i => i.NameFilter));
-            CreateMap<GetPgnPlayersEntityFilter, GetPgnPlayersFilters>()
-                .ForMember(m => m.NameFilter,
-                    o => o.MapFrom(i => i.Name));
 
         }
     }

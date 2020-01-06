@@ -6,9 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Formatting.Json;
 
 namespace chess.db.webapi
 {
@@ -19,6 +17,7 @@ namespace chess.db.webapi
             .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true)
             .AddEnvironmentVariables()
             .Build();
+
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
@@ -53,6 +52,7 @@ namespace chess.db.webapi
             }
             finally
             {
+                Log.Information("Shutting down.");
                 Log.CloseAndFlush();
             }
 
