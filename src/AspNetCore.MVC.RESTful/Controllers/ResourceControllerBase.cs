@@ -57,7 +57,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
         where TEntity : class
         where TDto : class, IResourceId<Guid>
     {
-        private readonly ILogger<ResourceControllerBase<TDto, TEntity, TId>> _logger;
+        protected readonly ILogger<ResourceControllerBase<TDto, TEntity, TId>> Logger;
         private readonly IResourceRepository<TEntity, TId> _restResourceRepository;
         private readonly IOrderByPropertyMappingService<TDto, TEntity> _orderByPropertyMappingService;
         private readonly IEntityUpdater<TEntity, TId> _entityUpdater;
@@ -79,7 +79,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
             Action<HateoasConfig> config = null,
             ILogger<ResourceControllerBase<TDto, TEntity, TId>> logger = null)
         {
-            _logger = logger;
+            Logger = logger;
             ConfigureHateoas(config);
 
             Mapper = NullX.Throw(mapper, nameof(mapper));
