@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Serilog.Extensions.Logging;
+using ILogger = Serilog.ILogger;
 
 namespace chess.games.db.Entities
 {
     public class ChessGamesDbContext : DbContext
     {
+        private ILoggerFactory _loggerFactory;
         public DbSet<PgnGame> PgnGames { get; set; }
         public DbSet<PgnImport> PgnImports { get; set; }
 
@@ -26,17 +30,22 @@ namespace chess.games.db.Entities
             // NOTE: Used by .NET Core IoC/MVC Startup
         }
 
-        public ChessGamesDbContext(string connectionString)
+        public ChessGamesDbContext(
+            string connectionString, 
+            ILoggerFactory loggerFactory = null)
             : base(new DbContextOptionsBuilder().UseSqlServer(connectionString).Options)
         {
+            _loggerFactory = loggerFactory;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-         
             base.OnModelCreating(modelBuilder);
         }
-
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLoggerFactory(_loggerFactory);
+        }
         public void RunWithExtendedTimeout(Action action, TimeSpan timeout)
         {
             var oldTimeOut = Database.GetCommandTimeout();
@@ -65,5 +74,6 @@ namespace chess.games.db.Entities
                 Console.WriteLine("DB Migrated");
             }
         }
+
     }
 }
