@@ -50,14 +50,16 @@ namespace AspNetCore.MVC.RESTful.Filters
                 contextController.CollectionConfig.Page = page;
             }
         }
+
         private static void GetOrderBy(IQueryCollection queryCollection, HateoasController contextController)
         {
             var val = queryCollection.GetByAlias("orderby", "order-by");
             contextController.CollectionConfig.OrderBy = val;
         }
+
         private static void GetSearchQuery(IQueryCollection queryCollection, HateoasController contextController)
         {
-            var val = queryCollection.GetByAlias("search", "search-query","search-text");
+            var val = queryCollection.GetByAlias("search", "search-query", "search-text");
             contextController.CollectionConfig.SearchText = val;
         }
     }

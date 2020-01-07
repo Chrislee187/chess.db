@@ -140,6 +140,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
                 // (only for Controllers that inherit from ResourceControllerBase<,>
                 opts.Filters.Add(new SupportCollectionParamsActionFilter());
                 opts.Filters.Add(new SupportDataShapingParamsActionFilter());
+                opts.Filters.Add<PerformanceActionFilter>();
             });
 
             services.AddTransient(typeof(IOrderByPropertyMappingService<,>), typeof(OrderByPropertyMappingService<,>));
