@@ -1,6 +1,6 @@
 ﻿namespace chess.db.webapi.Middleware
 {
-    public class ApiError
+    public class PublicErrorDetails
     {
         public string Id { get; set; }
         public short Status { get; set; }

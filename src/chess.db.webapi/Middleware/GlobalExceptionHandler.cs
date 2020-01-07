@@ -37,13 +37,12 @@ namespace chess.db.webapi.Middleware
 
         private Task HandleExceptionAsync(HttpContext context, Exception exception, GlobalExceptionOptions opts)
         {
-            var error = new ApiError
+            var error = new PublicErrorDetails
             {
                 Id = Guid.NewGuid().ToString(),
                 Status = (short)HttpStatusCode.InternalServerError,
                 Code = "",
-                Title = "Some kind of error occurred in the API.  Please use the error Id and contact our " +
-                        "support team if the problem persists.",
+                Title = "Some kind of error occurred in the API.  Please use the error Id and contact our support team if the problem persists.",
                 Detail = ""
             };
 
@@ -59,12 +58,9 @@ namespace chess.db.webapi.Middleware
             return context.Response.WriteAsync(result);
         }
 
-        private Exception GetInnermostException(Exception exception)
-        {
-            if (exception.InnerException != null)
-                return GetInnermostException(exception.InnerException);
-
-            return exception;
-        }
+        private Exception GetInnermostException(Exception exception) 
+            => exception.InnerException != null 
+                ? GetInnermostException(exception.InnerException) 
+                : exception;
     }
 }

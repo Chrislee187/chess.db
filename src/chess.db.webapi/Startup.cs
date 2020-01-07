@@ -11,8 +11,6 @@ using chess.games.db.api;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -54,7 +52,7 @@ namespace chess.db.webapi
             app.RestfulExceptionHandling(env);
             app.UseGlobalExceptionHandler(options =>
             {
-                options.AddResponseDetails = UpdateApiErrorResponse;
+//                options.AddResponseDetails = UpdateApiErrorResponse;
             });
 
             app.UseRestful(env);
@@ -65,15 +63,5 @@ namespace chess.db.webapi
             app.CheckRestfulMappingsFor<Player>(RestfulEndpointMappingChecks.Readwrite);
         }
 
-        private void UpdateApiErrorResponse(
-            HttpContext context, 
-            Exception ex, 
-            ApiError error)
-        {
-            if (ex.GetType().Name == typeof(SqlException).Name)
-            {
-                error.Title = "The was a problem!";
-            }
-        }
     }
 }
