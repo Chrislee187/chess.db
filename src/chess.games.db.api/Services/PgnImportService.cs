@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using chess.games.db.api.Repositories;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using PgnGame = PgnReader.PgnGame;
 
 namespace chess.games.db.api.Services
@@ -25,11 +27,16 @@ namespace chess.games.db.api.Services
     {
         private readonly IPgnRepository _pgnRepository;
         private readonly IMapper _mapper;
-        public PgnImportService(IPgnRepository pgnRepository, IMapper mapper)
-        {
-            _mapper = mapper;
-            _pgnRepository = pgnRepository;
+        private ILogger<PgnImportService> _logger;
 
+        public PgnImportService(
+            IPgnRepository pgnRepository, 
+            IMapper mapper, 
+            ILogger<PgnImportService> logger = null)
+        {
+            _logger = logger ?? NullLogger<PgnImportService>.Instance;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _pgnRepository = pgnRepository ?? throw new ArgumentNullException(nameof(pgnRepository));
         }
 
         public void ImportGames(string[] pgnFiles)
@@ -82,6 +89,7 @@ namespace chess.games.db.api.Services
         public void ProcessUnvalidatedGames()
         {
             var batchSize = 5001;
+            _logger.LogInformation("Reading validation batch...");
             var games = _pgnRepository.ValidationBatch(batchSize).ToList();
 
             if (!games.Any())

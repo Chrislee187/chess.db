@@ -2,8 +2,6 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Serilog.Extensions.Logging;
-using ILogger = Serilog.ILogger;
 
 namespace chess.games.db.Entities
 {

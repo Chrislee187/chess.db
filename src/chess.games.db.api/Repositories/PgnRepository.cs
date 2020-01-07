@@ -5,6 +5,8 @@ using chess.games.db.api.Services;
 using chess.games.db.Entities;
 using chess.games.db.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace chess.games.db.api.Repositories
 {
@@ -26,11 +28,21 @@ namespace chess.games.db.api.Repositories
     {
         private readonly ChessGamesDbContext _database;
 
+        private ILogger<PgnRepository> _logger;
+
+        public PgnRepository(
+            ChessGamesDbContext database,
+            ILogger<PgnRepository> logger = null)
+        {
+            _logger = logger ?? NullLogger<PgnRepository>.Instance;
+            _database = database;
+        }
+
         public bool ContainsGame(Game game)
         {
             if (!_database.Games.Any(g => g.MoveText == game.MoveText)) return false;
-
-            return _database.Games.Any(g =>
+            bool result = false;
+            _database.RunWithExtendedTimeout(() => result = _database.Games.Any(g =>
                 g.Event == game.Event
                 && g.Site == game.Site
                 && g.White == game.White
@@ -41,17 +53,13 @@ namespace chess.games.db.api.Repositories
                 && g.WhiteElo == game.WhiteElo
                 && g.BlackElo == game.BlackElo
                 && g.Eco == game.Eco
-                );
+            ), TimeSpan.FromMinutes(5));
+            return result;
         }
 
         public void SaveChanges()
         {
             _database.SaveChanges();
-        }
-
-        public PgnRepository(ChessGamesDbContext database)
-        {
-            _database = database;
         }
 
         public int ImportQueueSize
@@ -303,5 +311,6 @@ SELECT newid(), [Event], [Site], White, Black, [Date], [Round],
 					)
 		);
 ";
+
     }
 }

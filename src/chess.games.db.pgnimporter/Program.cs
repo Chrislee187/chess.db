@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using AutoMapper;
 using chess.games.db.api.Repositories;
@@ -6,14 +7,23 @@ using chess.games.db.api.Services;
 using chess.games.db.Entities;
 using chess.games.db.pgnimporter.Mapping;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Extensions.Logging;
 
 namespace chess.games.db.pgnimporter
 {
     class Program
     {
+        public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appSettings.json", optional: false)
+            .AddEnvironmentVariables()
+            .Build();
+
         private static ChessGamesDbContext _dbContext;
         private static readonly PgnFileFinder Finder = new PgnFileFinder();
-        private static IConfiguration _config;
+
         private static IMapper _mapper;
         private static IPgnImportService _svc;
         private static void RaiseStatus(string status) => Console.Write(status);
@@ -29,6 +39,7 @@ namespace chess.games.db.pgnimporter
             if (scanPath != "")
             {
                 RaiseStatus($"Starting import from: {scanPath}\n");
+                Log.Information("{scanPath}", scanPath);
                 var pgnFiles = Finder.FindFiles(scanPath);
 
                 _svc.ImportGames(pgnFiles);
@@ -43,16 +54,19 @@ namespace chess.games.db.pgnimporter
 
         private static void Startup()
         {
-            _config = new ConfigurationBuilder()
-                .AddJsonFile("appSettings.json", false, false)
-                .Build();
 
-            var connectionString = _config["chess-games-db"];
+            var connectionString = Configuration["chess-games-db"];
 
-            _dbContext = new ChessGamesDbContext(connectionString);
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration).CreateLogger();
+            var serilogLoggerFactory = new SerilogLoggerFactory(Log.Logger);
+
+            _dbContext = new ChessGamesDbContext(connectionString, serilogLoggerFactory);
             _mapper = AutoMapperFactory.Create();
-            var pgnRepository = new PgnRepository(_dbContext);
-            _svc = new PgnImportService(pgnRepository, _mapper);
+
+            var pgnRepository = new PgnRepository(_dbContext, serilogLoggerFactory.CreateLogger<PgnRepository>());
+            _svc = new PgnImportService(pgnRepository, _mapper, serilogLoggerFactory.CreateLogger<PgnImportService>());
+            
             _svc.Status += RaiseStatus;
         }
 
