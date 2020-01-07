@@ -134,12 +134,12 @@ namespace AspNetCore.MVC.RESTful.Configuration
 
             services.AddMvc(opts =>
             {
-                opts.Filters.Add(new DisableHateoasLinksActionFilter());
+                opts.Filters.Add<DisableHateoasLinksActionFilter>();
 
                 // NOTE: Add support for collection and data-shaping to RESTful resource endpoints
                 // (only for Controllers that inherit from ResourceControllerBase<,>
-                opts.Filters.Add(new SupportCollectionParamsActionFilter());
-                opts.Filters.Add(new SupportDataShapingParamsActionFilter());
+                opts.Filters.Add<SupportCollectionParamsActionFilter>();
+                opts.Filters.Add<SupportDataShapingParamsActionFilter>();
                 opts.Filters.Add<PerformanceActionFilter>();
             });
 

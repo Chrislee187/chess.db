@@ -3,6 +3,8 @@ using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AspNetCore.MVC.RESTful.Filters
 {
@@ -17,6 +19,12 @@ namespace AspNetCore.MVC.RESTful.Filters
     /// </summary>
     public class SupportCollectionParamsActionFilter : ActionFilterAttribute
     {
+        private ILogger<SupportCollectionParamsActionFilter> _logger;
+
+        public SupportCollectionParamsActionFilter(ILogger<SupportCollectionParamsActionFilter> logger = null)
+        {
+            _logger = logger ?? NullLogger<SupportCollectionParamsActionFilter>.Instance;
+        }
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
@@ -28,6 +36,11 @@ namespace AspNetCore.MVC.RESTful.Filters
                 GetCurrentPage(queryCollection, contextController);
                 GetOrderBy(queryCollection, contextController);
                 GetSearchQuery(queryCollection, contextController);
+
+                _logger.LogDebug("RESTful Collection Param: pagesize={pagesize}", contextController.CollectionConfig.PageSize);
+                _logger.LogDebug("RESTful Collection Param: page={page}", contextController.CollectionConfig.Page);
+                _logger.LogDebug("RESTful Collection Param: orderby={orderby}", contextController.CollectionConfig.OrderBy);
+                _logger.LogDebug("RESTful Collection Param: search={search}", contextController.CollectionConfig.SearchText);
             }
         }
 
@@ -49,6 +62,7 @@ namespace AspNetCore.MVC.RESTful.Filters
             {
                 contextController.CollectionConfig.Page = page;
             }
+
         }
 
         private static void GetOrderBy(IQueryCollection queryCollection, HateoasController contextController)

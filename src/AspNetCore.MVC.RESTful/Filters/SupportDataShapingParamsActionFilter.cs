@@ -3,6 +3,8 @@ using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AspNetCore.MVC.RESTful.Filters
 {   
@@ -13,6 +15,12 @@ namespace AspNetCore.MVC.RESTful.Filters
     /// </summary>
     public class SupportDataShapingParamsActionFilter : ActionFilterAttribute
     {
+        private ILogger<SupportDataShapingParamsActionFilter> _logger;
+
+        public SupportDataShapingParamsActionFilter(ILogger<SupportDataShapingParamsActionFilter> logger = null)
+        {
+            _logger = logger ?? NullLogger<SupportDataShapingParamsActionFilter>.Instance;
+        }
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
@@ -24,9 +32,10 @@ namespace AspNetCore.MVC.RESTful.Filters
             }
         }
 
-        private static void GetShape(IQueryCollection queryCollection, HateoasController contextController)
+        private void GetShape(IQueryCollection queryCollection, HateoasController contextController)
         {
             var val = queryCollection.GetByAlias("shape", "data-shape");
+            _logger.LogDebug("RESTful Collection Param: shape={shape}", val);
             contextController.CollectionConfig.Shape = val;
         }
     }
