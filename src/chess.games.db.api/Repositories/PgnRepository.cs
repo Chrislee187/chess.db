@@ -155,8 +155,10 @@ namespace chess.games.db.api.Repositories
 
             var matcher = new PlayerMatchingService();
 
+
             var surnameRelations = _database.Players
-                .Where(p => p.LastName.Equals(personName.Lastname, StringComparison.InvariantCultureIgnoreCase))
+//                .Where(p => personName.Lastname.Equals(p.LastName, StringComparison.InvariantCultureIgnoreCase)) // NOTE: This worked in EFCore 3.0
+                .Where(p => personName.Lastname.ToUpper() == p.LastName.ToUpper())
                 .ToList();
 
             var match = matcher.Match(personName, surnameRelations);
