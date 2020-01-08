@@ -19,6 +19,14 @@ namespace chess.games.db.api.Services
         public static bool TryParse(string text, out PersonName personName)
         {
             string firstname = null, middleName = null, lastname;
+
+            // Names with more than three parts cannot be analysed
+            if (text.Split(' ').Length > 3)
+            {
+                personName = null;
+                return false;
+            }
+
             try
             {
                 if (text.Contains(","))

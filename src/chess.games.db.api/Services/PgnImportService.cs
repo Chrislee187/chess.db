@@ -27,7 +27,7 @@ namespace chess.games.db.api.Services
     {
         private readonly IPgnRepository _pgnRepository;
         private readonly IMapper _mapper;
-        private ILogger<PgnImportService> _logger;
+        private readonly ILogger<PgnImportService> _logger;
 
         public PgnImportService(
             IPgnRepository pgnRepository, 
@@ -88,23 +88,32 @@ namespace chess.games.db.api.Services
 
         public void ProcessUnvalidatedGames()
         {
-            var batchSize = 5001;
-            _logger.LogInformation("Reading validation batch...");
-            var games = _pgnRepository.ValidationBatch(batchSize).ToList();
+            var whitePlayers = _pgnRepository.ValidationBatch()
+                .Select(g => g.White).Distinct().ToList();
+            var blackPlayers = _pgnRepository.ValidationBatch()
+                .Select(g => g.Black).Distinct().ToList();
 
-            if (!games.Any())
+            var players = whitePlayers.Union(blackPlayers)
+                .Distinct()
+                .OrderBy(s => s).ToList();
+
+            if (!players.Any())
             {
                 RaiseStatus("\nNo outstanding imported games requiring validation.\n");
             }
 
-            while (games.Any())
+            RaiseStatus($"\n{players.Count} players left to analyse.\n{_pgnRepository.ImportQueueSize} total games left to analyse...\n");
+
+            foreach (var player in players)
             {
-                RaiseStatus($"\nLoading {games.Count} unvalidated game(s) (from {_pgnRepository.ImportQueueSize} outstanding) for analysis...\n");
+                _logger.LogDebug("Reading validation batch for {player}...", player);
+                var games = _pgnRepository.ValidationBatch(player).ToList();
+                RaiseStatus(
+                    $"\nAnalysing {games.Count()} unvalidated game(s) for '{player.PadRight(30)}'...");
 
                 var gamesAdded = 0;
                 var dupesFound = 0;
-
-                var sw = Stopwatch.StartNew();
+                var failures = 0;
 
                 foreach (var pgnGame in games)
                 {
@@ -126,44 +135,23 @@ namespace chess.games.db.api.Services
                     }
                     else
                     {
+                        failures++;
                         _pgnRepository.MarkGameImportFailed(pgnGame.Id, "unmatched-player");
                     }
+
                     _pgnRepository.SaveChanges();
-
-                    RaiseStatusProgress(gamesAdded, dupesFound, sw);
                 }
-                sw.Stop();
 
-                RaiseStatusSummary(gamesAdded, dupesFound);
+                RaiseStatusSummary(gamesAdded, dupesFound, failures);
 
                 _pgnRepository.SaveChanges();
-                games = _pgnRepository.ValidationBatch(batchSize).ToList();
+
             }
         }
 
-        private void RaiseStatusSummary(int gamesAdded, int dupesFound)
+        private void RaiseStatusSummary(int gamesAdded, int dupesFound, int failures)
         {
-            RaiseStatus("\n");
-            RaiseStatus($"{gamesAdded} games added to the DB.\n");
-            RaiseStatus($"{dupesFound} duplicates ignored.\n");
-        }
-
-        private void RaiseStatusProgress(int gamesAdded, int dupesFound, Stopwatch sw)
-        {
-            var progress = gamesAdded + dupesFound;
-            progress = progress == 0 ? 1 : progress;
-            var interval = 100;
-            if (progress % interval == 0)
-            {
-                RaiseStatus("+");
-                if (progress % 1000 == 0)
-                {
-                    sw.Stop();
-                    RaiseStatus(
-                        $"\n 1000 games processed in {sw.Elapsed} - {sw.Elapsed.TotalMilliseconds / 1000:#}ms avg per game\n");
-                    sw.Restart();
-                }
-            }
+            RaiseStatus($"\t+{gamesAdded}|={dupesFound}?{failures}");
         }
 
         private void RaiseStatusShowingFileImportHeader()

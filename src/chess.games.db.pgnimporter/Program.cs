@@ -49,6 +49,7 @@ namespace chess.games.db.pgnimporter
                 RaiseStatus("No pgn files/folders specified for input.\n");
             }
 
+            RaiseStatus("Initialising validation process...\n");
             _svc.ProcessUnvalidatedGames();
         }
 

@@ -14,7 +14,7 @@ namespace chess.games.db.api.Repositories
     {
         int ImportQueueSize { get; }
         int QueuePgnGames(IEnumerable<PgnImport> games);
-        IEnumerable<PgnGame> ValidationBatch(int batchSize = int.MaxValue);
+        IEnumerable<PgnGame> ValidationBatch(string name = null, int batchSize = int.MaxValue);
         void AddNewGame(Game game);
 
         bool ContainsGame(Game game);
@@ -28,7 +28,7 @@ namespace chess.games.db.api.Repositories
     {
         private readonly ChessGamesDbContext _database;
 
-        private ILogger<PgnRepository> _logger;
+        private readonly ILogger<PgnRepository> _logger;
 
         public PgnRepository(
             ChessGamesDbContext database,
@@ -69,13 +69,31 @@ namespace chess.games.db.api.Repositories
                             && !_database.PgnImportErrors.AsNoTracking()
                                 .Any(e => e.PgnGameId == g.Id));
 
-        public IEnumerable<PgnGame> ValidationBatch(int batchSize = 1000)
-            => _database.PgnGames.AsNoTracking()
-                .Where(g => !_database.ImportedPgnGameIds.AsNoTracking()
-                                .Any(i => i.Id == g.Id)
-                            && !_database.PgnImportErrors.AsNoTracking()
-                                .Any(e => e.PgnGameId == g.Id))
+        public IEnumerable<PgnGame> ValidationBatch(string name = null, int batchSize = int.MaxValue)
+        {
+            IQueryable<PgnGame> filter;
+
+            if (name != null)
+            {
+                filter = _database.PgnGames.AsNoTracking()
+                    .Where(g => !_database.ImportedPgnGameIds.AsNoTracking()
+                                    .Any(i => i.Id == g.Id)
+                                && !_database.PgnImportErrors.AsNoTracking()
+                                    .Any(e => e.PgnGameId == g.Id)
+                                && (g.White.ToUpper() == name 
+                                           || g.Black.ToUpper() == name));
+            }
+            else
+            {
+                filter = _database.PgnGames.AsNoTracking()
+                    .Where(g => !_database.ImportedPgnGameIds.AsNoTracking()
+                                    .Any(i => i.Id == g.Id)
+                                && !_database.PgnImportErrors.AsNoTracking()
+                                    .Any(e => e.PgnGameId == g.Id));
+            }
+            return filter
                 .Take(batchSize);
+        }
 
         public int QueuePgnGames(IEnumerable<PgnImport> games)
         {
@@ -152,8 +170,6 @@ namespace chess.games.db.api.Repositories
 
         private PgnPlayer MatchPlayer(string pgnPlayerName)
         {
-            if (!PersonName.TryParse(pgnPlayerName, out var personName)) return null;
-
             var pgnPlayer = _database.PlayerLookup.Find(pgnPlayerName);
             if (pgnPlayer != null)
             {
@@ -161,15 +177,9 @@ namespace chess.games.db.api.Repositories
                 return pgnPlayer;
             }
 
-            var matcher = new PlayerMatchingService();
+            if (!PersonName.TryParse(pgnPlayerName, out var personName)) return null;
 
-
-            var surnameRelations = _database.Players
-//                .Where(p => personName.Lastname.Equals(p.LastName, StringComparison.InvariantCultureIgnoreCase)) // NOTE: This worked in EFCore 3.0
-                .Where(p => personName.Lastname.ToUpper() == p.LastName.ToUpper())
-                .ToList();
-
-            var match = matcher.Match(personName, surnameRelations);
+            var match = MatchPlayer(personName);
 
             if(match != null)
             {
@@ -177,6 +187,60 @@ namespace chess.games.db.api.Repositories
             }
 
             return CreatePlayerLookup(pgnPlayerName, personName);
+        }
+
+        private Player MatchPlayer(PersonName personName)
+        {
+            var players = _database.Players
+                // ReSharper disable once SpecifyStringComparison - need this format of insensitive comparison to
+                // allow it to be converted to SQL by EF
+                .Where(p => personName.Lastname.ToUpper() == p.LastName.ToUpper())
+                .ToList();
+
+            if (!players.Any()) return null;
+
+            var exact = players.SingleOrDefault(p => MatchAllNames(personName, p));
+            if (exact != null)
+            {
+                return exact;
+            }
+
+            if (string.IsNullOrEmpty(personName.Firstname))
+            {
+                return null;
+            }
+
+            var matchingFirstInitial = players
+                .Where(p => !string.IsNullOrEmpty(p.Firstname))
+                .Where(p => p.Firstname.ToLowerInvariant()[0] == personName.Firstname.ToLowerInvariant()[0])
+                .ToList();
+
+            if (matchingFirstInitial.Any())
+            {
+                if (matchingFirstInitial.Count() == 1)
+                {
+                    var player = matchingFirstInitial.First();
+                    if (personName.Firstname.Length > player.Firstname.Length)
+                    {
+                        player.Firstname = personName.Firstname;
+                    }
+                    return player;
+                }
+                else
+                {
+                    // TODO: Use middlename to further disambiguate
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool MatchAllNames(PersonName personName, Player player)
+        {
+            return string.Equals(personName.Firstname, player.Firstname, StringComparison.InvariantCultureIgnoreCase)
+                   && string.Equals(personName.Middlename, player.OtherNames, StringComparison.InvariantCultureIgnoreCase)
+                   && string.Equals(personName.Lastname, player.LastName, StringComparison.InvariantCultureIgnoreCase);
         }
 
         private PgnPlayer CreatePlayerLookup(string pgnName, Player player)
@@ -212,15 +276,6 @@ namespace chess.games.db.api.Repositories
 
         private PgnPlayer FindOrCreatePlayer(string pgnName)
         {
-            var lookup = _database.PlayerLookup.Find(pgnName);
-
-            if (lookup != null)
-            {
-                LoadChildren(lookup);
-
-                return lookup;
-            }
-
             return MatchPlayer(pgnName);
         }
 
