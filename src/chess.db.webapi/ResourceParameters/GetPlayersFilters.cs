@@ -1,6 +1,6 @@
 ﻿namespace chess.db.webapi.ResourceParameters
 {
-    public class GetPlayersFilters
+    public class PlayersFilters
     {
         public string FirstnameFilter { get; set; }
         public string MiddlenameFilter { get; set; }

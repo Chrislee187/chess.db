@@ -164,7 +164,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
 
             link = CollectionConfig.AppendToUrl(link);
 
-            return HateoasLink.GetCollection(link, rel);
+            return HateoasLink.Collection(link, rel);
         }
         private HateoasLink ResourceGetLinkBuilder(TId id, string shape = null, string rel = null)
         {

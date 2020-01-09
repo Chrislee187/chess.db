@@ -129,7 +129,7 @@ namespace AspNetCore.MVC.RESTful.Controllers
                 return BadRequest(orderByCheck.Details);
             }
 
-            var orderByMappings = _orderByPropertyMappingService.GetPropertyMapping();
+            var orderByMappings = _orderByPropertyMappingService.PropertyMapping();
 
             var pagedEntities = _restResourceRepository
                 .Load(

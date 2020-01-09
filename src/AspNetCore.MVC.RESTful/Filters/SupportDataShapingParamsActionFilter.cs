@@ -28,13 +28,13 @@ namespace AspNetCore.MVC.RESTful.Filters
             {
                 var queryCollection = contextController.Request.Query;
 
-                GetShape(queryCollection, contextController);
+                Shape(queryCollection, contextController);
             }
         }
 
-        private void GetShape(IQueryCollection queryCollection, HateoasController contextController)
+        private void Shape(IQueryCollection queryCollection, HateoasController contextController)
         {
-            var val = queryCollection.GetByAlias("shape", "data-shape");
+            var val = queryCollection.ByAlias("shape", "data-shape");
             _logger.LogDebug("RESTful Collection Param: shape={shape}", val);
             contextController.CollectionConfig.Shape = val;
         }

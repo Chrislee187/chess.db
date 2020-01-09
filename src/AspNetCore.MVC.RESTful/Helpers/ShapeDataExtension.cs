@@ -36,7 +36,7 @@ namespace AspNetCore.MVC.RESTful.Helpers
             var propertyNames = (shape ?? "").Split(',')
                 .Where(s => !string.IsNullOrEmpty(s.Trim())).ToList();
 
-            var shapeProperties = GetProperties<T>(propertyNames.ToArray()).ToList();
+            var shapeProperties = Properties<T>(propertyNames.ToArray()).ToList();
 
             foreach (var sourceObject in source)
             {
@@ -59,14 +59,14 @@ namespace AspNetCore.MVC.RESTful.Helpers
                 .Where(s => !string.IsNullOrEmpty(s.Trim())).ToArray();
 
 
-            var expando = GetProperties<T>(propertyNames).ToList()
+            var expando = Properties<T>(propertyNames).ToList()
                 .ToDictionary(k => k.Name, v => v.GetValue(source))
                 .ToExpando();
 
             return expando;
         }
 
-        private static IEnumerable<PropertyInfo> GetProperties<T>(string[] shape)
+        private static IEnumerable<PropertyInfo> Properties<T>(string[] shape)
         {
             var infos = new List<PropertyInfo>();
 

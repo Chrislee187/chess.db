@@ -14,8 +14,8 @@ namespace chess.db.webapi.Controllers
     [Route("api/games")]
     public class GamesController : ResourceControllerBase<GameDto, Game, Guid>
     {
-        private const string GetGameRouteName = "GetGame";
-        private const string GetGamesRouteName = "GetGames";
+        private const string GameRouteName = "GetGame";
+        private const string GamesRouteName = "GetGames";
 
         public GamesController(IMapper mapper,
             IGamesRepository gamesRepository,
@@ -25,15 +25,15 @@ namespace chess.db.webapi.Controllers
         {
         }
 
-        [HttpGet(Name = GetGamesRouteName)]
+        [HttpGet(Name = GamesRouteName)]
         [HttpHead]
-        public IActionResult GetGames()
+        public IActionResult Games()
         {
             return ResourcesGet();
         }
 
-        [HttpGet("{id}", Name = GetGameRouteName)]
-        public IActionResult GetGame(Guid id)
+        [HttpGet("{id}", Name = GameRouteName)]
+        public IActionResult Game(Guid id)
             => ResourceGet(id);
     }
 }

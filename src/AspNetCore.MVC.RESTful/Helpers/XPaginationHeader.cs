@@ -32,19 +32,19 @@ namespace AspNetCore.MVC.RESTful.Helpers
     public class XPaginationHeader
     {
         /// <summary>
-        /// The GetZero method.
-        /// This sample shows how to call the <see cref="GetZero"/> method.
+        /// The Zero method.
+        /// This sample shows how to call the <see cref="Zero"/> method.
         ///     <code>
         ///     class TestClass 
         ///     {
         ///         static int Main() 
         ///         {
-        ///             return GetZero();
+        ///             return Zero();
         ///         }
         ///     }
         ///     </code>
         /// </summary>
-        public static int GetZero()
+        public static int Zero()
         {
             return 0;
         }

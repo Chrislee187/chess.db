@@ -55,7 +55,7 @@ namespace AspNetCore.MVC.RESTful.Services
             return (true, null);
         }
 
-        public IDictionary<string, OrderByPropertyMappingValue> GetPropertyMapping() 
+        public IDictionary<string, OrderByPropertyMappingValue> PropertyMapping() 
             => _propertyMapping.MappingDictionary;
     }
 }

@@ -5,7 +5,7 @@ using chess.games.db.Entities;
 namespace chess.games.db.api.Players
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class GetPlayersEntitySearch : IEntitySearch<Player>
+    public class PlayersEntitySearch : IEntitySearch<Player>
     {
         public IQueryable<Player> Search(IQueryable<Player> entities, string searchText)
         {

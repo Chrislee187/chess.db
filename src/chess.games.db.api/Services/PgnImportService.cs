@@ -69,8 +69,12 @@ namespace chess.games.db.api.Services
 
                     RaiseStatus($"{createdCount}".PadLeft(7) + $"{pgnGames.Length - createdCount}".PadLeft(7));
 
-                    var createdPerSec = createdCount * (1000 / sw.Elapsed.Milliseconds);
-                    averages.Add(createdPerSec);
+                    var createdPerSec = 0;
+                    if (sw.ElapsedMilliseconds > 0)
+                    {
+                        createdPerSec = createdCount * (1000 / sw.Elapsed.Milliseconds);
+                        averages.Add(createdPerSec);
+                    }
 
                     RaiseStatus($"{sw.Elapsed.Milliseconds}ms".PadLeft(7));
                     RaiseStatus($"{createdPerSec}".PadLeft(7));
@@ -106,14 +110,15 @@ namespace chess.games.db.api.Services
 
             foreach (var player in players)
             {
-                _logger.LogDebug("Reading validation batch for {player}...", player);
                 var games = _pgnRepository.ValidationBatch(player).ToList();
-                RaiseStatus(
-                    $"\nAnalysing {games.Count()} unvalidated game(s) for '{player.PadRight(30)}'...");
+                _logger.LogDebug("{games} read for '{player}'", games.Count(), player);
+                RaiseStatus($"\nAnalysing {games.Count():#####} unvalidated game(s) for '{player}'...");
 
                 var gamesAdded = 0;
                 var dupesFound = 0;
                 var failures = 0;
+
+                var sw = Stopwatch.StartNew();
 
                 foreach (var pgnGame in games)
                 {
@@ -141,17 +146,18 @@ namespace chess.games.db.api.Services
 
                     _pgnRepository.SaveChanges();
                 }
-
-                RaiseStatusSummary(gamesAdded, dupesFound, failures);
+                sw.Stop();
+                RaiseStatusSummary(gamesAdded, dupesFound, failures, sw);
 
                 _pgnRepository.SaveChanges();
 
             }
         }
 
-        private void RaiseStatusSummary(int gamesAdded, int dupesFound, int failures)
+        private void RaiseStatusSummary(int gamesAdded, int dupesFound, int failures, Stopwatch sw)
         {
-            RaiseStatus($"\t+{gamesAdded}|={dupesFound}?{failures}");
+            var avgMs = sw.ElapsedMilliseconds / (gamesAdded + dupesFound + failures);
+            RaiseStatus($"\t+{gamesAdded}|={dupesFound}?{failures} - {avgMs}ms average validation time per game");
         }
 
         private void RaiseStatusShowingFileImportHeader()

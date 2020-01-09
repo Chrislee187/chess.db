@@ -11,7 +11,7 @@ namespace AspNetCore.MVC.RESTful.Services
     public interface IOrderByPropertyMappingService<TDto, TEntity>
         // ReSharper restore UnusedTypeParameter
     {
-        IDictionary<string, OrderByPropertyMappingValue> GetPropertyMapping();
+        IDictionary<string, OrderByPropertyMappingValue> PropertyMapping();
         
         (bool Valid, ProblemDetails Details) ClauseIsValid(string fields);
     }

@@ -15,8 +15,8 @@ namespace chess.db.webapi.Controllers
     [Route("api/sites")]
     public class SitesController : ResourceControllerBase<SiteDto, Site, Guid>
     {
-        private const string GetSiteRouteName = "GetSite";
-        private const string GetSitesRouteName = "GetSites";
+        private const string SiteRouteName = "GetSite";
+        private const string SitesRouteName = "GetSites";
 
         public SitesController(IMapper mapper,
             ISitesRepository gamesRepository,
@@ -27,15 +27,15 @@ namespace chess.db.webapi.Controllers
         {
         }
 
-        [HttpGet(Name = GetSitesRouteName)]
+        [HttpGet(Name = SitesRouteName)]
         [HttpHead]
-        public IActionResult GetSites()
+        public IActionResult Sites()
         {
             return ResourcesGet();
         }
 
-        [HttpGet("{id}", Name = GetSiteRouteName)]
-        public IActionResult GetSite(Guid id)
+        [HttpGet("{id}", Name = SiteRouteName)]
+        public IActionResult Site(Guid id)
             => ResourceGet(id);
     }
 }

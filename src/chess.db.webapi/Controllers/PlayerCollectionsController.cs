@@ -18,7 +18,7 @@ namespace chess.db.webapi.Controllers
     {
         private readonly IPlayersRepository _playersRepository;
 
-        private const string GetPlayerCollectionRouteName = "GetPlayerCollection";
+        private const string PlayerCollectionRouteName = "GetPlayerCollection";
 
         public PlayerCollectionsController(
             IMapper mapper,
@@ -30,8 +30,8 @@ namespace chess.db.webapi.Controllers
             _playersRepository = NullX.Throw(playersRepository, nameof(playersRepository));
         }
 
-        [HttpGet("({ids})", Name = GetPlayerCollectionRouteName)]
-        public IActionResult GetPlayerCollection([FromRoute] IEnumerable<Guid> ids)
+        [HttpGet("({ids})", Name = PlayerCollectionRouteName)]
+        public IActionResult PlayerCollection([FromRoute] IEnumerable<Guid> ids)
         {
             if (ids == null)
             {
@@ -67,7 +67,7 @@ namespace chess.db.webapi.Controllers
 
             var added = Mapper.Map<IEnumerable<PlayerDto>>(entities);
             return CreatedAtRoute(
-                GetPlayerCollectionRouteName,
+                PlayerCollectionRouteName,
                 new {ids = string.Join(",", added.Select(a => a.Id)) },
                 added);
         }

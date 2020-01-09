@@ -26,7 +26,7 @@ namespace AspNetCore.MVC.RESTful.Models
             HateoasConfig.Relationships.Delete,
             "DELETE",
             url);
-        public static HateoasLink GetCollection(string url, string rel = null) => new HateoasLink(
+        public static HateoasLink Collection(string url, string rel = null) => new HateoasLink(
             string.IsNullOrWhiteSpace(rel) ? HateoasConfig.Relationships.CurrentPage : rel,
             "GET",
             url);

@@ -32,10 +32,10 @@ namespace AspNetCore.MVC.RESTful.Filters
             {
                 var queryCollection = contextController.Request.Query;
 
-                GetPageSize(queryCollection, contextController);
-                GetCurrentPage(queryCollection, contextController);
-                GetOrderBy(queryCollection, contextController);
-                GetSearchQuery(queryCollection, contextController);
+                PageSize(queryCollection, contextController);
+                CurrentPage(queryCollection, contextController);
+                OrderBy(queryCollection, contextController);
+                SearchQuery(queryCollection, contextController);
 
                 _logger.LogDebug("RESTful Collection Param: pagesize={pagesize}", contextController.CollectionConfig.PageSize);
                 _logger.LogDebug("RESTful Collection Param: page={page}", contextController.CollectionConfig.Page);
@@ -44,9 +44,9 @@ namespace AspNetCore.MVC.RESTful.Filters
             }
         }
 
-        private static void GetPageSize(IQueryCollection queryCollection, HateoasController contextController)
+        private static void PageSize(IQueryCollection queryCollection, HateoasController contextController)
         {
-            var val = queryCollection.GetByAlias("pagesize", "page-size");
+            var val = queryCollection.ByAlias("pagesize", "page-size");
 
             if (int.TryParse(val, out var pageSize))
             {
@@ -54,9 +54,9 @@ namespace AspNetCore.MVC.RESTful.Filters
             }
         }
 
-        private static void GetCurrentPage(IQueryCollection queryCollection, HateoasController contextController)
+        private static void CurrentPage(IQueryCollection queryCollection, HateoasController contextController)
         {
-            var val = queryCollection.GetByAlias("page", "currentpage", "current-page", "pagenumber", "page-number");
+            var val = queryCollection.ByAlias("page", "currentpage", "current-page", "pagenumber", "page-number");
 
             if (int.TryParse(val, out var page))
             {
@@ -65,15 +65,15 @@ namespace AspNetCore.MVC.RESTful.Filters
 
         }
 
-        private static void GetOrderBy(IQueryCollection queryCollection, HateoasController contextController)
+        private static void OrderBy(IQueryCollection queryCollection, HateoasController contextController)
         {
-            var val = queryCollection.GetByAlias("orderby", "order-by");
+            var val = queryCollection.ByAlias("orderby", "order-by");
             contextController.CollectionConfig.OrderBy = val;
         }
 
-        private static void GetSearchQuery(IQueryCollection queryCollection, HateoasController contextController)
+        private static void SearchQuery(IQueryCollection queryCollection, HateoasController contextController)
         {
-            var val = queryCollection.GetByAlias("search", "search-query", "search-text");
+            var val = queryCollection.ByAlias("search", "search-query", "search-text");
             contextController.CollectionConfig.SearchText = val;
         }
     }

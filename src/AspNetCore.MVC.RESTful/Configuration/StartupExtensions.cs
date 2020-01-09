@@ -171,7 +171,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
             }
         }
 
-        private static RestfulAutoMapperConventionsChecker GetChecker(IApplicationBuilder app) 
+        private static RestfulAutoMapperConventionsChecker RestfulMappingChecker(IApplicationBuilder app) 
             => _mapperChecker ??= new RestfulAutoMapperConventionsChecker(
                     app.ApplicationServices.GetService<IMapper>()
             );
@@ -182,11 +182,11 @@ namespace AspNetCore.MVC.RESTful.Configuration
         {
             if (endpoints == RestfulEndpointMappingChecks.Readonly)
             {
-                GetChecker(app).CheckReadonly<TEntity>();
+                RestfulMappingChecker(app).CheckReadonly<TEntity>();
             }
             else
             {
-                GetChecker(app).Check<TEntity>();
+                RestfulMappingChecker(app).Check<TEntity>();
             }
         }
 
@@ -197,7 +197,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
             bool checkResourceCreate = true,
             bool checkResourceUpdate = true)
         {
-            GetChecker(app).Check<TEntity>(
+            RestfulMappingChecker(app).Check<TEntity>(
                 checkResourceGet, 
                 checkResourcesGet, 
                 checkResourceCreate, 

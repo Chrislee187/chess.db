@@ -18,7 +18,7 @@ namespace chess.games.db.pgnimporter
         {
             if (!Directory.Exists(archiveFolder)) Directory.CreateDirectory(archiveFolder);
 
-            var destFile = CreateDestinationFolder(Path.Combine(archiveFolder, GetSubFolderPath(file, scanPath)));
+            var destFile = CreateDestinationFolder(Path.Combine(archiveFolder, SubFolderPath(file, scanPath)));
 
             if (!File.Exists(destFile))
             {
@@ -37,7 +37,7 @@ namespace chess.games.db.pgnimporter
             return destinationPath;
         }
 
-        private static string GetSubFolderPath(string file, string scanPath)
+        private static string SubFolderPath(string file, string scanPath)
         {
             var relativePath = Path.GetFullPath(file).Replace(Path.GetFullPath(scanPath), "");
 

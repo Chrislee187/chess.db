@@ -35,12 +35,12 @@ namespace chess.db.webapi.Mapping.Profiles
 
         private void MapPlayerParameters()
         {
-            CreateMap<GetPlayersFilters, GetPlayersEntityFilter>()
+            CreateMap<PlayersFilters, PlayersEntityFilter>()
                 .ForMember(m => m.Firstname, o => o.MapFrom(i => i.FirstnameFilter))
                 .ForMember(m => m.Middlename, o => o.MapFrom(i => i.MiddlenameFilter))
                 .ForMember(m => m.Lastname, o => o.MapFrom(i => i.LastnameFilter))
                 ;
-            CreateMap<GetPlayersEntityFilter, GetPlayersFilters>()
+            CreateMap<PlayersEntityFilter, PlayersFilters>()
                 .ForMember(m => m.FirstnameFilter, o => o.MapFrom(i => i.Firstname))
                 .ForMember(m => m.MiddlenameFilter, o => o.MapFrom(i => i.Middlename))
                 .ForMember(m => m.LastnameFilter, o => o.MapFrom(i => i.Lastname))

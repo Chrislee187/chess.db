@@ -17,8 +17,8 @@ namespace chess.db.webapi.Controllers
     [Route("api/players")]
     public class PlayersController : ResourceControllerBase<PlayerDto, Player, Guid>
     {
-        private const string GetPlayerRouteName = "GetPlayer";
-        private const string GetPlayersRouteName = "GetPlayers";
+        private const string PlayerRouteName = "GetPlayer";
+        private const string PlayersRouteName = "GetPlayers";
         private const string CreatePlayerRouteName = "CreatePlayer";
         private const string UpsertPlayerRouteName = "UpsertPlayer";
         private const string PatchPlayerRouteName = "PatchPlayer";
@@ -32,18 +32,18 @@ namespace chess.db.webapi.Controllers
         {
         }
         
-        [HttpGet(Name = GetPlayersRouteName)]
+        [HttpGet(Name = PlayersRouteName)]
         [HttpHead]
-        public IActionResult GetPlayers([FromQuery] GetPlayersFilters filters)
+        public IActionResult Players([FromQuery] PlayersFilters filters)
         {
             return ResourcesGet(
                 filters, 
-                Mapper.Map<GetPlayersEntityFilter>(filters), 
-                new GetPlayersEntitySearch());
+                Mapper.Map<PlayersEntityFilter>(filters), 
+                new PlayersEntitySearch());
         }
 
-        [HttpGet("{id}", Name = GetPlayerRouteName)]
-        public IActionResult GetPlayer(Guid id)
+        [HttpGet("{id}", Name = PlayerRouteName)]
+        public IActionResult Player(Guid id)
             => ResourceGet(id);
 
         [HttpPost(Name = CreatePlayerRouteName)]

@@ -14,8 +14,8 @@ namespace chess.db.webapi.Controllers
     [Route("api/events")]
     public class EventsController : ResourceControllerBase<EventDto, Event, Guid>
     {
-        private const string GetEventRouteName = "GetEvent";
-        private const string GetEventsRouteName = "GetEvents";
+        private const string EventRouteName = "GetEvent";
+        private const string EventsRouteName = "GetEvents";
 
         public EventsController(IMapper mapper,
             IEventsRepository gamesRepository,
@@ -25,15 +25,15 @@ namespace chess.db.webapi.Controllers
         {
         }
 
-        [HttpGet(Name = GetEventsRouteName)]
+        [HttpGet(Name = EventsRouteName)]
         [HttpHead]
-        public IActionResult GetEvents()
+        public IActionResult Events()
         {
             return ResourcesGet();
         }
 
-        [HttpGet("{id}", Name = GetEventRouteName)]
-        public IActionResult GetEvent(Guid id)
+        [HttpGet("{id}", Name = EventRouteName)]
+        public IActionResult Event(Guid id)
             => ResourceGet(id);
     }
 }

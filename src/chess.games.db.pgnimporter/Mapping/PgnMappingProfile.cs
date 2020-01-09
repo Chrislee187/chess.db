@@ -44,7 +44,7 @@ namespace chess.games.db.pgnimporter.Mapping
                 if (pairs.ContainsKeyInsensitive(tag))
                 {
                     usedTags.Add(tag.ToLowerInvariant());
-                    var ecoValue = pairs.GetValueInsensitive(tag);
+                    var ecoValue = pairs.ValueInsensitive(tag);
                     if (!string.IsNullOrWhiteSpace(ecoValue))
                     {
                         valueSetter(ecoValue);

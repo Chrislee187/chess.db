@@ -4,7 +4,7 @@ using chess.games.db.Entities;
 
 namespace chess.games.db.api.Players
 {
-    public class GetPlayersEntityFilter : EntityFilter<Player>
+    public class PlayersEntityFilter : EntityFilter<Player>
     {
         public string Firstname { get; set; }
         public string Middlename { get; set; }
