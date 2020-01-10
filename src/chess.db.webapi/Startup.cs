@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Helpers;
 using AspNetCore.MVC.RESTful.Services;
-using chess.db.webapi.Controllers;
 using chess.db.webapi.Helpers;
 using chess.db.webapi.Middleware;
 using chess.db.webapi.Models;
@@ -57,10 +56,6 @@ namespace chess.db.webapi
             });
 
             app.UseRestful(env);
-
-            app.CheckRestfulMappingsForController<EventsController>();
-            app.CheckRestfulMappingsForController<SitesController>();
-            app.CheckRestfulMappingsForController<PlayersController>();
         }
 
     }

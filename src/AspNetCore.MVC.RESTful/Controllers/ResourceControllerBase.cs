@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using AutoMapper;
-using AspNetCore.MVC.RESTful.AutoMapper;
 using AspNetCore.MVC.RESTful.Configuration;
 using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Helpers;
@@ -43,7 +42,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
     /// </para>
     /// <list>
     /// See also 
-    /// <seealso cref="RestfulAutoMapperConventionsChecker"></seealso>,
     /// <seealso cref="HateoasController"></seealso>.
     /// <seealso cref="IResourceRepository{TEntity,TId}"></seealso>,
     /// <seealso cref="IEntityUpdater{TEntity,TId}"></seealso>,
