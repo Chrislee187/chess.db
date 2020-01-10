@@ -27,18 +27,19 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
                 checkResourceUpdate: false);
         }
 
-
         public void Check<TEntity>(
                 bool checkResourceGet = true,
                 bool checkResourcesGet = true,
                 bool checkResourceCreate = true,
                 bool checkResourceUpdate = true
             )
+            => Check(typeof(TEntity).Name, checkResourceGet, checkResourcesGet, checkResourceCreate, checkResourceUpdate);
+
+        public void Check(string entity, bool checkResourceGet, bool checkResourcesGet, bool checkResourceCreate,
+            bool checkResourceUpdate)
         {
             var allTypeMaps = _mapper.ConfigurationProvider.GetAllTypeMaps()
                 .Select(m => (m.SourceType.Name, m.DestinationType.Name));
-
-            var entity = typeof(TEntity).Name;
 
             var getMappings = new List<(string, string)>()
             {
@@ -47,25 +48,24 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
             };
 
             var getCollectionMappings = new List<(string, string)>()
-                {
+            {
                 // GET /{resources} parameters filters
-                ( $"{Filters(entity)}", $"{ResourceFilter(entity)}" ),
-                ( $"{ResourceFilter(entity)}", $"{Filters(entity)}" ),
-
+                ($"{Filters(entity)}", $"{ResourceFilter(entity)}"),
+                ($"{ResourceFilter(entity)}", $"{Filters(entity)}"),
             };
 
             var createMappings = new List<(string, string)>
             {
                 // POST /{resource}
-                ( $"{entity}CreationDto", $"{entity}"),
+                ($"{entity}CreationDto", $"{entity}"),
             };
 
             var updateMappings = new List<(string, string)>
             {
                 // PUT /{resource}
                 // PATCH /{resource}
-                ( $"{entity}UpdateDto", $"{entity}"),
-                ( $"{entity}", $"{entity}UpdateDto"),
+                ($"{entity}UpdateDto", $"{entity}"),
+                ($"{entity}", $"{entity}UpdateDto"),
             };
 
             foreach (var typeMapping in allTypeMaps)
@@ -84,12 +84,12 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
                 CheckMappingsFor($"{entity}:ResourceUpdate", updateMappings, checkResourceUpdate)
             };
 
-            var exceptions = missingMappings.Where(m => m != null).ToList();
+            var exceptions = missingMappings.Where(m => m != null)
+                .ToList();
             if (exceptions.Any())
             {
                 throw new AggregateException(@"Missing mappings", exceptions);
             }
-
         }
 
         private static Exception CheckMappingsFor(string method, List<(string, string)> mappings, bool check = true)
@@ -103,7 +103,7 @@ namespace AspNetCore.MVC.RESTful.AutoMapper
             return null;
         }
 
-        private static string ResourceFilter(string entity) => $"Get{entity}sEntityFilter";
-        private static string Filters(string entity) => $"Get{entity}sFilters";
+        private static string ResourceFilter(string entity) => $"{entity}sEntityFilter";
+        private static string Filters(string entity) => $"{entity}sFilters";
     }
 }

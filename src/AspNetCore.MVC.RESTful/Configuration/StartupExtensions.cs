@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Reflection;
 using AspNetCore.MVC.RESTful.AutoMapper;
+using AspNetCore.MVC.RESTful.Controllers;
 using AspNetCore.MVC.RESTful.Filters;
 using AspNetCore.MVC.RESTful.Services;
 using AutoMapper;
@@ -9,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
@@ -175,8 +179,38 @@ namespace AspNetCore.MVC.RESTful.Configuration
             => _mapperChecker ??= new RestfulAutoMapperConventionsChecker(
                     app.ApplicationServices.GetService<IMapper>()
             );
+        public static void CheckRestfulMappingsForController<TResourceController>(
+            [NotNull] this IApplicationBuilder app,
+            RestfulEndpointMappingChecks endpoints = RestfulEndpointMappingChecks.Readwrite)
 
-        public static void CheckRestfulMappingsFor<TEntity>(
+        {
+            var controllerType = typeof(TResourceController);
+
+            if (!controllerType?.BaseType?.Name.StartsWith("ResourceControllerBase") ?? true)
+            {
+                throw new ApplicationException($"{nameof(TResourceController)} is not a RESTful Resource Controller");
+            }
+
+            var entityType = controllerType.BaseType.GenericTypeArguments[1];
+            var httpMethods = entityType.GetMembers(BindingFlags.Public | BindingFlags.Instance)
+                .SelectMany(m => m.GetCustomAttributes<HttpMethodAttribute>())
+                .Select(a => a.HttpMethods.First())
+                .Distinct()
+                .ToList();
+
+            var checkResource = httpMethods.Contains("GET");
+            var checkResources = httpMethods.Contains("GET");
+            var checkCreate = httpMethods.Contains("POST");
+            var checkUpdate = httpMethods.Contains("PUT");
+
+            RestfulMappingChecker(app).Check(entityType.Name,
+                checkResource,
+                checkResources,
+                checkCreate,
+                checkUpdate);
+        }
+
+        public static void CheckRestfulMappingsForEntity<TEntity>(
             [NotNull] this IApplicationBuilder app,
             RestfulEndpointMappingChecks endpoints = RestfulEndpointMappingChecks.Readwrite)
         {
@@ -190,7 +224,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
             }
         }
 
-        public static void CheckRestfulMappingsFor<TEntity>(
+        public static void CheckRestfulMappingsForEntity<TEntity>(
             [NotNull] this IApplicationBuilder app,
             bool checkResourceGet = true,
             bool checkResourcesGet = true,
