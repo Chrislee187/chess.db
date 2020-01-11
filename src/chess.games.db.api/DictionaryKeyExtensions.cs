@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace chess.games.db.api
 {
-    public static class StringDictionaryExtensions
+    public static class DictionaryKeyExtensions
     {
-        public static bool ContainsKeyInsensitive(this IDictionary<string, string> dict, string key)
+        public static bool ContainsKeyInsensitive<T>(this IDictionary<string, T> dict, string key)
             => dict.Any(d => d.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase));
-        public static string ValueInsensitive(this IDictionary<string, string> dict, string key)
+        public static T ValueInsensitive<T>(this IDictionary<string, T> dict, string key)
             => dict.Single(d => d.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase)).Value;
     }
 }

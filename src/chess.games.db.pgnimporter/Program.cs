@@ -49,7 +49,11 @@ namespace chess.games.db.pgnimporter
             }
 
             ShowStatus("Initialising validation process...\n");
+
+            Console.CursorVisible = false;
+
             _svc.ProcessUnvalidatedGames();
+            Console.CursorVisible = true;
         }
 
         private static void Startup()

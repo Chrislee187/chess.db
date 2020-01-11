@@ -39,22 +39,22 @@ namespace chess.games.db.pgnimporter.Mapping
 
             var pairs = pgnGame.TagPairs.ToDictionary(k => k.Name, v => v.Value);
 
-            void ParseCustomTag(string tag, Action<string> valueSetter)
+            void ParseCommonTag(string tag, Action<string> valueSetter)
             {
-                if (pairs.ContainsKeyInsensitive(tag))
+                if (!pairs.ContainsKeyInsensitive(tag)) return;
+
+                usedTags.Add(tag.ToLowerInvariant());
+                var ecoValue = pairs.ValueInsensitive(tag);
+                
+                if (!string.IsNullOrWhiteSpace(ecoValue))
                 {
-                    usedTags.Add(tag.ToLowerInvariant());
-                    var ecoValue = pairs.ValueInsensitive(tag);
-                    if (!string.IsNullOrWhiteSpace(ecoValue))
-                    {
-                        valueSetter(ecoValue);
-                    }
+                    valueSetter(ecoValue);
                 }
             }
 
-            ParseCustomTag("ECO", v => game.Eco = v);
-            ParseCustomTag("WhiteELO", v => game.WhiteElo = v);
-            ParseCustomTag("BlackELO", v => game.BlackElo = v);
+            ParseCommonTag("ECO", v => game.Eco = v);
+            ParseCommonTag("WhiteELO", v => game.WhiteElo = v);
+            ParseCommonTag("BlackELO", v => game.BlackElo = v);
 
             var customTags = pgnGame.TagPairs
                 .Where(t => !usedTags.Contains(t.Name.ToLowerInvariant()))
