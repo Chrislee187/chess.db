@@ -1,5 +1,4 @@
 ﻿using chess.games.db.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace chess.games.db
@@ -14,7 +13,7 @@ namespace chess.games.db
         /// <returns></returns>
         public static IServiceCollection AddChessDatabaseContext(this IServiceCollection services, string connectionString) 
             => services.AddDbContext<ChessGamesDbContext>(
-                opts => opts.UseSqlServer(connectionString)
+                opts => opts.UseSqlOrSqlLite(connectionString)
             );
     }
 }

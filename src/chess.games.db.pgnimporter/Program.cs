@@ -7,6 +7,7 @@ using chess.games.db.api.Services;
 using chess.games.db.Entities;
 using chess.games.db.pgnimporter.Mapping;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.CommandLine;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Extensions.Logging;
@@ -15,11 +16,7 @@ namespace chess.games.db.pgnimporter
 {
     class Program
     {
-        public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appSettings.json", optional: false)
-            .AddEnvironmentVariables()
-            .Build();
+        public static IConfiguration Configuration { get; private set; }
 
         private static ChessGamesDbContext _dbContext;
         private static readonly PgnFileFinder Finder = new PgnFileFinder();
@@ -29,7 +26,7 @@ namespace chess.games.db.pgnimporter
         private static void ShowStatus(string status) => Console.Write(status);
         static void Main(string[] args)
         {
-            Startup();
+            Startup(args);
 
             ShowStatus("Performing any DB migrations...\n");
             _dbContext.UpdateDatabase();
@@ -56,9 +53,16 @@ namespace chess.games.db.pgnimporter
             Console.CursorVisible = true;
         }
 
-        private static void Startup()
+        private static void Startup(string[] args)
         {
-            var connectionString = Configuration["chess-games-db"];
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddEnvironmentVariables()
+                .AddJsonFile("appSettings.json", optional: false)
+                .AddCommandLine(args)
+                .Build();
+
+            var connectionString = Configuration["ChessDB"];
 
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)

@@ -1,14 +1,12 @@
-﻿using System.Reflection.Metadata.Ecma335;
-
-namespace chess.games.db.pgnimporter
+﻿
+namespace chess.games.db.api.Services
 {
     public class StatusIndicatorBuilder
     {
         private static string _indicatorsType1 = @"|/-\";
-        private static string _indicatorsType2 = @"·ooOOoo.";
+        private static string _indicatorsType2 = @"·ooOOoo·";
 
         private string _indicators = _indicatorsType2;
-
 
         private IndicatorType _indicatorType = IndicatorType.WrapChar;
         private int _indicatorIndex = 0;

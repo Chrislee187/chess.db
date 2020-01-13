@@ -91,6 +91,9 @@ namespace chess.games.db.api.Repositories
                                 && !_database.PgnImportErrors.AsNoTracking()
                                     .Any(e => e.PgnGameId == g.Id));
             }
+
+
+
             return filter
                 .Take(batchSize);
         }

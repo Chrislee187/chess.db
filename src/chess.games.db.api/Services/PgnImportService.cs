@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using chess.games.db.api.Repositories;
-using chess.games.db.pgnimporter;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using PgnGame = PgnReader.PgnGame;
@@ -93,14 +92,29 @@ namespace chess.games.db.api.Services
 
         public void ProcessUnvalidatedGames()
         {
-            var whitePlayers = _pgnRepository.ValidationBatch()
-                .Select(g => g.White).Distinct().ToList();
-            var blackPlayers = _pgnRepository.ValidationBatch()
-                .Select(g => g.Black).Distinct().ToList();
+            // var whitePlayers = _pgnRepository.ValidationBatch()
+            //     .Select(g => g.White).Distinct().ToList();
+            // var blackPlayers = _pgnRepository.ValidationBatch()
+            //     .Select(g => g.Black).Distinct().ToList();
+            //
+            // var players = whitePlayers.Union(blackPlayers)
+            //     .Distinct()
+            //     .OrderBy(s => s).ToList();
 
-            var players = whitePlayers.Union(blackPlayers)
-                .Distinct()
-                .OrderBy(s => s).ToList();
+            var wp = _pgnRepository.ValidationBatch()
+                    .GroupBy(s => s.White)
+                    .OrderByDescending(g => g.Count()).ToList();
+
+            var bp = _pgnRepository.ValidationBatch()
+                    .GroupBy(s => s.Black)
+                    .OrderByDescending(g => g.Count()).ToList();
+
+            var p = wp.Concat(bp)
+                .OrderByDescending(g => g.Count()).ToList();
+
+            var players = p.Select(s => s.Key)
+                .Distinct().ToList();
+
 
             if (!players.Any())
             {
