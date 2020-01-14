@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace chess.games.db
+namespace chess.games.db.Configuration
 {
     public static class DbContextOptionsBuilderExtensions
     {
-        public static DbContextOptionsBuilder UseSqlOrSqlLite(this DbContextOptionsBuilder builder,
+        public static DbContextOptionsBuilder UseSql(this DbContextOptionsBuilder builder,
+            ConfigurationExtensions.DbServerTypes serverType,
             string connectionString)
         {
-            return connectionString.Contains("sqlite")
+            return serverType == ConfigurationExtensions.DbServerTypes.SQLite
                 ? builder.UseSqlite(connectionString)
                 : builder.UseSqlServer(connectionString);
         }

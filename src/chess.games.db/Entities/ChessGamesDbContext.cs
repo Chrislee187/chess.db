@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using chess.games.db.Configuration;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer.Internal;
@@ -31,10 +32,11 @@ namespace chess.games.db.Entities
         }
 
         public ChessGamesDbContext(
+            ConfigurationExtensions.DbServerTypes serverType,
             string connectionString, 
             ILoggerFactory loggerFactory = null)
             : base(new DbContextOptionsBuilder()
-                .UseSqlOrSqlLite(connectionString)
+                .UseSql(serverType, connectionString)
                 .Options)
         {
             _loggerFactory = loggerFactory;

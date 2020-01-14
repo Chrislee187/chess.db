@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration.CommandLine;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Extensions.Logging;
+using ConfigurationExtensions = chess.games.db.Configuration.ConfigurationExtensions;
 
 namespace chess.games.db.pgnimporter
 {
@@ -62,18 +63,21 @@ namespace chess.games.db.pgnimporter
                 .AddCommandLine(args)
                 .Build();
 
+            var serverType = Enum.Parse<ConfigurationExtensions.DbServerTypes>(Configuration["DbServerType"]);
             var connectionString = Configuration["ChessDB"];
 
             Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration)
+                .ReadFrom
+                .Configuration(Configuration)
                 .CreateLogger();
-            var serilogLoggerFactory = new SerilogLoggerFactory(Log.Logger);
 
-            _dbContext = new ChessGamesDbContext(connectionString, serilogLoggerFactory);
+            var loggerFactory = new SerilogLoggerFactory(Log.Logger);
+
+            _dbContext = new ChessGamesDbContext(serverType, connectionString, loggerFactory);
             _mapper = AutoMapperFactory.Create();
 
-            var pgnRepository = new PgnRepository(_dbContext, serilogLoggerFactory.CreateLogger<PgnRepository>());
-            _svc = new PgnImportService(pgnRepository, _mapper, serilogLoggerFactory.CreateLogger<PgnImportService>());
+            var pgnRepository = new PgnRepository(_dbContext, loggerFactory.CreateLogger<PgnRepository>());
+            _svc = new PgnImportService(pgnRepository, _mapper, loggerFactory.CreateLogger<PgnImportService>());
             
             _svc.Status += ShowStatus;
         }

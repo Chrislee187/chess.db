@@ -8,11 +8,13 @@ using chess.db.webapi.Middleware;
 using chess.db.webapi.Models;
 using chess.games.db;
 using chess.games.db.api;
+using chess.games.db.Configuration;
 using chess.games.db.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ConfigurationExtensions = chess.games.db.Configuration.ConfigurationExtensions;
 
 namespace chess.db.webapi
 {
@@ -30,8 +32,11 @@ namespace chess.db.webapi
             services
                 .AddRestful();
 
+            var serverType = Enum.Parse<ConfigurationExtensions.DbServerTypes>(Configuration["DbServerType"]);
+            var connectionString = Configuration["ChessDB"];
+
             services
-                .AddChessDatabaseContext(Configuration["ChessDB"])
+                .AddChessDatabaseContext(serverType, connectionString)
                 .AddChessRepositories();
 
             services
