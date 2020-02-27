@@ -6,7 +6,6 @@ using AspNetCore.MVC.RESTful.Services;
 using chess.db.webapi.Helpers;
 using chess.db.webapi.Middleware;
 using chess.db.webapi.Models;
-using chess.games.db;
 using chess.games.db.api;
 using chess.games.db.Configuration;
 using chess.games.db.Entities;
@@ -31,9 +30,9 @@ namespace chess.db.webapi
         {
             services
                 .AddRestful();
-
-            var serverType = Enum.Parse<ConfigurationExtensions.DbServerTypes>(Configuration["DbServerType"]);
-            var connectionString = Configuration["ChessDB"];
+            
+            var serverType = Configuration.ServerType();
+            var connectionString = Configuration.ConnectionString();
 
             services
                 .AddChessDatabaseContext(serverType, connectionString)
@@ -62,6 +61,5 @@ namespace chess.db.webapi
 
             app.UseRestful(env);
         }
-
     }
 }

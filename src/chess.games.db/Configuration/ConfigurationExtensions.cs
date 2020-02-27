@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-
 namespace chess.games.db.Configuration
 {
     public static class ConfigurationExtensions
@@ -28,7 +27,8 @@ namespace chess.games.db.Configuration
             this IServiceCollection services,
             DbServerTypes serverType,
             string connectionString)
-            => services.AddDbContext<ChessGamesDbContext>(
+        {
+            return services.AddDbContext<ChessGamesDbContext>(
                 opts =>
                 {
                     switch (serverType)
@@ -43,6 +43,7 @@ namespace chess.games.db.Configuration
                             throw new ArgumentOutOfRangeException(nameof(serverType), serverType, null);
                     }
                 });
+        }
 
         public static IConfiguration Configuration(string[] args = null) 
             => BaseConfigBuilder()
@@ -157,7 +158,5 @@ namespace chess.games.db.Configuration
 
         private static IConfigurationBuilder AddCommandLineSafe(this IConfigurationBuilder builder, string[] args = null)
             => args == null ? builder : builder.AddCommandLine(args);
-
     }
-
 }

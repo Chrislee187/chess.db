@@ -12,11 +12,7 @@ namespace chess.db.webapi
 {
     public class Program
     {
-        public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true)
-            .AddEnvironmentVariables()
-            .Build();
+        public static IConfiguration Configuration { get; } = games.db.Configuration.ConfigurationExtensions.Configuration();
 
         public static void Main(string[] args)
         {

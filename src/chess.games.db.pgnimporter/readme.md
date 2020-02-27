@@ -4,7 +4,8 @@ This little tool will import any number of PGN games from PGN files recursively 
 
 The games will be imported to the database specified in the `appsettings.json`, `DbServerType` & `ChessDB` properties.
 
-See [chess.game.db](https://github.com/Chrislee187/chess.db/tree/master/src/chess.games.db) readme for more inforation on the DB configuration settings.
+See [chess.game.db](https://github.com/Chrislee187/chess.db/tree/master/src/chess.games.db) readme for more information on the DB configuration settings.
+
 ## Example Usage
 Build with `dotnet build` and run the compiled `chess.games.db.exe`, or use 
 `dotnet run .\chess.games.db.pgnimporter -- .\SampleFiles`
@@ -32,5 +33,3 @@ Validating     9 game(s) for (3/218) 'Robatsch, Karl'   +0=9?0 - 76ms avg. per g
 Validating     6 game(s) for (4/218) 'Botvinnik, Mikhail'       +0=6?0 - 77ms avg. per game
 ...
 ```
-
-5
