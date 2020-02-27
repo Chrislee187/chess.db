@@ -7,7 +7,7 @@ namespace chess.games.db.api.Services
         private static string _indicatorsType2 = @"·ooOOoo·";
 
         private readonly string _indicators = _indicatorsType2;
-        private int _indicatorIndex = 0;
+        private int _indicatorIndex;
         private readonly int _indicatorsCount;
         private string _clearPrevious = "";
 

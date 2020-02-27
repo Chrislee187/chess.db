@@ -1,16 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using chess.games.db.api.Repositories;
 using chess.games.db.api.Services;
-using chess.games.db.Configuration;
 using chess.games.db.Entities;
 using chess.games.db.pgnimporter.Mapping;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Extensions.Logging;
+using System;
+using System.Linq;
 using ConfigurationExtensions = chess.games.db.Configuration.ConfigurationExtensions;
 
 namespace chess.games.db.pgnimporter
@@ -31,7 +29,7 @@ namespace chess.games.db.pgnimporter
             Startup(args);
             
             var scanPath = args.Any() ? args[0] : @"";
-
+            ShowStatus("Checking for new files...\n");
             if (scanPath != "")
             {
                 ShowStatus($"Starting import from: {scanPath}...\n");
@@ -41,7 +39,7 @@ namespace chess.games.db.pgnimporter
             }
             else
             {
-                ShowStatus("No pgn files/folders specified for input.\n");
+                ShowStatus("No pgn files/folders specified for import.\n");
             }
 
             ShowStatus("Initialising validation process...\n");

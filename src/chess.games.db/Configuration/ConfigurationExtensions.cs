@@ -135,7 +135,7 @@ namespace chess.games.db.Configuration
             var serverType = dbType ?? config.ServerType();
             var connectionString = connString ?? config.ConnectionString();
 
-            return new ChessGamesDbContext(serverType, connectionString);
+            return new ChessGamesDbContext(serverType, connectionString, loggerFactory);
         }
 
         // ReSharper disable InconsistentNaming

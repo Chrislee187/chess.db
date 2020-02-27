@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using chess.games.db.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -8,7 +7,7 @@ namespace chess.games.db.Entities
 {
     public class ChessGamesDbContext : DbContext
     {
-        private ILoggerFactory _loggerFactory;
+        private readonly ILoggerFactory _loggerFactory;
         public DbSet<PgnGame> PgnGames { get; set; }
         public DbSet<PgnImport> PgnImports { get; set; }
 
@@ -53,25 +52,5 @@ namespace chess.games.db.Entities
 
             Database.SetCommandTimeout(oldTimeOut);
         }
-
-        public void UpdateDatabase()
-        {
-            var migs = Database.GetPendingMigrations().ToList();
-
-            if (migs.Any())
-            {
-                Console.WriteLine("Pending DB migrations:");
-                migs.ForEach(m => Console.WriteLine($"  {m}"));
-
-                Console.WriteLine("Applying...");
-                var oldTimeOut = Database.GetCommandTimeout();
-                Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
-
-                Database.Migrate();
-                Database.SetCommandTimeout(oldTimeOut);
-                Console.WriteLine("DB Migrated");
-            }
-        }
-
     }
 }
