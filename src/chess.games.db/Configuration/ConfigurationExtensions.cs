@@ -105,9 +105,9 @@ namespace chess.games.db.Configuration
             var config = Configuration(args);
 
             var dbType = config.ServerType();
-            Reporter($"Connecting to {dbType} chess database...");
             var dbContext = config.CreateDbContext(dbType);
 
+            Reporter($"Connecting to {dbType} chess database...");
             Reporter("  Checking for pending migrations...");
 
             var pendingMigrations = (await dbContext.Database.GetPendingMigrationsAsync()).ToList();
