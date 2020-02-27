@@ -4,10 +4,10 @@ using System.Linq;
 using AutoMapper;
 using chess.games.db.api.Repositories;
 using chess.games.db.api.Services;
+using chess.games.db.Configuration;
 using chess.games.db.Entities;
 using chess.games.db.pgnimporter.Mapping;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.CommandLine;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Extensions.Logging;
@@ -17,6 +17,7 @@ namespace chess.games.db.pgnimporter
 {
     class Program
     {
+        private static Action<string> Reporter = Console.WriteLine;
         public static IConfiguration Configuration { get; private set; }
 
         private static ChessGamesDbContext _dbContext;
@@ -28,9 +29,6 @@ namespace chess.games.db.pgnimporter
         static void Main(string[] args)
         {
             Startup(args);
-
-            ShowStatus("Performing any DB migrations...\n");
-            _dbContext.UpdateDatabase();
             
             var scanPath = args.Any() ? args[0] : @"";
 
@@ -56,15 +54,9 @@ namespace chess.games.db.pgnimporter
 
         private static void Startup(string[] args)
         {
-            Configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddEnvironmentVariables()
-                .AddJsonFile("appSettings.json", optional: false)
-                .AddCommandLine(args)
-                .Build();
-
-            var serverType = Enum.Parse<ConfigurationExtensions.DbServerTypes>(Configuration["DbServerType"]);
-            var connectionString = Configuration["ChessDB"];
+            ConfigurationExtensions.Reporter = Reporter;
+            
+            Configuration = ConfigurationExtensions.Configuration(args);
 
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom
@@ -73,7 +65,8 @@ namespace chess.games.db.pgnimporter
 
             var loggerFactory = new SerilogLoggerFactory(Log.Logger);
 
-            _dbContext = new ChessGamesDbContext(serverType, connectionString, loggerFactory);
+            _dbContext = ConfigurationExtensions.InitDb(args, loggerFactory).Result;
+
             _mapper = AutoMapperFactory.Create();
 
             var pgnRepository = new PgnRepository(_dbContext, loggerFactory.CreateLogger<PgnRepository>());
@@ -81,6 +74,5 @@ namespace chess.games.db.pgnimporter
             
             _svc.Status += ShowStatus;
         }
-
     }
 }

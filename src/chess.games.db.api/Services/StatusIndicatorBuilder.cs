@@ -6,11 +6,9 @@ namespace chess.games.db.api.Services
         private static string _indicatorsType1 = @"|/-\";
         private static string _indicatorsType2 = @"·ooOOoo·";
 
-        private string _indicators = _indicatorsType2;
-
-        private IndicatorType _indicatorType = IndicatorType.WrapChar;
+        private readonly string _indicators = _indicatorsType2;
         private int _indicatorIndex = 0;
-        private int _indicatorsCount;
+        private readonly int _indicatorsCount;
         private string _clearPrevious = "";
 
         public string ClearLast() => _clearPrevious + new string(' ', _clearPrevious.Length) + _clearPrevious;

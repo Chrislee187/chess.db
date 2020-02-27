@@ -6,6 +6,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+
 
 namespace chess.games.db.Configuration
 {
@@ -14,7 +16,7 @@ namespace chess.games.db.Configuration
         private static readonly string DefaultSQLiteFile = "ChessDB.sqlite";
         private static readonly string DefaultDataFolder = "ChessDB";
 
-        public static Action<string> Reporter = Console.WriteLine;
+        public static Action<string> Reporter = (_) => { };
         /// <summary>
         /// Add a SQL based ChessGamesDbContext to the container
         /// </summary>
@@ -46,7 +48,7 @@ namespace chess.games.db.Configuration
             => BaseConfigBuilder()
             .AddEnvironmentVariables()
             .AddJsonFile()
-            .AddCommandLine(args)
+            .AddCommandLineSafe(args)
             .Build();
 
         public static DbServerTypes ServerType(this IConfiguration config)
@@ -100,12 +102,12 @@ namespace chess.games.db.Configuration
             return connectionString;
         }
 
-        public static async Task<ChessGamesDbContext> InitDb(string[] args = null)
+        public static async Task<ChessGamesDbContext> InitDb(string[] args = null, ILoggerFactory loggerFactory = null)
         {
             var config = Configuration(args);
 
             var dbType = config.ServerType();
-            var dbContext = config.CreateDbContext(dbType);
+            var dbContext = config.CreateDbContext(dbType, loggerFactory: loggerFactory);
 
             Reporter($"Connecting to {dbType} chess database...");
             Reporter("  Checking for pending migrations...");
@@ -125,9 +127,10 @@ namespace chess.games.db.Configuration
             return dbContext;
         }
 
-        private static ChessGamesDbContext CreateDbContext(this IConfiguration config, 
-            DbServerTypes? dbType = null, 
-            string connString = null)
+        private static ChessGamesDbContext CreateDbContext(this IConfiguration config,
+            DbServerTypes? dbType = null,
+            string connString = null,
+            ILoggerFactory loggerFactory = null)
         {
             var serverType = dbType ?? config.ServerType();
             var connectionString = connString ?? config.ConnectionString();
@@ -152,7 +155,7 @@ namespace chess.games.db.Configuration
         private static IConfigurationBuilder AddEnvironmentVariables(this IConfigurationBuilder builder)
             => builder; // TODO: Add env var support
 
-        private static IConfigurationBuilder AddCommandLine(this IConfigurationBuilder builder, string[] args = null)
+        private static IConfigurationBuilder AddCommandLineSafe(this IConfigurationBuilder builder, string[] args = null)
             => args == null ? builder : builder.AddCommandLine(args);
 
     }

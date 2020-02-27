@@ -87,34 +87,26 @@ namespace chess.games.db.api.Services
                     if (e is SqlException) throw;
                 }
             });
-            RaiseStatus($"\n{pgnFiles.Length} total files processed, {averages.Average()} games created per second");
+            if (averages.Any())
+            {
+                RaiseStatus($"\n{pgnFiles.Length} total files processed, {averages.Average()} games created per second.\n");
+            }
         }
 
         public void ProcessUnvalidatedGames()
         {
-            // var whitePlayers = _pgnRepository.ValidationBatch()
-            //     .Select(g => g.White).Distinct().ToList();
-            // var blackPlayers = _pgnRepository.ValidationBatch()
-            //     .Select(g => g.Black).Distinct().ToList();
-            //
-            // var players = whitePlayers.Union(blackPlayers)
-            //     .Distinct()
-            //     .OrderBy(s => s).ToList();
+            var validationBatch = _pgnRepository.ValidationBatch().ToList();
+            var wp = validationBatch
+                    .GroupBy(s => s.White);
 
-            var wp = _pgnRepository.ValidationBatch()
-                    .GroupBy(s => s.White)
-                    .OrderByDescending(g => g.Count()).ToList();
-
-            var bp = _pgnRepository.ValidationBatch()
-                    .GroupBy(s => s.Black)
-                    .OrderByDescending(g => g.Count()).ToList();
+            var bp = validationBatch
+                    .GroupBy(s => s.Black);
 
             var p = wp.Concat(bp)
-                .OrderByDescending(g => g.Count()).ToList();
+                .OrderByDescending(g => g.Count());
 
             var players = p.Select(s => s.Key)
                 .Distinct().ToList();
-
 
             if (!players.Any())
             {

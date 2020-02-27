@@ -13,7 +13,7 @@ namespace chess.games.db.api.Repositories
     public interface IPgnRepository
     {
         int ImportQueueSize { get; }
-        int QueuePgnGames(IEnumerable<PgnImport> games);
+        int QueuePgnGames(in IEnumerable<PgnImport> games);
         IEnumerable<PgnGame> ValidationBatch(string name = null, int batchSize = int.MaxValue);
         void AddNewGame(Game game);
 
@@ -26,6 +26,7 @@ namespace chess.games.db.api.Repositories
     
     public class PgnRepository : IPgnRepository
     {
+        private MergeSqlFactory _sqlFactory = new MergeSqlFactory();
         private readonly ChessGamesDbContext _database;
 
         private readonly ILogger<PgnRepository> _logger;
@@ -69,6 +70,7 @@ namespace chess.games.db.api.Repositories
                             && !_database.PgnImportErrors.AsNoTracking()
                                 .Any(e => e.PgnGameId == g.Id));
 
+
         public IEnumerable<PgnGame> ValidationBatch(string name = null, int batchSize = int.MaxValue)
         {
             IQueryable<PgnGame> filter;
@@ -80,8 +82,9 @@ namespace chess.games.db.api.Repositories
                                     .Any(i => i.Id == g.Id)
                                 && !_database.PgnImportErrors.AsNoTracking()
                                     .Any(e => e.PgnGameId == g.Id)
-                                && (g.White.ToUpper() == name 
-                                           || g.Black.ToUpper() == name));
+                                && (g.White == name
+                                    || g.Black == name));
+
             }
             else
             {
@@ -98,26 +101,29 @@ namespace chess.games.db.api.Repositories
                 .Take(batchSize);
         }
 
-        public int QueuePgnGames(IEnumerable<PgnImport> games)
+        public int QueuePgnGames(in IEnumerable<PgnImport> games)
         {
             var gamesList = games.ToArray();
 
             _database.PgnImports.AttachRange(gamesList);
 			_database.SaveChanges();
 
+            var isSqlLite =
+                _database.Database.ProviderName.Contains("SQLite", StringComparison.InvariantCultureIgnoreCase);
+
             // NOTE: Merge new games in to main PgnGame store, we use raw SQL here as it's exponentially quicker
             // than per rows scans with EF Core DbSets
             int mergedGamesCount = 0;
             _database.RunWithExtendedTimeout(() =>
             {
-                mergedGamesCount = _database.Database.ExecuteSqlRaw(MergeNewGamesSql);
+                mergedGamesCount = _database.Database.ExecuteSqlRaw(_sqlFactory.Create(isSqlLite));
             }, TimeSpan.FromMinutes(5));
 
-			// Clean the import queue
+            // Clean the import queue
             _database.PgnImports.RemoveRange(gamesList);
             _database.SaveChanges();
 
-			return mergedGamesCount;
+            return mergedGamesCount;
         }
 
         public void AddNewGame(Game game) 
@@ -197,7 +203,7 @@ namespace chess.games.db.api.Repositories
             var players = _database.Players
                 // ReSharper disable once SpecifyStringComparison - need this format of insensitive comparison to
                 // allow it to be converted to SQL by EF
-                .Where(p => personName.Lastname.ToUpper() == p.LastName.ToUpper())
+                .Where(p => personName.Lastname == p.LastName)
                 .ToList();
 
             if (!players.Any()) return null;
@@ -331,44 +337,5 @@ namespace chess.games.db.api.Repositories
 
         private void LoadChildren(PgnEvent entity)
             => _database.LoadChildren(entity, "Event");
-
-        private static readonly string MergeNewGamesSql = $@"INSERT {nameof(ChessGamesDbContext.PgnGames)} (
-		Id, [Event], [Site], White, Black, [Date], [Round], 
-		Result, MoveList, ECO, WhiteElo, BlackElo, CustomTagsJson
-	) 
-SELECT newid(), [Event], [Site], White, Black, [Date], [Round], 
-		Result, MoveList, ECO, WhiteElo, BlackElo, CustomTagsJson
-	FROM 	{nameof(ChessGamesDbContext.PgnImports)} import 
-	WHERE NOT EXISTS (
-			SELECT Id
-			FROM {nameof(ChessGamesDbContext.PgnGames)} game 
-			WHERE
-				game.[Event] = import.[Event]
-				AND game.[Site] = import.[Site]
-				AND game.White = import.White 
-				AND game.Black = import.Black 
-				AND game.[Date] = import.[Date] 
-				AND game.[Round] = import.[Round] 
-				AND game.Result = import.Result 
-				AND game.MoveList = import.MoveList 
-				AND (
-						(game.ECO IS NOT NULL AND game.ECO = import.ECO)
-						OR (game.ECO IS NULL AND import.Eco IS NULL)
-					)
-				AND (
-						(game.WhiteElo IS NOT NULL AND game.WhiteElo = import.WhiteElo)
-						OR (game.WhiteElo IS NULL AND import.WhiteElo IS NULL)
-					)
-				AND (
-						(game.BlackElo IS NOT NULL AND game.BlackElo = import.BlackElo)
-						OR (game.BlackElo IS NULL AND import.BlackElo IS NULL)
-					)
-				AND (
-						(game.CustomTagsJson IS NOT NULL AND game.CustomTagsJson = import.CustomTagsJson)
-						OR (game.CustomTagsJson IS NULL AND import.CustomTagsJson IS NULL)
-					)
-		);
-";
-
     }
 }
