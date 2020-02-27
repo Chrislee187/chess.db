@@ -1,22 +1,32 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using ConfigurationExtensions = chess.games.db.Configuration.ConfigurationExtensions;
+using chess.games.db.Configuration;
+using Serilog;
 
 namespace chess.games.db
 {
     class Program
     {
-        private static Action<string> Reporter = Console.WriteLine;
+        private static ILogger _logger;
+        private static Action<string> Reporter = (text) =>
+        {
+            Console.WriteLine(text);
+            _logger.Information(text);
+        };
 
         // ReSharper disable once UnusedParameter.Local
         private static async Task Main(string[] args)
         {
-            ConfigurationExtensions.Reporter = Reporter;
+            _logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(ConfigurationExtensions.Configuration()).CreateLogger();
+            Log.Logger = _logger;
+
+            DbStartup.Reporter = Reporter;
 
             Reporter($"Chess DB Creator");
 
-            var dbContext = await ConfigurationExtensions.InitDb();
+            var dbContext = await DbStartup.InitDbAsync();
 
             Reporter("Chess DB Status");
             Reporter($"  Valid games: {dbContext.Games.Count()}");

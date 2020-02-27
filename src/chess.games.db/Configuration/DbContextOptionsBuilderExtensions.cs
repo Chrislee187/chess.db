@@ -5,10 +5,10 @@ namespace chess.games.db.Configuration
     public static class DbContextOptionsBuilderExtensions
     {
         public static DbContextOptionsBuilder UseSql(this DbContextOptionsBuilder builder,
-            ConfigurationExtensions.DbServerTypes serverType,
+            DbServerTypes serverType,
             string connectionString)
         {
-            return serverType == ConfigurationExtensions.DbServerTypes.SQLite
+            return serverType == DbServerTypes.Sqlite
                 ? builder.UseSqlite(connectionString)
                 : builder.UseSqlServer(connectionString);
         }

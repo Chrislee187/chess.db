@@ -3,7 +3,7 @@ namespace chess.games.db.api.Services
 {
     public class StatusIndicatorBuilder
     {
-        private static string _indicatorsType1 = @"|/-\";
+        // private static string _indicatorsType1 = @"|/-\";
         private static string _indicatorsType2 = @"·ooOOoo·";
 
         private readonly string _indicators = _indicatorsType2;

@@ -29,7 +29,7 @@ namespace chess.games.db.Entities
         }
 
         public ChessGamesDbContext(
-            ConfigurationExtensions.DbServerTypes serverType,
+            DbServerTypes serverType,
             string connectionString, 
             ILoggerFactory loggerFactory = null)
             : base(new DbContextOptionsBuilder()

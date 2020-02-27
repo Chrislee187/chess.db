@@ -9,6 +9,7 @@ using Serilog;
 using Serilog.Extensions.Logging;
 using System;
 using System.Linq;
+using chess.games.db.Configuration;
 using ConfigurationExtensions = chess.games.db.Configuration.ConfigurationExtensions;
 
 namespace chess.games.db.pgnimporter
@@ -52,7 +53,7 @@ namespace chess.games.db.pgnimporter
 
         private static void Startup(string[] args)
         {
-            ConfigurationExtensions.Reporter = Reporter;
+            DbStartup.Reporter = Reporter;
             
             Configuration = ConfigurationExtensions.Configuration(args);
 
@@ -63,7 +64,7 @@ namespace chess.games.db.pgnimporter
 
             var loggerFactory = new SerilogLoggerFactory(Log.Logger);
 
-            _dbContext = ConfigurationExtensions.InitDb(args, loggerFactory).Result;
+            _dbContext = DbStartup.InitDbAsync(args, loggerFactory).Result;
 
             _mapper = AutoMapperFactory.Create();
 

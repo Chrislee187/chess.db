@@ -336,8 +336,11 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         {
             Assert.Inconclusive("Header is only added to when the action result is formatted, " +
                         "so can't test here as formatting is PostAction");
+
+            // ReSharper disable once HeuristicUnreachableCode
             _mockery.WithValidModelState();
 
+            // ReSharper disable once UnusedVariable
             var resourceCreate = _controller.ResourceCreate(new TestCreationDto());
 
             _controller.Response.Headers
@@ -349,6 +352,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         {
             Assert.Inconclusive("Header is only added to when the action result is formatted, " +
                                 "so can't test here as formatting is PostAction");
+            // ReSharper disable once HeuristicUnreachableCode
             var resourcesResult = _controller.ResourceOptions();
 
             resourcesResult
@@ -364,6 +368,7 @@ namespace AspNetCore.MVC.Restful.Tests.Controllers
         {
             Assert.Inconclusive("ActionFilters pre-execution triggers handle model validation, so cannot be directly unit-tested");
 
+            // ReSharper disable once HeuristicUnreachableCode
             _mockery.WithInvalidModelState();
 
             var resourcesResult = _controller.ResourceCreate(new TestCreationDto());

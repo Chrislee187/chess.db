@@ -15,6 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "chess.game.db.unit.tests", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{436D9DF5-F8DF-4E03-A5A2-98CB4FC44AE6}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		..\readme.md = ..\readme.md
 	EndProjectSection
 EndProject
@@ -24,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.MVC.Restful.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "chess.games.db.pgnimporter.unit.tests", "chess.games.db.pgnimporter.unit.tests\chess.games.db.pgnimporter.unit.tests.csproj", "{1CAD2A2A-B8AD-42AE-8E05-484E6BB2C961}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "chess.db.webapi.integration.tests", "chess.db.webapi.integration.tests\chess.db.webapi.integration.tests.csproj", "{06BDC6BA-47F6-4C0E-B121-9C3CC54B1184}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "chess.db.webapi.integration.tests", "chess.db.webapi.integration.tests\chess.db.webapi.integration.tests.csproj", "{06BDC6BA-47F6-4C0E-B121-9C3CC54B1184}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

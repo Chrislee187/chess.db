@@ -64,7 +64,7 @@ namespace chess.games.db.api.Services
                     RaiseStatus($"{importGames.Count}".PadLeft(7));
 
                     var sw = Stopwatch.StartNew();
-                    var createdCount = _pgnRepository.QueuePgnGames(importGames);
+                    var createdCount = _pgnRepository.QueuePgnGamesForValidation(importGames);
                     sw.Stop();
 
                     RaiseStatus($"{createdCount}".PadLeft(7) + $"{pgnGames.Length - createdCount}".PadLeft(7));

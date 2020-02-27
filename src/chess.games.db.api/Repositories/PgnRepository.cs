@@ -13,7 +13,7 @@ namespace chess.games.db.api.Repositories
     public interface IPgnRepository
     {
         int ImportQueueSize { get; }
-        int QueuePgnGames(in IEnumerable<PgnImport> games);
+        int QueuePgnGamesForValidation(in IEnumerable<PgnImport> games);
         IEnumerable<PgnGame> ValidationBatch(string name = null, int batchSize = int.MaxValue);
         void AddNewGame(Game game);
 
@@ -60,6 +60,7 @@ namespace chess.games.db.api.Repositories
 
         public void SaveChanges()
         {
+            _logger.LogDebug("Calling database.SaveChanges()");
             _database.SaveChanges();
         }
 
@@ -69,7 +70,6 @@ namespace chess.games.db.api.Repositories
                                 .Any(i => i.Id == g.Id)
                             && !_database.PgnImportErrors.AsNoTracking()
                                 .Any(e => e.PgnGameId == g.Id));
-
 
         public IEnumerable<PgnGame> ValidationBatch(string name = null, int batchSize = int.MaxValue)
         {
@@ -95,14 +95,14 @@ namespace chess.games.db.api.Repositories
                                     .Any(e => e.PgnGameId == g.Id));
             }
 
-
-
             return filter
                 .Take(batchSize);
         }
 
-        public int QueuePgnGames(in IEnumerable<PgnImport> games)
+        public int QueuePgnGamesForValidation(in IEnumerable<PgnImport> games)
         {
+            _logger.LogDebug("Queuing PGN files for validation...");
+
             var gamesList = games.ToArray();
 
             _database.PgnImports.AttachRange(gamesList);
@@ -179,22 +179,27 @@ namespace chess.games.db.api.Repositories
 
         private PgnPlayer MatchPlayer(string pgnPlayerName)
         {
+            if (!PersonName.TryParse(pgnPlayerName, out var personName)) return null;
+
+            void LogMatch(string pgn, PersonName person) 
+                => _logger.LogDebug($"Existing player '{pgn}' matched to '{person}'");
+
             var pgnPlayer = _database.PlayerLookup.Find(pgnPlayerName);
             if (pgnPlayer != null)
             {
+                LogMatch(pgnPlayerName, personName);
                 LoadChildren(pgnPlayer);
                 return pgnPlayer;
             }
-
-            if (!PersonName.TryParse(pgnPlayerName, out var personName)) return null;
-
+            
             var match = MatchPlayer(personName);
-
-            if(match != null)
+            if (match != null)
             {
+                _logger.LogDebug($"New player ('{personName}') added as '{match}'.");
                 return CreatePlayerLookup(pgnPlayerName, match);
             }
 
+            LogMatch(pgnPlayerName, personName);
             return CreatePlayerLookup(pgnPlayerName, personName);
         }
 
@@ -285,7 +290,9 @@ namespace chess.games.db.api.Repositories
 
         private PgnPlayer FindOrCreatePlayer(string pgnName)
         {
-            return MatchPlayer(pgnName);
+            var findOrCreatePlayer = MatchPlayer(pgnName);
+
+            return findOrCreatePlayer;
         }
 
         private PgnEvent FindOrCreateEvent(PgnGame pgnGame)
@@ -298,10 +305,12 @@ namespace chess.games.db.api.Repositories
                     Id = pgnGame.Event,
                     Event = new Event {Id = Guid.NewGuid(), Name = pgnGame.Event}
                 };
+                _logger.LogDebug($"New event added '{lookup.Event.Name}'.");
                 _database.EventLookup.Add(lookup);
             }
             else
             {
+                _logger.LogDebug($"Existing event found '{lookup.Event.Name}'.");
                 LoadChildren(lookup);
             }
 
@@ -318,11 +327,13 @@ namespace chess.games.db.api.Repositories
                     Id = pgnGame.Site,
                     Site = new Site() { Id = Guid.NewGuid(), Name = pgnGame.Site }
                 };
+                _logger.LogDebug($"New site added '{lookup.Site.Name}'.");
 
                 _database.SiteLookup.Add(lookup);
             }
             else
             {
+                _logger.LogDebug($"Existing site found '{lookup.Site.Name}'.");
                 LoadChildren(lookup);
             }
 
