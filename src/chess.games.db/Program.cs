@@ -1,35 +1,27 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using chess.games.db.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using ConfigurationExtensions = chess.games.db.Configuration.ConfigurationExtensions;
 
 namespace chess.games.db
 {
     class Program
     {
+        private static Action<string> Reporter = Console.WriteLine;
+
         // ReSharper disable once UnusedParameter.Local
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            IConfiguration config = new ConfigurationBuilder()
-                .AddJsonFile("appSettings.json", false, false)
-                .Build();
+            ConfigurationExtensions.Reporter = Reporter;
 
-            var connectionString = config["chess-games-db"];
+            Reporter($"Chess DB Creator");
 
-            Console.WriteLine("Connecting to DB...");
-            var c = new ChessGamesDbContext(connectionString);
+            var dbContext = await ConfigurationExtensions.InitDb();
 
-            Console.WriteLine("  Checking for pending migrations...");
-            if (c.Database.GetPendingMigrations().Any())
-            {
-                var ms = await c.Database.GetPendingMigrationsAsync();
-                Console.WriteLine($"Applying {ms.Count()} pending migration(s)...");
-                
-                c.Database.Migrate();
-                Console.WriteLine("... database successfully updated.");
-            }
+            Reporter("Chess DB Status");
+            Reporter($"  Valid games: {dbContext.Games.Count()}");
+            Reporter($"  Pending validation: {dbContext.PgnImports.Count()}"); 
+            Reporter($"  Failed validations: {dbContext.PgnImportErrors.Count()}");
         }
     }
 

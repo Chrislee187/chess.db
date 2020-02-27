@@ -6,7 +6,6 @@ namespace chess.games.db.Entities
     {
         public string Name { get; set; }
         public override string ToString() => Name;
-
     }
 
     public class PgnEvent : DbEntity<string>

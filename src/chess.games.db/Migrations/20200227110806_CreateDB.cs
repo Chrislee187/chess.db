@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace chess.games.db.Migrations
 {
-    public partial class InitialTables : Migration
+    public partial class CreateDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,6 +17,17 @@ namespace chess.games.db.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Events", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ImportedPgnGameIds",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ImportedPgnGameIds", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -35,12 +46,24 @@ namespace chess.games.db.Migrations
                     Eco = table.Column<string>(nullable: true),
                     WhiteElo = table.Column<string>(nullable: true),
                     BlackElo = table.Column<string>(nullable: true),
-                    CustomTagsJson = table.Column<string>(nullable: true),
-                    ImportNormalisationComplete = table.Column<bool>(nullable: false)
+                    CustomTagsJson = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PgnGames", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PgnImportErrors",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    PgnGameId = table.Column<Guid>(nullable: false),
+                    Error = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PgnImportErrors", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -142,8 +165,8 @@ namespace chess.games.db.Migrations
                     Result = table.Column<int>(nullable: false),
                     MoveText = table.Column<string>(nullable: true),
                     Eco = table.Column<string>(nullable: true),
-                    WhiteElo = table.Column<int>(nullable: false),
-                    BlackElo = table.Column<int>(nullable: false)
+                    WhiteElo = table.Column<int>(nullable: true),
+                    BlackElo = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -237,7 +260,13 @@ namespace chess.games.db.Migrations
                 name: "Games");
 
             migrationBuilder.DropTable(
+                name: "ImportedPgnGameIds");
+
+            migrationBuilder.DropTable(
                 name: "PgnGames");
+
+            migrationBuilder.DropTable(
+                name: "PgnImportErrors");
 
             migrationBuilder.DropTable(
                 name: "PgnImports");

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
 using chess.games.db.Configuration;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace chess.games.db.Entities
