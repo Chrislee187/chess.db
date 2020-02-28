@@ -71,8 +71,6 @@ namespace AspNetCore.MVC.RESTful.Controllers
         /// <returns></returns>
         protected List<HateoasLink> ResourceGetLinks(TId id, string shape)
         {
-            
-
             var links = new List<HateoasLink>
             {
                 ResourceGetLinkBuilder(id, shape: shape, rel: HateoasConfig.Relationships.Self),

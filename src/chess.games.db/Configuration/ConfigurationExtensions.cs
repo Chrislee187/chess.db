@@ -23,7 +23,7 @@ namespace chess.games.db.Configuration
                 .SetBasePath(Directory.GetCurrentDirectory());
 
         private static IConfigurationBuilder AddJsonFile(this IConfigurationBuilder builder)
-            => builder.AddJsonFile("appSettings.json", optional: false);
+            => builder.AddJsonFile("appsettings.json", optional: false);
 
         private static IConfigurationBuilder AddEnvironmentVariables(this IConfigurationBuilder builder)
             => builder; // TODO: Add env var support
