@@ -1,13 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using AspNetCore.MVC.RESTful.Configuration;
+﻿using AspNetCore.MVC.RESTful.Configuration;
 
 namespace AspNetCore.MVC.RESTful.Models
 {
     /// <summary>
     /// Model for a Hateoas link
     /// </summary>
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+
     public class HateoasLink
     {
         public static HateoasLink Create(string url) => new HateoasLink(
