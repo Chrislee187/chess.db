@@ -29,7 +29,7 @@ import { ChessGameListComponent } from './chess-game-list/chess-game-list.compon
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'chess-game-list', component: ChessGameListComponent},
+      { path: 'chess-games', component: ChessGameListComponent},
     ])
   ],
   providers: [],
