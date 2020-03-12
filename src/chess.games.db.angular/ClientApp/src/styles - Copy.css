@@ -1,0 +1,65 @@
+/* */
+/* You can add global styles to this file, and also import other style files */
+/* */
+/* Provide sufficient contrast against white background */
+a {
+   color: #0366d6;
+}
+/* */
+
+#game-list table {
+   background-color: beige;
+  width: 100%;
+  table-layout: fixed;
+  padding-left: 0.5ch;
+  padding-right: 0.5ch;
+}
+.ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+#game-list table td {
+}
+#game-list table tfoot {
+  text-align: center;
+}
+#game-list table tfoot input {
+  text-align: center;
+  font-size: smaller;
+  width: 6ch;
+}
+#game-list table a {
+  padding-left: 0.5ch;
+  padding-right: 0.5ch;
+  color: #0366d6;
+}
+#game-list table a:hover {
+  cursor: pointer;
+}
+  /* .ellipsis:hover { */
+  /*   overflow: visible; */
+  /*   font-style: italic; */
+  /* } */
+  .col-player {
+    width: 10%;
+  }
+.col-result {
+  text-align: center;
+  width: 5ch;
+}
+.col-event {
+  width: 10%;
+}
+.col-round {
+  text-align: center;
+  width: 3ch;
+}
+.col-site {
+  width: 10%;
+}
+.col-date {
+  width: 9ch;
+}
+.col-moves {
+}
