@@ -16,7 +16,6 @@ body {
 
 }
 #game-list table {
-  background-color: beige;
   width: 100%;
   table-layout: fixed;
   padding-left: 0.5ch;
@@ -37,7 +36,7 @@ body {
 
 .col-round {
   text-align: center;
-  width: 3ch;
+  width: 5ch;
 }
 
 .col-site {
@@ -45,8 +44,16 @@ body {
 }
 
 .col-date {
-  width: 9ch;
+  width: 11ch;
 }
 
 .col-moves {
+}
+
+.page-link {
+  cursor: pointer;
+}
+
+.table-paginating {
+  user-select: none;
 }

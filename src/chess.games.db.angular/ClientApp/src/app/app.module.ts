@@ -11,6 +11,7 @@ import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { ChessGameListComponent } from './chess-game-list/chess-game-list.component';
+import { ChessGameService } from "./services/ChessGameService";
 
 @NgModule({
   declarations: [
@@ -32,7 +33,7 @@ import { ChessGameListComponent } from './chess-game-list/chess-game-list.compon
       { path: 'chess-games', component: ChessGameListComponent},
     ])
   ],
-  providers: [],
+  providers: [ChessGameService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

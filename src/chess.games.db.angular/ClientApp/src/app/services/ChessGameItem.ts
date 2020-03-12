@@ -1,4 +1,4 @@
-export class ChessGameEntry {
+export class ChessGameItem {
 
   public white: string;
   public black: string;

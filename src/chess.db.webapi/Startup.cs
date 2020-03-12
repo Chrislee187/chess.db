@@ -18,6 +18,8 @@ namespace chess.db.webapi
 {
     public class Startup
     {
+
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -27,9 +29,12 @@ namespace chess.db.webapi
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+
             services
                 .AddRestful();
-            
+
+
             var serverType = Configuration.ServerType();
             var connectionString = Configuration.ConnectionString();
 
@@ -52,6 +57,7 @@ namespace chess.db.webapi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
             app.RestfulExceptionHandling(env);
             app.UseGlobalExceptionHandler(options =>
             {
@@ -59,6 +65,7 @@ namespace chess.db.webapi
             });
 
             app.UseRestful(env);
+
         }
     }
 }

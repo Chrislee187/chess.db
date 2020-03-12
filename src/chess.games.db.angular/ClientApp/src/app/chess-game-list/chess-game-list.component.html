@@ -1,113 +1,97 @@
 <div class="container">
-  <div id="filters">
-    <i class="fa fa-tasks"></i> Filter and Search controls
-  </div>
-  <div id="game-list" class="table-responsive">
 
-      <table class="table-sm table-hover table-bordered">
-        <caption>List of chess games</caption>
+
+  <div>
+    <div id="filters">
+      <i class="fa fa-tasks"></i> Filter and Search controls
+    </div>
+    <div id="game-list" class="table-responsive">
+      <table class="table-sm table-bordered"
+             [ngClass]="{
+               'table-hover' : !paginating,
+               'text-muted' : paginating,
+               'table-paginating' : paginating
+               }">
         <thead class="thead-dark">
           <tr>
-            <th class="col-player">
-              <div>White</div>
-            </th>
+            <th class="col-player">White</th>
             <th class="col-player">Black</th>
             <th class="col-result"></th>
             <th class="col-event">Event</th>
             <th class="col-round">#</th>
             <th class="col-site">Site</th>
             <th class="col-date">Date</th>
-            <th class="col-moves ellipsis">Moves</th>
+            <th class="col-moves">Moves</th>
           </tr>
         </thead>
-        <tbody>
 
+        <tbody *ngIf="games && games.length > 0">
           <tr *ngFor="let g of games">
-            <td class="col-player text-truncate" title="{{ g.white }}">
-              {{ g.white }}
-            </td>
-            <td class="col-player text-truncate" title="{{ g.black }}">
-              {{ g.black }}
-            </td>
-            <td class="col-result text-truncate" title="{{ g.result }}">{{ g.result }}</td>
+            <td class="col-player text-truncate" title="{{ g.white }}">{{ g.white }}</td>
+            <td class="col-player text-truncate" title="{{ g.black }}">{{ g.black }}</td>
+            <td class="col-result text-truncate" title="{{ g.result }}">{{ g.result == "1-0" ? "w" : g.result == "0-1" ? "b" : "½" }}</td>
             <td class="col-event text-truncate" title="{{ g.event }}">{{ g.event }}</td>
             <td class="col-round text-truncate">{{ g.round }}</td>
             <td class="col-site text-truncate" title="{{ g.site }}">{{ g.site }}</td>
             <td class="col-date text-truncate">{{ g.date }}</td>
             <td class="col-moves text-truncate">{{ g.moves }}</td>
-          </tr>
+        </tr>
         </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="8">
-              Bootstrap pagination classes
-            </td>
-          </tr>
+
+        <tr *ngIf="!games">
+          <td colspan="8">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="sr-only">Loading game list</span>
+            </div>
+            Loading games...
+          </td>
+        </tr>
+        <tr *ngIf="games && games.length === 0">
+          <td colspan="8" class="text-warning text-center">
+            No games found!
+          </td>
+        </tr>
+        <tfoot *ngIf="games && games.length > 0">
           <tr>
             <td colspan="8">
               <nav aria-label="Page navigation example">
                 <ul class="pagination pagination-sm justify-content-center">
-                  <li class="page-item  disabled">
-                    <a class="page-link" href="#" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                    </a>
+                  <li class="page-item"
+                      [ngClass]="{ disabled : !previousPage || paginating}">
+                      <a class="page-link"
+                         aria-label="Previous"
+                         (click)="load(previousPage)">
+                        <span aria-hidden="true">&lt;</span>
+                      </a>
                   </li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                      <span aria-hidden="true">&raquo;</span>
+                  <li class="page-item disabled">
+                      <div class="page-link">
+                        <span *ngIf="paginating"
+                              class="spinner-border spinner-border-sm text-primary" role="status">
+                          <span class="sr-only">Loading game list</span>
+                        </span>
+                        <span *ngIf="!paginating">
+                          {{ currentPage }}
+                        </span>
+                      </div>
+                  </li>
+
+                  <li class="page-item"
+                      [ngClass]="{ disabled : !nextPage || paginating}">
+                    <a class="page-link"
+                       aria-label="Next"
+                       (click)="load(nextPage)">
+                      <span aria-hidden="true">&gt;</span>
                     </a>
                   </li>
                 </ul>
               </nav>
             </td>
           </tr>
-          <tr>
-            <td colspan="8">
-              Bootstrap toolbar classes
-            </td>
-          </tr>
-          <tr>
-            <td colspan="8">
-              <div class="btn-toolbar justify-content-center" role="toolbar" aria-label="Pagination">
-                <button class="btn btn-secondary"
-                        title="Goto to page 1"
-                        onclick="getgames('.../chessdbapi/games?page=1')">
-                  «
-                </button>
-                <button class="btn btn-primary"
-                        title="Goto to page 3"
-                        onclick="getgames('.../chessdbapi/games?page=3')">
-                  &lt;
-                </button>
-                <div class="input-group">
-                  <!-- <div class="input-group-prepend"> -->
-                  <!--   <div class="input-group-text" id="directToPage">@</div> -->
-                  <!-- </div> -->
-                  <input type="text" name="page"
-                         class="form-control"
-                         placeholder="Page number..."
-                         title="Go directly to page"
-                         onchange="getgames('.../chessdbapi/games?page=value')" value="4" />
-                </div>
-                <button class="btn btn-primary"
-                        title="Goto to page 5"
-                        onclick="getgames('.../chessdbapi/games?page=5')">
-                  &gt;
-                </button>
-                <button class="btn btn-secondary"
-                        title="Goto to page 20"
-                        onclick="getgames('.../chessdbapi/games?page=20')">
-                  »
-                </button>
-              </div>
-            </td>
-          </tr>
         </tfoot>
+
       </table>
 
+    </div>
   </div>
-
 </div>
