@@ -1,391 +1,113 @@
-<div id="root" class="container">
-<div id="filters">
-  <i class="fa fa-tasks"></i> Filter and Search controls
+<div class="container">
+  <div id="filters">
+    <i class="fa fa-tasks"></i> Filter and Search controls
   </div>
-  <div id="game-list" class=" table-responsive">
-    <table class="table-sm table-hover table-bordered">
-      <caption>List of chess games</caption>
-      <thead class="thead-dark">
-        <tr>
-          <th class="col-player"><div>White</div></th>
-          <th class="col-player">Black</th>
-          <th class="col-result"></th>
-          <th class="col-event">Event</th>
-          <th class="col-round">#</th>
-          <th class="col-site">Site</th>
-          <th class="col-date">Date</th>
-          <th class="col-moves ellipsis">Moves</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="col-player ellipsis" title="Gary Kasparov">
-            <div>
-              Gary Kasparov
-            </div>
-          </td>
-          <td class="col-player ellipsis" title="Nigel Short">
-            <div>
-              Nigel Short
-            </div>
-          </td>
-          <td class="col-result ellipsis" title="1/2-1/2">1/2</td>
-          <td class="col-event ellipsis" title="An event">An event</td>
-          <td class="col-round ellipsis">1</td>
-          <td class="col-site ellipsis" title="Somewhere over the rainbow">Somewhere over the rainbow</td>
-          <td class="col-date ellipsis">??.??.??</td>
-          <td class="col-moves ellipsis">
-            1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {{ '{' }} This opening is called the Ruy Lopez.{{ '}' }}
-            4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-            11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-            Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-            23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-            hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-            35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-            Nf2 42. g4 Bd3 43. Re6
-          </td>
-        </tr>
-        <tr>
-          <td class="col-player ellipsis" title="Gary Kasparov">
-            <div>
-              Gary Kasparov
-            </div>
-          </td>
-          <td class="col-player ellipsis" title="Nigel Short">
-            <div>
-              Nigel Short
-            </div>
-          </td>
-          <td class="col-result ellipsis" title="1/2-1/2">1/2</td>
-          <td class="col-event ellipsis" title="An event">An event</td>
-          <td class="col-round ellipsis">1</td>
-          <td class="col-site ellipsis" title="Somewhere over the rainbow">Somewhere over the rainbow</td>
-          <td class="col-date ellipsis">??.??.??</td>
-          <td class="col-moves ellipsis">
-            1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {{ '{' }} This opening is called the Ruy Lopez.{{ '}' }}
-            4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-            11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-            Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-            23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-            hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-            35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-            Nf2 42. g4 Bd3 43. Re6
-          </td>
-        </tr>
-        <tr>
-          <td class="col-player ellipsis" title="Gary Kasparov">
-            <div>
-              Gary Kasparov
-            </div>
-          </td>
-          <td class="col-player ellipsis" title="Nigel Short">
-            <div>
-              Nigel Short
-            </div>
-          </td>
-          <td class="col-result ellipsis" title="1/2-1/2">1/2</td>
-          <td class="col-event ellipsis" title="An event">An event</td>
-          <td class="col-round ellipsis">1</td>
-          <td class="col-site ellipsis" title="Somewhere over the rainbow">Somewhere over the rainbow</td>
-          <td class="col-date ellipsis">??.??.??</td>
-          <td class="col-moves ellipsis">
-            1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {{ '{' }} This opening is called the Ruy Lopez.{{ '}' }}
-            4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-            11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-            Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-            23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-            hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-            35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-            Nf2 42. g4 Bd3 43. Re6
-          </td>
-        </tr>
-        <tr>
-          <td class="col-player ellipsis" title="Gary Kasparov">
-            <div>
-              Gary Kasparov
-            </div>
-          </td>
-          <td class="col-player ellipsis" title="Nigel Short">
-            <div>
-              Nigel Short
-            </div>
-          </td>
-          <td class="col-result ellipsis" title="1/2-1/2">1/2</td>
-          <td class="col-event ellipsis" title="An event">An event</td>
-          <td class="col-round ellipsis">1</td>
-          <td class="col-site ellipsis" title="Somewhere over the rainbow">Somewhere over the rainbow</td>
-          <td class="col-date ellipsis">??.??.??</td>
-          <td class="col-moves ellipsis">
-            1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {{ '{' }} This opening is called the Ruy Lopez.{{ '}' }}
-            4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-            11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-            Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-            23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-            hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-            35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-            Nf2 42. g4 Bd3 43. Re6
-          </td>
-        </tr>
-        <tr>
-          <td class="col-player ellipsis" title="Gary Kasparov">
-            <div>
-              Gary Kasparov
-            </div>
-          </td>
-          <td class="col-player ellipsis" title="Nigel Short">
-            <div>
-              Nigel Short
-            </div>
-          </td>
-          <td class="col-result ellipsis" title="1/2-1/2">1/2</td>
-          <td class="col-event ellipsis" title="An event">An event</td>
-          <td class="col-round ellipsis">1</td>
-          <td class="col-site ellipsis" title="Somewhere over the rainbow">Somewhere over the rainbow</td>
-          <td class="col-date ellipsis">??.??.??</td>
-          <td class="col-moves ellipsis">
-            1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {{ '{' }} This opening is called the Ruy Lopez.{{ '}' }}
-            4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-            11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-            Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-            23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-            hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-            35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-            Nf2 42. g4 Bd3 43. Re6
-          </td>
-        </tr>
-        <tr>
-          <td class="col-player ellipsis" title="Gary Kasparov">
-            <div>
-              Gary Kasparov
-            </div>
-          </td>
-          <td class="col-player ellipsis" title="Nigel Short">
-            <div>
-              Nigel Short
-            </div>
-          </td>
-          <td class="col-result ellipsis" title="1/2-1/2">1/2</td>
-          <td class="col-event ellipsis" title="An event">An event</td>
-          <td class="col-round ellipsis">1</td>
-          <td class="col-site ellipsis" title="Somewhere over the rainbow">Somewhere over the rainbow</td>
-          <td class="col-date ellipsis">??.??.??</td>
-          <td class="col-moves ellipsis">
-            1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {{ '{' }} This opening is called the Ruy Lopez.{{ '}' }}
-            4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-            11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-            Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-            23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-            hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-            35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-            Nf2 42. g4 Bd3 43. Re6
-          </td>
-        </tr>
-        <tr>
-          <td class="col-player ellipsis" title="Gary Kasparov">
-            <div>
-              Gary Kasparov
-            </div>
-          </td>
-          <td class="col-player ellipsis" title="Nigel Short">
-            <div>
-              Nigel Short
-            </div>
-          </td>
-          <td class="col-result ellipsis" title="1/2-1/2">1/2</td>
-          <td class="col-event ellipsis" title="An event">An event</td>
-          <td class="col-round ellipsis">1</td>
-          <td class="col-site ellipsis" title="Somewhere over the rainbow">Somewhere over the rainbow</td>
-          <td class="col-date ellipsis">??.??.??</td>
-          <td class="col-moves ellipsis">
-            1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {{ '{' }} This opening is called the Ruy Lopez.{{ '}' }}
-            4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-            11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-            Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-            23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-            hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-            35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-            Nf2 42. g4 Bd3 43. Re6
-          </td>
-        </tr>
-        <tr>
-          <td class="col-player ellipsis" title="Gary Kasparov">
-            <div>
-              Gary Kasparov
-            </div>
-          </td>
-          <td class="col-player ellipsis" title="Nigel Short">
-            <div>
-              Nigel Short
-            </div>
-          </td>
-          <td class="col-result ellipsis" title="1/2-1/2">1/2</td>
-          <td class="col-event ellipsis" title="An event">An event</td>
-          <td class="col-round ellipsis">1</td>
-          <td class="col-site ellipsis" title="Somewhere over the rainbow">Somewhere over the rainbow</td>
-          <td class="col-date ellipsis">??.??.??</td>
-          <td class="col-moves ellipsis">
-            1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {{ '{' }} This opening is called the Ruy Lopez.{{ '}' }}
-            4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-            11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-            Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-            23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-            hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-            35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-            Nf2 42. g4 Bd3 43. Re6
-          </td>
-        </tr>
-        <tr>
-          <td class="col-player ellipsis" title="Gary Kasparov">
-            <div>
-              Gary Kasparov
-            </div>
-          </td>
-          <td class="col-player ellipsis" title="Nigel Short">
-            <div>
-              Nigel Short
-            </div>
-          </td>
-          <td class="col-result ellipsis" title="1/2-1/2">1/2</td>
-          <td class="col-event ellipsis" title="An event">An event</td>
-          <td class="col-round ellipsis">1</td>
-          <td class="col-site ellipsis" title="Somewhere over the rainbow">Somewhere over the rainbow</td>
-          <td class="col-date ellipsis">??.??.??</td>
-          <td class="col-moves ellipsis">
-            1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {{ '{' }} This opening is called the Ruy Lopez.{{ '}' }}
-            4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-            11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-            Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-            23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-            hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-            35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-            Nf2 42. g4 Bd3 43. Re6
-          </td>
-        </tr>
-        <tr>
-          <td class="col-player ellipsis" title="Gary Kasparov">
-            <div>
-              Gary Kasparov
-            </div>
-          </td>
-          <td class="col-player ellipsis" title="Nigel Short">
-            <div>
-              Nigel Short
-            </div>
-          </td>
-          <td class="col-result ellipsis" title="1/2-1/2">1/2</td>
-          <td class="col-event ellipsis" title="An event">An event</td>
-          <td class="col-round ellipsis">1</td>
-          <td class="col-site ellipsis" title="Somewhere over the rainbow">Somewhere over the rainbow</td>
-          <td class="col-date ellipsis">??.??.??</td>
-          <td class="col-moves ellipsis">
-            1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {{ '{' }} This opening is called the Ruy Lopez.{{ '}' }}
-            4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-            11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-            Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-            23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-            hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-            35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-            Nf2 42. g4 Bd3 43. Re6
-          </td>
-        </tr>
-        <tr>
-          <td class="col-player ellipsis" title="Gary Kasparov">
-            <div>
-              Gary Kasparov
-            </div>
-          </td>
-          <td class="col-player ellipsis" title="Nigel Short">
-            <div>
-              Nigel Short
-            </div>
-          </td>
-          <td class="col-result ellipsis" title="1/2-1/2">1/2</td>
-          <td class="col-event ellipsis" title="An event">An event</td>
-          <td class="col-round ellipsis">1</td>
-          <td class="col-site ellipsis" title="Somewhere over the rainbow">Somewhere over the rainbow</td>
-          <td class="col-date ellipsis">??.??.??</td>
-          <td class="col-moves ellipsis">
-            1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {{ '{' }} This opening is called the Ruy Lopez.{{ '}' }}
-            4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-            11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-            Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-            23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-            hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-            35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-            Nf2 42. g4 Bd3 43. Re6
-          </td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="8">
-            Bootstrap pagination classes
-          </td>
-        </tr>
-        <tr>
-          <td colspan="8">
-            <nav aria-label="Page navigation example">
-              <ul class="pagination pagination-sm justify-content-center">
-                <li class="page-item  disabled">
-                  <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                  <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </td>
-      </tr>
-      <tr>
-        <td colspan="8">
-          Bootstrap toolbar classes
-        </td>
-      </tr>
-        <tr>
-          <td colspan="8">
-            <div class="btn-toolbar" role="toolbar" aria-label="Pagination">
-              <button class="btn btn-secondary"
-                      title="Goto to page 1"
-                      onclick="getgames('.../chessdbapi/games?page=1')">
-                «
-              </button>
-              <button class="btn btn-primary"
-                      title="Goto to page 3"
-                      onclick="getgames('.../chessdbapi/games?page=3')">
-                &lt;
-              </button>
-              <div class="input-group">
-                <!-- <div class="input-group-prepend"> -->
-                <!--   <div class="input-group-text" id="directToPage">@</div> -->
-                <!-- </div> -->
-                <input type="text" name="page"
-                       class="form-control"
-                       placeholder="Page number..."
-                       title="Go directly to page"
-                       onchange="getgames('.../chessdbapi/games?page=value')" value="4" />
+  <div id="game-list" class="table-responsive">
+
+      <table class="table-sm table-hover table-bordered">
+        <caption>List of chess games</caption>
+        <thead class="thead-dark">
+          <tr>
+            <th class="col-player">
+              <div>White</div>
+            </th>
+            <th class="col-player">Black</th>
+            <th class="col-result"></th>
+            <th class="col-event">Event</th>
+            <th class="col-round">#</th>
+            <th class="col-site">Site</th>
+            <th class="col-date">Date</th>
+            <th class="col-moves ellipsis">Moves</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr *ngFor="let g of games">
+            <td class="col-player text-truncate" title="{{ g.white }}">
+              {{ g.white }}
+            </td>
+            <td class="col-player text-truncate" title="{{ g.black }}">
+              {{ g.black }}
+            </td>
+            <td class="col-result text-truncate" title="{{ g.result }}">{{ g.result }}</td>
+            <td class="col-event text-truncate" title="{{ g.event }}">{{ g.event }}</td>
+            <td class="col-round text-truncate">{{ g.round }}</td>
+            <td class="col-site text-truncate" title="{{ g.site }}">{{ g.site }}</td>
+            <td class="col-date text-truncate">{{ g.date }}</td>
+            <td class="col-moves text-truncate">{{ g.moves }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="8">
+              Bootstrap pagination classes
+            </td>
+          </tr>
+          <tr>
+            <td colspan="8">
+              <nav aria-label="Page navigation example">
+                <ul class="pagination pagination-sm justify-content-center">
+                  <li class="page-item  disabled">
+                    <a class="page-link" href="#" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="8">
+              Bootstrap toolbar classes
+            </td>
+          </tr>
+          <tr>
+            <td colspan="8">
+              <div class="btn-toolbar" role="toolbar" aria-label="Pagination">
+                <button class="btn btn-secondary"
+                        title="Goto to page 1"
+                        onclick="getgames('.../chessdbapi/games?page=1')">
+                  «
+                </button>
+                <button class="btn btn-primary"
+                        title="Goto to page 3"
+                        onclick="getgames('.../chessdbapi/games?page=3')">
+                  &lt;
+                </button>
+                <div class="input-group">
+                  <!-- <div class="input-group-prepend"> -->
+                  <!--   <div class="input-group-text" id="directToPage">@</div> -->
+                  <!-- </div> -->
+                  <input type="text" name="page"
+                         class="form-control"
+                         placeholder="Page number..."
+                         title="Go directly to page"
+                         onchange="getgames('.../chessdbapi/games?page=value')" value="4" />
+                </div>
+                <button class="btn btn-primary"
+                        title="Goto to page 5"
+                        onclick="getgames('.../chessdbapi/games?page=5')">
+                  &gt;
+                </button>
+                <button class="btn btn-secondary"
+                        title="Goto to page 20"
+                        onclick="getgames('.../chessdbapi/games?page=20')">
+                  »
+                </button>
               </div>
-              <button class="btn btn-primary"
-                      title="Goto to page 5"
-                      onclick="getgames('.../chessdbapi/games?page=5')">
-                &gt;
-              </button>
-              <button class="btn btn-secondary"
-                      title="Goto to page 20"
-                      onclick="getgames('.../chessdbapi/games?page=20')">
-                »
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+
   </div>
 
 </div>

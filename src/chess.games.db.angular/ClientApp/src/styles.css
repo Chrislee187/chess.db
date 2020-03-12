@@ -12,3 +12,51 @@ body {
   font-family: sans-serif;
   font-size: 0.8rem;
 }
+
+.players-card {
+
+}
+.sites-card {
+
+}
+.events-card {
+
+}
+.games-card {
+
+}
+#game-list table {
+  background-color: beige;
+  width: 100%;
+  table-layout: fixed;
+  padding-left: 0.5ch;
+  padding-right: 0.5ch;
+}
+.col-player {
+  width: 100px;
+}
+
+.col-result {
+  text-align: center;
+  width: 5ch;
+}
+
+.col-event {
+  width: 75px;
+}
+
+.col-round {
+  text-align: center;
+  width: 3ch;
+}
+
+.col-site {
+  width: 100px;
+}
+
+.col-date {
+  width: 9ch;
+}
+
+.col-moves {
+}
