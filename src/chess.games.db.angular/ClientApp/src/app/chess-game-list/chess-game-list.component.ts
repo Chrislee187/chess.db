@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ChessGameItem } from "../services/ChessGameItem";
-import { ChessGameService } from "../services/ChessGameService";
+import { ChessGameItem } from "../repos/ChessGameItem";
+import { ChessGamesService as ChessGameService } from "../services/ChessGamesService";
+import { GamesList } from "../repos/GamesList";
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-chess-game-list',
@@ -20,6 +22,8 @@ export class ChessGameListComponent implements OnInit {
   public totalPages: number;
 
   public paginating:boolean;
+  public apiError: boolean;
+  public errorMessage: string;
       constructor(private chessGameService: ChessGameService) {
 
     }
@@ -29,23 +33,32 @@ export class ChessGameListComponent implements OnInit {
     }
 
   load(url: string) {
-    console.info("Loading from: ", url);
     this.paginating = true;
 
     this.chessGameService.loadGames(url)
-      .subscribe(success => {
+      .subscribe(
+        (data: GamesList) => {
+          if (data) {
+            this.games = data.games;
+            this.previousPage = data.previousPage;
+            this.nextPage = data.nextPage;
+            this.currentPage = data.currentPage;
+          }
 
-        if (success) {
-          this.games = this.chessGameService.games;
-          this.previousPage = this.chessGameService.previousPage;
-          this.nextPage = this.chessGameService.nextPage;
-          this.currentPage = this.chessGameService.currentPage;
+          this.loadFinished(null);
+        },
+        (error: HttpErrorResponse) => {
+          this.loadFinished(error); 
         }
-        console.debug("Next: ", this.nextPage);
-        console.debug("Prev: ", this.previousPage);
-        this.paginating = false;
-      });
+        );
+  }
+
+  loadFinished(error?: HttpErrorResponse | null) {
+    this.apiError = error !== null ;
+    this.paginating = false;
+    this.errorMessage = error && error.message;
   }
 
 }
+
 

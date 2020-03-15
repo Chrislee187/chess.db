@@ -2,7 +2,7 @@
 
 
   <div>
-    <div id="filters">
+    <div id="filters" *ngIf="!apiError">
       <i class="fa fa-tasks"></i> Filter and Search controls
     </div>
     <div id="game-list" class="table-responsive">
@@ -12,7 +12,7 @@
                'text-muted' : paginating,
                'table-paginating' : paginating
                }">
-        <thead class="thead-dark">
+        <thead class="thead-dark" *ngIf="!apiError">
           <tr>
             <th class="col-player">White</th>
             <th class="col-player">Black</th>
@@ -35,10 +35,10 @@
             <td class="col-site text-truncate" title="{{ g.site }}">{{ g.site }}</td>
             <td class="col-date text-truncate">{{ g.date }}</td>
             <td class="col-moves text-truncate">{{ g.moves }}</td>
-        </tr>
+          </tr>
         </tbody>
 
-        <tr *ngIf="!games">
+        <tr *ngIf="!games && !apiError">
           <td colspan="8">
             <div class="spinner-border spinner-border-sm text-primary" role="status">
               <span class="sr-only">Loading game list</span>
@@ -46,9 +46,14 @@
             Loading games...
           </td>
         </tr>
-        <tr *ngIf="games && games.length === 0">
-          <td colspan="8" class="text-warning text-center">
+        <tr *ngIf="games && games.length === 0 && !apiError">
+          <td colspan="8" class="bg-warning text-light text-center">
             No games found!
+          </td>
+        </tr>
+        <tr *ngIf="apiError">
+          <td colspan="8" class="text-danger text-center">
+            API Error occurred: {{ errorMessage }}
           </td>
         </tr>
         <tfoot *ngIf="games && games.length > 0">
@@ -58,22 +63,22 @@
                 <ul class="pagination pagination-sm justify-content-center">
                   <li class="page-item"
                       [ngClass]="{ disabled : !previousPage || paginating}">
-                      <a class="page-link"
-                         aria-label="Previous"
-                         (click)="load(previousPage)">
-                        <span aria-hidden="true">&lt;</span>
-                      </a>
+                    <a class="page-link"
+                       aria-label="Previous"
+                       (click)="load(previousPage)">
+                      <span aria-hidden="true">&lt;</span>
+                    </a>
                   </li>
                   <li class="page-item disabled">
-                      <div class="page-link">
-                        <span *ngIf="paginating"
-                              class="spinner-border spinner-border-sm text-primary" role="status">
-                          <span class="sr-only">Loading game list</span>
-                        </span>
-                        <span *ngIf="!paginating">
-                          {{ currentPage }}
-                        </span>
-                      </div>
+                    <div class="page-link">
+                      <span *ngIf="paginating"
+                            class="spinner-border spinner-border-sm text-primary" role="status">
+                        <span class="sr-only">Loading game list</span>
+                      </span>
+                      <span *ngIf="!paginating">
+                        {{ currentPage }}
+                      </span>
+                    </div>
                   </li>
 
                   <li class="page-item"
@@ -89,9 +94,7 @@
             </td>
           </tr>
         </tfoot>
-
       </table>
-
     </div>
   </div>
 </div>

@@ -24,11 +24,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="ClientApp\src\app\services\ChessGameService.ts" />
+    <None Remove="ClientApp\src\app\repos\GamesList.ts" />
+    <None Remove="ClientApp\src\app\repos\GamesListRepo.ts" />
+    <None Remove="ClientApp\src\app\services\ChessGamesService.ts" />
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\src\app\services\ChessGameService.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\repos\GamesList.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\repos\GamesListRepo.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\ChessGamesService.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
