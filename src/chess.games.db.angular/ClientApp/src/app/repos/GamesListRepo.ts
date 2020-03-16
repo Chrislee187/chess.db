@@ -25,7 +25,6 @@ export class GamesListRepo {
           return throwError(errorResponse);;
         }),
         map((response: any) => {
-//          console.debug("Response", response);
           if (response.status === 200) {
             const currentPage = this.getCurrentPageNumberFromUrl(url);
             const nextPage: string = this.getLink('next-page', response.body._links);

@@ -28,7 +28,7 @@ export class ChessGameListComponent implements OnInit {
 
     }
 
-    ngOnInit(): void {
+  ngOnInit(): void {
       this.load("");
     }
 
@@ -54,6 +54,7 @@ export class ChessGameListComponent implements OnInit {
   }
 
   loadFinished(error: HttpErrorResponse | null) {
+    console.log("E: ", error);
     this.paginating = false;
     this.apiError = error !== null ;
     this.errorMessage = error && error.message;
