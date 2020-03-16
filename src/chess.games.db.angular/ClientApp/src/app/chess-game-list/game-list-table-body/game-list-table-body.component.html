@@ -1,0 +1,30 @@
+
+<tr *ngFor="let g of games">
+  <td class="text-truncate" title="{{ g.white }}">{{ g.white }}</td>
+  <td class="text-truncate" title="{{ g.black }}">{{ g.black }}</td>
+  <td class="text-truncate" title="{{ g.result }}">{{ g.result == "1-0" ? "w" : g.result == "0-1" ? "b" : "½" }}</td>
+  <td class="text-truncate" title="{{ g.event }}">{{ g.event }}</td>
+  <td class="text-truncate">{{ g.round }}</td>
+  <td class="text-truncate" title="{{ g.site }}">{{ g.site }}</td>
+  <td class="text-truncate">{{ g.date }}</td>
+  <td class="text-truncate">{{ g.moves }}</td>
+</tr>
+
+<tr *ngIf="!apiError && !games">
+  <td colspan="8">
+    <div class="spinner-border spinner-border-sm text-primary" role="status">
+      <span class="sr-only">Loading game list</span>
+    </div>
+    Loading games...
+  </td>
+</tr>
+<tr *ngIf="!apiError && (games && games.length === 0)">
+  <td colspan="8" class="bg-warning text-light text-center">
+    No games found!
+  </td>
+</tr>
+<tr *ngIf="apiError">
+  <td colspan="8" class="text-danger text-center">
+    API Error occurred: {{ errorMessage }}
+  </td>
+</tr>

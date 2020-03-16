@@ -13,6 +13,10 @@ import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { ChessGameListComponent } from './chess-game-list/chess-game-list.component';
 import { ChessGamesService as ChessGameService } from "./services/ChessGamesService";
 import { GamesListRepo } from "./repos/GamesListRepo";
+import { GameListTableHeaderComponent } from "./chess-game-list/game-list-table-header/game-list-table-header.component";
+import { GameListTableFooterComponent } from "./chess-game-list/game-list-table-footer/game-list-table-footer.component";
+import { GameListTableBodyComponent } from "./chess-game-list/game-list-table-body/game-list-table-body.component";
+import { GameListTableHeaderCellComponent } from "./chess-game-list/game-list-table-header/game-list-table-header-cell/game-list-table-header-cell.component";
 
 @NgModule({
   declarations: [
@@ -21,7 +25,11 @@ import { GamesListRepo } from "./repos/GamesListRepo";
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    ChessGameListComponent
+    ChessGameListComponent,
+    GameListTableHeaderComponent,
+    GameListTableFooterComponent,
+    GameListTableBodyComponent,
+    GameListTableHeaderCellComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

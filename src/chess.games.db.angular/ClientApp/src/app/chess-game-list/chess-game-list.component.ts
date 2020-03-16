@@ -53,9 +53,9 @@ export class ChessGameListComponent implements OnInit {
         );
   }
 
-  loadFinished(error?: HttpErrorResponse | null) {
-    this.apiError = error !== null ;
+  loadFinished(error: HttpErrorResponse | null) {
     this.paginating = false;
+    this.apiError = error !== null ;
     this.errorMessage = error && error.message;
   }
 

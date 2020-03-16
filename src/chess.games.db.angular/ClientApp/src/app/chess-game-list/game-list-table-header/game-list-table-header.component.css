@@ -1,0 +1,28 @@
+.col-player {
+  width: 100px;
+}
+
+.col-result {
+  text-align: center;
+  width: 5ch;
+}
+
+.col-event {
+  width: 75px;
+}
+
+.col-round {
+  text-align: center;
+  width: 5ch;
+}
+
+.col-site {
+  width: 100px;
+}
+
+.col-date {
+  width: 11ch;
+}
+
+.col-moves {
+}

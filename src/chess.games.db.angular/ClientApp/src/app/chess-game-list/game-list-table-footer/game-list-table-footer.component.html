@@ -1,0 +1,36 @@
+<tr>
+  <td colspan="8">
+    <nav aria-label="navigation">
+      <ul class="pagination pagination-sm justify-content-center">
+        <li class="page-item"
+            [ngClass]="{ disabled : !previousPage || paginating}">
+          <a class="page-link"
+             aria-label="Previous"
+             (click)="load(previousPage)">
+            <span aria-hidden="true">&lt;</span>
+          </a>
+        </li>
+        <li class="page-item disabled">
+          <div class="page-link">
+            <span *ngIf="paginating"
+                  class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="sr-only">Loading game list</span>
+            </span>
+            <span *ngIf="!paginating">
+              {{ currentPage }}
+            </span>
+          </div>
+        </li>
+
+        <li class="page-item"
+            [ngClass]="{ disabled : !nextPage || paginating}">
+          <a class="page-link"
+             aria-label="Next"
+             (click)="load(nextPage)">
+            <span aria-hidden="true">&gt;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </td>
+</tr>
