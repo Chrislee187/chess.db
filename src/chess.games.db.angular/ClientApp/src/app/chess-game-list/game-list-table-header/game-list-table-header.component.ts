@@ -5,13 +5,7 @@ import { Component, OnInit, Input } from "@angular/core";
   templateUrl: './game-list-table-header.component.html',
   styleUrls: ['./game-list-table-header.component.css']
 })
-export class GameListTableHeaderComponent implements OnInit {
+export class GameListTableHeaderComponent {
 
   @Input() apiError:boolean;
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
 }

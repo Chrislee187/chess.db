@@ -10,4 +10,8 @@ export class GameListTableBodyComponent {
   @Input() list: GamesList;
   @Input() apiError: boolean;
   @Input() errorMessage: string;
+
+  constructor() {
+     this.list = new GamesList([]);
+  }
 }
