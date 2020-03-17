@@ -8,8 +8,8 @@ import { ChessGamesService } from "../services/ChessGamesService";
 import { GamesListRepo } from "../repos/GamesListRepo";
 import { HttpClient, HttpHandler, HttpErrorResponse } from "@angular/common/http";
 import { Observable, of, throwError } from "rxjs";
-import { GamesList } from "../repos/GamesList";
-import { ChessGameItem } from "../repos/ChessGameItem";
+import { GamesList } from "../models/GamesList";
+import { ChessGameItem } from "../models/ChessGameItem";
 import { HttpClientTestingModule } from "@angular/common/http/testing"
 import { ChessGameBuilder } from "../builders/ChessGameBuilder";
 import { GamesListBuilder } from "../builders/GamesListBuilder";

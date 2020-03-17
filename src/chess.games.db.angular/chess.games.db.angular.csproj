@@ -32,10 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\src\app\repos\GamesList.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\GamesList.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\repos\GamesListRepo.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\repos\Pagination.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\repos\SortField.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\Pagination.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\SortField.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\ChessGamesService.ts" />
   </ItemGroup>
 

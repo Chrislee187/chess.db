@@ -5,8 +5,8 @@ var Pagination = /** @class */ (function () {
         this.currentPage = pagination.currentPage;
         this.pageSize = pagination.pageSize;
         this.totalPages = pagination.totalPages;
-        this.nextPage = pagination.nextPage;
-        this.previousPage = pagination.previousPage;
+        this.nextPageUrl = pagination.nextPageUrl;
+        this.previousPageUrl = pagination.previousPageUrl;
         this.sortFields = pagination.sortFields;
     }
     Pagination.parseJson = function (json) {
@@ -31,8 +31,8 @@ var Pagination = /** @class */ (function () {
         currentPage: 1,
         pageSize: 10,
         totalPages: 0,
-        nextPage: "",
-        previousPage: "",
+        nextPageUrl: "",
+        previousPageUrl: "",
         sortFields: [{ fieldName: "White", ascending: true }]
     });
     return Pagination;

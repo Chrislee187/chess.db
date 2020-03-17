@@ -4,16 +4,16 @@ export class Pagination implements IPagination {
   public currentPage: number;
   public pageSize: number;
   public totalPages: number;
-  public nextPage?: string;
-  public previousPage?: string;
+  public nextPageUrl?: string;
+  public previousPageUrl?: string;
   public sortFields: SortField[];
 
   static default: Pagination = new Pagination({
     currentPage: 1,
     pageSize: 10,
     totalPages: 0,
-    nextPage: "",
-    previousPage: "",
+    nextPageUrl: "",
+    previousPageUrl: "",
     sortFields: [{ fieldName: "White", ascending: true }]
   });
 
@@ -25,8 +25,8 @@ export class Pagination implements IPagination {
     this.currentPage = pagination.currentPage;
     this.pageSize = pagination.pageSize;
     this.totalPages = pagination.totalPages;
-    this.nextPage = pagination.nextPage;
-    this.previousPage = pagination.previousPage;
+    this.nextPageUrl = pagination.nextPageUrl;
+    this.previousPageUrl = pagination.previousPageUrl;
     this.sortFields = pagination.sortFields;
   }
 
@@ -55,8 +55,8 @@ export interface IPagination {
   currentPage: number;
   pageSize: number;
   totalPages: number;
-  nextPage?: string;
-  previousPage?: string;
+  nextPageUrl?: string;
+  previousPageUrl?: string;
   sortFields: SortField[];
 
   toUrlQueryParams?(): string;

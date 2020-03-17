@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Observable, throwError, of } from "rxjs";
-import { ChessGameItem } from "./ChessGameItem";
+import { ChessGameItem } from "../models/ChessGameItem";
 import { catchError, map } from "rxjs/operators"
-import { GamesList } from "./GamesList";
-import { Pagination } from "./Pagination";
-import { SortField } from "./SortField";
+import { GamesList } from "../models/GamesList";
+import { Pagination } from "../models/Pagination";
+import { SortField } from "../models/SortField";
 
 @Injectable()
 export class GamesListRepo {
@@ -22,7 +22,6 @@ export class GamesListRepo {
       url += pagination.toUrlQueryParams();
     }
 
-    console.log("Request URL: ", url);
     return this.httpClient
       .get(url,
         {
@@ -39,8 +38,8 @@ export class GamesListRepo {
             const games = response.body.value.map(d => {
               return this.mapToChessGameItem(d);
             });
-
-            return new GamesList(games, this.getPaginationFromHeader(response));
+            let currentPageUrl = response.body._links[0].href;
+            return new GamesList(games, currentPageUrl, this.getPaginationFromHeader(response));
           }
 
           return new GamesList();

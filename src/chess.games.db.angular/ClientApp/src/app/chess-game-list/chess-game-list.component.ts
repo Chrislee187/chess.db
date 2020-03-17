@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ChessGameItem } from "../repos/ChessGameItem";
+import { ChessGameItem } from "../models/ChessGameItem";
 import { ChessGamesService as ChessGameService } from "../services/ChessGamesService";
-import { GamesList } from "../repos/GamesList";
+import { GamesList } from "../models/GamesList";
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
@@ -24,17 +24,16 @@ export class ChessGameListComponent implements OnInit {
   public paginating:boolean;
   public apiError: boolean;
   public errorMessage: string;
-      constructor(private chessGameService: ChessGameService) {
+  constructor(private chessGameService: ChessGameService) {
 
-    }
+  }
 
   ngOnInit(): void {
-      this.load("");
-    }
+    this.load("");
+  }
 
   load(url: string): void {
     this.paginating = true;
-
     this.chessGameService.loadGames(url)
       .subscribe(
         (data: GamesList) => {
@@ -43,10 +42,11 @@ export class ChessGameListComponent implements OnInit {
             this.games = data.games;
 
           }
-          
+
           this.loadFinished(null);
         },
         (error: HttpErrorResponse) => {
+          console.log("ErRoR: ", error);
           this.loadFinished(error); 
         }
         );

@@ -64,10 +64,10 @@ namespace AspNetCore.MVC.RESTful.Helpers
                 pageSize = pagination.PageSize,
                 currentPage = pagination.CurrentPage,
                 totalPages = pagination.TotalPages,
-                previousPage = pagination.HasPrevious
+                previousPageUrl = pagination.HasPrevious
                     ? CreatePlayersResourceUri(ResourceUriType.PreviousPage, urlBuilder)
                     : null,
-                nextPage = pagination.HasNext
+                nextPageUrl = pagination.HasNext
                     ? CreatePlayersResourceUri(ResourceUriType.NextPage, urlBuilder)
                     : null
             };

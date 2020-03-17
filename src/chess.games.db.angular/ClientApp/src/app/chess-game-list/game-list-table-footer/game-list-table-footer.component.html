@@ -6,15 +6,15 @@
             [ngClass]="{ disabled : list.currentPage === 1 || paginating}">
           <a class="page-link"
              aria-label="Previous"
-             (click)="loadFirst(list.previousPage)">
+             (click)="load(list.firstPageUrl)">
             <span aria-hidden="true">&lt;&lt;</span>
           </a>
         </li>
         <li class="page-item"
-            [ngClass]="{ disabled : !list.previousPage || paginating}">
+            [ngClass]="{ disabled : !list.previousPageUrl || paginating}">
           <a class="page-link"
              aria-label="Previous"
-             (click)="load(list.previousPage)">
+             (click)="load(list.previousPageUrl)">
             <span aria-hidden="true">&lt;</span>
           </a>
         </li>
@@ -25,25 +25,25 @@
               <span class="sr-only">Loading game list</span>
             </span>
             <span *ngIf="!paginating">
-              {{ list.currentPage }}
+              {{ list.currentPage }} / {{ list.totalPages }}
             </span>
           </div>
         </li>
 
         <li class="page-item"
-            [ngClass]="{ disabled : !list.nextPage || paginating}">
+            [ngClass]="{ disabled : !list.nextPageUrl || paginating}">
           <a class="page-link"
              aria-label="Next"
-             (click)="load(list.nextPage)">
+             (click)="load(list.nextPageUrl)">
             <span aria-hidden="true">&gt;</span>
           </a>
         </li>
         <li class="page-item"
-            [ngClass]="{ disabled : !list.nextPage || paginating}">
+            [ngClass]="{ disabled : !list.nextPageUrl || paginating}">
           <a class="page-link"
              aria-label="Next"
-             (click)="loadLast(list.nextPage)">
-            <span aria-hidden="true">&gt;gt;</span>
+             (click)="load(list.lastPageUrl)">
+            <span aria-hidden="true">&gt;&gt;</span>
           </a>
         </li>
 

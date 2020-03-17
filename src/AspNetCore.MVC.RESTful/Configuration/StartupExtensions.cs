@@ -16,7 +16,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
 {
     public static class StartupExtensions
     {
-        private const string CorsAllowLocalhost = "allow-localhost";
+        private const string CorsPolicy = "RESTful-policy";
         /// <summary>
         /// Setup Restful for the application, calls
         /// <code>
@@ -47,7 +47,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
             });
 
             app.UseRouting();
-            app.UseCors(CorsAllowLocalhost);
+            app.UseCors(CorsPolicy);
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -129,7 +129,7 @@ namespace AspNetCore.MVC.RESTful.Configuration
 
             services.AddCors(opts =>
             {
-                opts.AddPolicy(CorsAllowLocalhost, builder =>
+                opts.AddPolicy(CorsPolicy, builder =>
                 {
                     builder
                         .WithOrigins("http://localhost:4200")

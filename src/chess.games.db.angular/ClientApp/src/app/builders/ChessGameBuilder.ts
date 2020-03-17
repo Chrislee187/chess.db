@@ -1,5 +1,5 @@
-import { ChessGameItem } from "../repos/ChessGameItem";
-import { GamesList } from "../repos/GamesList";
+import { ChessGameItem } from "../models/ChessGameItem";
+import { GamesList } from "../models/GamesList";
 
 export class ChessGameBuilder {
 
