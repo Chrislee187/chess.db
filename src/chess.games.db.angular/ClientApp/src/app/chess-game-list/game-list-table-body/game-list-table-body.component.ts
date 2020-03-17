@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { ChessGameItem } from "../../repos/ChessGameItem";
+import { GamesList } from "../../repos/GamesList";
 
 @Component({
   selector: '[game-list-table-body]',
@@ -7,7 +8,7 @@ import { ChessGameItem } from "../../repos/ChessGameItem";
   styleUrls: ['./game-list-table-body.component.css']
 })
 export class GameListTableBodyComponent implements OnInit {
-  @Input() games: ChessGameItem[];
+  @Input() list: GamesList;
   @Input() apiError: boolean;
   @Input() errorMessage: string;
   constructor() { }

@@ -1,17 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var PaginationParams = /** @class */ (function () {
-    function PaginationParams() {
+var Pagination = /** @class */ (function () {
+    function Pagination() {
     }
-    return PaginationParams;
+    Pagination.default = {
+        currentPage: 1,
+        pageSize: 10,
+        totalPages: 0,
+        nextPage: "",
+        previousPage: "",
+        sortFields: [{ fieldName: "White", ascending: true }]
+    };
+    return Pagination;
 }());
-exports.PaginationParams = PaginationParams;
+exports.Pagination = Pagination;
 var SortField = /** @class */ (function () {
-    function SortField(fieldName, direction) {
+    function SortField(fieldName, ascending) {
         this.fieldName = fieldName;
-        this.direction = direction;
+        this.ascending = ascending;
     }
     return SortField;
 }());
 exports.SortField = SortField;
-//# sourceMappingURL=PaginationParams.js.map
+//# sourceMappingURL=Pagination.js.map

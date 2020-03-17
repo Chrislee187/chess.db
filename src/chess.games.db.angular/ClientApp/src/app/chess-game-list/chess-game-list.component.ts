@@ -12,7 +12,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 
 export class ChessGameListComponent implements OnInit {
-
+  public list: GamesList;
   public games: ChessGameItem[];
   public previousPage: string;
   public nextPage: string;
@@ -39,10 +39,9 @@ export class ChessGameListComponent implements OnInit {
       .subscribe(
         (data: GamesList) => {
           if (data) {
+            this.list = data;
             this.games = data.games;
-            this.previousPage = data.previousPage;
-            this.nextPage = data.nextPage;
-            this.currentPage = data.currentPage;
+
           }
 
           this.loadFinished(null);
@@ -54,7 +53,6 @@ export class ChessGameListComponent implements OnInit {
   }
 
   loadFinished(error: HttpErrorResponse | null) {
-    console.log("E: ", error);
     this.paginating = false;
     this.apiError = error !== null ;
     this.errorMessage = error && error.message;

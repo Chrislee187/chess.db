@@ -60,14 +60,14 @@ namespace AspNetCore.MVC.RESTful.Helpers
             _collectionConfig = collectionConfig;
             var metadata = new
             {
-                pagination.TotalCount,
-                pagination.PageSize,
-                pagination.CurrentPage,
-                pagination.TotalPages,
-                PreviousPage = pagination.HasPrevious
+                totalCount = pagination.TotalCount,
+                pageSize = pagination.PageSize,
+                currentPage = pagination.CurrentPage,
+                totalPages = pagination.TotalPages,
+                previousPage = pagination.HasPrevious
                     ? CreatePlayersResourceUri(ResourceUriType.PreviousPage, urlBuilder)
                     : null,
-                NextPage = pagination.HasNext
+                nextPage = pagination.HasNext
                     ? CreatePlayersResourceUri(ResourceUriType.NextPage, urlBuilder)
                     : null
             };

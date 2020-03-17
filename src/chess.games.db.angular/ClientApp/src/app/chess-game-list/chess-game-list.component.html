@@ -18,7 +18,7 @@
         ></thead>
         <tbody *ngIf="games && games.length > 0"
                game-list-table-body
-               [games]="games"
+               [list]="list"
                [apiError]="apiError"
                [errorMessage]="errorMessage"
         ></tbody>
@@ -26,12 +26,9 @@
 
         <tfoot *ngIf="games && games.length > 0"
                game-list-table-footer
+               [list]="list"
                [apiError]="apiError"
                [paginating]="paginating"
-               [nextPage]="nextPage"
-               [previousPage]="previousPage"
-               [currentPage]="currentPage"
-               [games]="games"
                (loadEvent)="load($event)"></tfoot>
       </table>
 

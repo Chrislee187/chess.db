@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { ChessGameItem } from "../../repos/ChessGameItem";
+import { GamesList } from "../../repos/GamesList";
 
 @Component({
   selector: '[game-list-table-footer]',
@@ -8,6 +9,7 @@ import { ChessGameItem } from "../../repos/ChessGameItem";
 })
 export class GameListTableFooterComponent implements OnInit {
 
+  private _list: GamesList;
   @Output() loadEvent = new EventEmitter<string>();
 
   @Input() apiError: boolean;
@@ -15,7 +17,12 @@ export class GameListTableFooterComponent implements OnInit {
   @Input() nextPage: string;
   @Input() previousPage: string;
   @Input() currentPage: number;
-  @Input() games: ChessGameItem[];
+  @Input() set list(g: GamesList) {
+    this._list = g;
+  }
+  get list(): GamesList {
+     return this._list;
+  }
   constructor() { }
 
   ngOnInit() {

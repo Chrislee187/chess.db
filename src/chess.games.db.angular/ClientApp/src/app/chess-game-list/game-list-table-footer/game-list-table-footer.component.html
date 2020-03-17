@@ -3,10 +3,10 @@
     <nav aria-label="navigation">
       <ul class="pagination pagination-sm justify-content-center">
         <li class="page-item"
-            [ngClass]="{ disabled : !previousPage || paginating}">
+            [ngClass]="{ disabled : !list.previousPage || paginating}">
           <a class="page-link"
              aria-label="Previous"
-             (click)="load(previousPage)">
+             (click)="load(list.previousPage)">
             <span aria-hidden="true">&lt;</span>
           </a>
         </li>
@@ -17,16 +17,16 @@
               <span class="sr-only">Loading game list</span>
             </span>
             <span *ngIf="!paginating">
-              {{ currentPage }}
+              {{ list.currentPage }}
             </span>
           </div>
         </li>
 
         <li class="page-item"
-            [ngClass]="{ disabled : !nextPage || paginating}">
+            [ngClass]="{ disabled : !list.nextPage || paginating}">
           <a class="page-link"
              aria-label="Next"
-             (click)="load(nextPage)">
+             (click)="load(list.nextPage)">
             <span aria-hidden="true">&gt;</span>
           </a>
         </li>

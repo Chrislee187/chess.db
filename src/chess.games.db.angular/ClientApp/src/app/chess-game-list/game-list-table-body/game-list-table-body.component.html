@@ -1,5 +1,5 @@
 
-<tr *ngFor="let g of games">
+<tr *ngFor="let g of list.games">
   <td class="text-truncate" title="{{ g.white }}">{{ g.white }}</td>
   <td class="text-truncate" title="{{ g.black }}">{{ g.black }}</td>
   <td class="text-truncate" title="{{ g.result }}">{{ g.result == "1-0" ? "w" : g.result == "0-1" ? "b" : "½" }}</td>
@@ -10,7 +10,7 @@
   <td class="text-truncate">{{ g.moves }}</td>
 </tr>
 
-<tr *ngIf="!apiError && !games">
+<tr *ngIf="!apiError && !list.games">
   <td colspan="8">
     <div class="spinner-border spinner-border-sm text-primary" role="status">
       <span class="sr-only">Loading game list</span>
