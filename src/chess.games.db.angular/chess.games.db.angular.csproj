@@ -27,6 +27,7 @@
     <None Remove="ClientApp\src\app\repos\GamesList.ts" />
     <None Remove="ClientApp\src\app\repos\GamesListRepo.ts" />
     <None Remove="ClientApp\src\app\repos\Pagination.ts" />
+    <None Remove="ClientApp\src\app\repos\SortField.ts" />
     <None Remove="ClientApp\src\app\services\ChessGamesService.ts" />
   </ItemGroup>
 
@@ -34,12 +35,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\repos\GamesList.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\repos\GamesListRepo.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\repos\Pagination.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\repos\SortField.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\ChessGamesService.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ClientApp\src\app\game-list-table-body\" />
-    <Folder Include="ClientApp\src\app\game-list-table-header-cell\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

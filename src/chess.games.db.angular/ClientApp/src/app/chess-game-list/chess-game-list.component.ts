@@ -32,7 +32,7 @@ export class ChessGameListComponent implements OnInit {
       this.load("");
     }
 
-  load(url: string) {
+  load(url: string): void {
     this.paginating = true;
 
     this.chessGameService.loadGames(url)
@@ -43,7 +43,7 @@ export class ChessGameListComponent implements OnInit {
             this.games = data.games;
 
           }
-
+          
           this.loadFinished(null);
         },
         (error: HttpErrorResponse) => {
@@ -52,7 +52,7 @@ export class ChessGameListComponent implements OnInit {
         );
   }
 
-  loadFinished(error: HttpErrorResponse | null) {
+  loadFinished(error: HttpErrorResponse | null): void {
     this.paginating = false;
     this.apiError = error !== null ;
     this.errorMessage = error && error.message;

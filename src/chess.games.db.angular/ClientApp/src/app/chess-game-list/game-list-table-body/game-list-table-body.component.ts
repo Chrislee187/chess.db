@@ -1,5 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { ChessGameItem } from "../../repos/ChessGameItem";
+import { Component, Input } from "@angular/core";
 import { GamesList } from "../../repos/GamesList";
 
 @Component({
@@ -7,13 +6,8 @@ import { GamesList } from "../../repos/GamesList";
   templateUrl: './game-list-table-body.component.html',
   styleUrls: ['./game-list-table-body.component.css']
 })
-export class GameListTableBodyComponent implements OnInit {
+export class GameListTableBodyComponent {
   @Input() list: GamesList;
   @Input() apiError: boolean;
   @Input() errorMessage: string;
-  constructor() { }
-
-  ngOnInit() {
-  }
-
 }

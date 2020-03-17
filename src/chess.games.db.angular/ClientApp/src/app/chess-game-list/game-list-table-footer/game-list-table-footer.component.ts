@@ -9,26 +9,29 @@ import { GamesList } from "../../repos/GamesList";
 })
 export class GameListTableFooterComponent implements OnInit {
 
-  private _list: GamesList;
   @Output() loadEvent = new EventEmitter<string>();
 
   @Input() apiError: boolean;
   @Input() paginating: boolean;
-  @Input() nextPage: string;
-  @Input() previousPage: string;
-  @Input() currentPage: number;
-  @Input() set list(g: GamesList) {
-    this._list = g;
-  }
-  get list(): GamesList {
-     return this._list;
-  }
-  constructor() { }
+  @Input() list: GamesList;
 
   ngOnInit() {
   }
 
-  load(url: string) {
+  load(url: string): void {
     this.loadEvent.next(url);
+  }
+
+  loadFirst(prevUrl: string): void {
+    // TODO: Fix up the Pagination meta data handling so we do this better
+    let replace = prevUrl.replace(`page=${this.list.currentPage - 1}`, 'page=1');
+
+    this.loadEvent.next(replace);
+  }
+  loadLast(nextUrl: string): void {
+    // TODO: Fix up the Pagination meta data handling so we do this better
+    let replace = nextUrl.replace(`page=${this.list.currentPage + 1}`, `page=${this.list.totalPages}`);
+
+    this.loadEvent.next(replace);
   }
 }

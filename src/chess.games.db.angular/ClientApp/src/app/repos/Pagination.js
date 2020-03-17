@@ -1,25 +1,41 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Pagination = /** @class */ (function () {
-    function Pagination() {
+    function Pagination(pagination) {
+        this.currentPage = pagination.currentPage;
+        this.pageSize = pagination.pageSize;
+        this.totalPages = pagination.totalPages;
+        this.nextPage = pagination.nextPage;
+        this.previousPage = pagination.previousPage;
+        this.sortFields = pagination.sortFields;
     }
-    Pagination.default = {
+    Pagination.parseJson = function (json) {
+        return new Pagination(JSON.parse(json));
+    };
+    Pagination.prototype.toUrlQueryParams = function () {
+        var urlParams = "?page-size=" + this.pageSize;
+        urlParams += "&page=" + this.currentPage;
+        if (this.sortFields.length > 0) {
+            var orderByParams = "";
+            orderByParams = this.sortFields
+                .map(function (x) { return x; })
+                .reduce(function (g, field) {
+                g += "" + field.fieldName + (field.ascending ? "" : " desc") + ",";
+                return g;
+            }, "");
+            urlParams += "&order-by=" + orderByParams.substr(0, orderByParams.length - 1);
+        }
+        return urlParams;
+    };
+    Pagination.default = new Pagination({
         currentPage: 1,
         pageSize: 10,
         totalPages: 0,
         nextPage: "",
         previousPage: "",
         sortFields: [{ fieldName: "White", ascending: true }]
-    };
+    });
     return Pagination;
 }());
 exports.Pagination = Pagination;
-var SortField = /** @class */ (function () {
-    function SortField(fieldName, ascending) {
-        this.fieldName = fieldName;
-        this.ascending = ascending;
-    }
-    return SortField;
-}());
-exports.SortField = SortField;
 //# sourceMappingURL=Pagination.js.map

@@ -1,6 +1,4 @@
 <div class="container">
-
-
   <div>
     <div id="filters" *ngIf="!apiError">
       <i class="fa fa-tasks"></i> TODO: Filter and Search controls
@@ -22,8 +20,6 @@
                [apiError]="apiError"
                [errorMessage]="errorMessage"
         ></tbody>
-
-
         <tfoot *ngIf="games && games.length > 0"
                game-list-table-footer
                [list]="list"
@@ -31,7 +27,6 @@
                [paginating]="paginating"
                (loadEvent)="load($event)"></tfoot>
       </table>
-
     </div>
   </div>
 </div>

@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpParams, HttpErrorResponse } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Observable, throwError, of } from "rxjs";
 import { ChessGameItem } from "./ChessGameItem";
 import { catchError, map } from "rxjs/operators"
 import { GamesList } from "./GamesList";
 import { Pagination } from "./Pagination";
+import { SortField } from "./SortField";
 
 @Injectable()
 export class GamesListRepo {
@@ -18,11 +19,7 @@ export class GamesListRepo {
       if (!pagination) {
         pagination = Pagination.default;
       }
-    
-      if (pagination) {
-        let urlParams = this.buildPaginationParams(pagination);
-        url += urlParams;
-      }
+      url += pagination.toUrlQueryParams();
     }
 
     console.log("Request URL: ", url);
@@ -43,47 +40,23 @@ export class GamesListRepo {
               return this.mapToChessGameItem(d);
             });
 
-            return new GamesList(games, this.getPaginationFromHeadere(response));
+            return new GamesList(games, this.getPaginationFromHeader(response));
           }
 
           return new GamesList();
         })
       );
   }
-
-
-  private buildPaginationParams(paginationParams: Pagination): string {
-
-    let urlParams = `?page-size=${paginationParams.pageSize}`;
-    urlParams += `&page=${paginationParams.currentPage}`;
-
-    if (paginationParams.sortFields.length > 0) {
-      let orderByParams = "";
-      for (var field of paginationParams.sortFields) {
-        orderByParams += `${field.fieldName} ${field.ascending ? " asc" : " desc"},`;
-      }
-      urlParams += `&order-by=${orderByParams.substr(0, orderByParams.length - 1)}`;
-    }
-
-    return urlParams;
-  }
-
-  private getPaginationFromHeadere(response: any): Pagination {
+  
+  private getPaginationFromHeader(response: any): Pagination {
     let paginationJson = response.headers.get("X-Pagination");
-    let pagination: Pagination;
-    if (!paginationJson) {
-      console.warn("No X-Pagination header found, using Default.");
-      pagination = Pagination.default;
-    }
-    else {
-      pagination = JSON.parse(paginationJson);
-    }
 
-    return pagination;
+    return paginationJson
+      ? Pagination.parseJson(paginationJson)
+      : Pagination.default;
   }
-
-
-  mapToChessGameItem(d: any): ChessGameItem {
+  
+  private mapToChessGameItem(d: any): ChessGameItem {
     return {
       white: d.White,
       black: d.Black,

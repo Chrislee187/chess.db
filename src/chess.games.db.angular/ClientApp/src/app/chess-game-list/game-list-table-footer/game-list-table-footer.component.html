@@ -3,6 +3,14 @@
     <nav aria-label="navigation">
       <ul class="pagination pagination-sm justify-content-center">
         <li class="page-item"
+            [ngClass]="{ disabled : list.currentPage === 1 || paginating}">
+          <a class="page-link"
+             aria-label="Previous"
+             (click)="loadFirst(list.previousPage)">
+            <span aria-hidden="true">&lt;&lt;</span>
+          </a>
+        </li>
+        <li class="page-item"
             [ngClass]="{ disabled : !list.previousPage || paginating}">
           <a class="page-link"
              aria-label="Previous"
@@ -30,6 +38,15 @@
             <span aria-hidden="true">&gt;</span>
           </a>
         </li>
+        <li class="page-item"
+            [ngClass]="{ disabled : !list.nextPage || paginating}">
+          <a class="page-link"
+             aria-label="Next"
+             (click)="loadLast(list.nextPage)">
+            <span aria-hidden="true">&gt;gt;</span>
+          </a>
+        </li>
+
       </ul>
     </nav>
   </td>
