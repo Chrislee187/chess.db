@@ -65,9 +65,9 @@ describe('chess-game-list component', () => {
 
       component.load("");
 
-      expect(component.games).toBeFalsy();
       expect(component.apiError).toBeTruthy();
       expect(component.errorMessage).toBe("500 An error occured");
+      expect(component.games).toBeFalsy();
       expect(component.paginating).toBeFalsy();
     }));
 

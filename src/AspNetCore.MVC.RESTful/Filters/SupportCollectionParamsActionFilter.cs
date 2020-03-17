@@ -68,7 +68,7 @@ namespace AspNetCore.MVC.RESTful.Filters
         private static void OrderBy(IQueryCollection queryCollection, HateoasController contextController)
         {
             var val = queryCollection.ByAlias("orderby", "order-by");
-            contextController.CollectionConfig.OrderBy = val;
+            contextController.CollectionConfig.OrderBy = val.Unwrap('"');
         }
 
         private static void SearchQuery(IQueryCollection queryCollection, HateoasController contextController)

@@ -4,15 +4,48 @@ import { Observable, throwError, of } from "rxjs";
 import { ChessGameItem } from "./ChessGameItem";
 import { catchError, map } from "rxjs/operators"
 import { GamesList } from "./GamesList";
+import { Pagination } from "./Pagination";
 
 @Injectable()
 export class GamesListRepo {
   constructor(private httpClient: HttpClient) {  }
 
-  public loadGames(url: string): Observable<GamesList> {
+  buildParams(paginationParams: Pagination): string {
+
+    let urlParams = `?page-size=${paginationParams.pageSize}`;
+    urlParams += `&page=${paginationParams.page}`;
+
+    if (paginationParams.sortFields.length > 0) {
+      let orderByParams = "";
+      for (var field of paginationParams.sortFields) {
+        orderByParams += `${field.fieldName} ${field.direction},`;
+      }
+      urlParams += `&order-by="${orderByParams.substr(0, orderByParams.length-1)}"`;
+    }
+
+    return urlParams;
+  }
+
+  public loadGames(url: string, pagination?: Pagination): Observable<GamesList> {
 
     if (url === "") url = "http://localhost:5000/api/games";
 
+    if (url.indexOf("?") === -1) {
+      if (!pagination) {
+        pagination = {
+          page: 1,
+          pageSize: 10,
+          sortFields: [{fieldName: "white", direction: "asc"}]
+        };
+      }
+
+      if (pagination) {
+        let urlParams = this.buildParams(pagination);
+        url += urlParams;
+      }
+    }
+
+    console.log("Request URL: ", url);
     return this.httpClient
       .get(url,
         {
@@ -32,6 +65,8 @@ export class GamesListRepo {
             const games = response.body.value.map(d => {
               return this.mapToChessGameItem(d);
             });
+
+            // TODO: Unpack X-Pagination header and store in GamesList
             const result = new GamesList(games, currentPage, nextPage, previousPage);
             return result;
           }
