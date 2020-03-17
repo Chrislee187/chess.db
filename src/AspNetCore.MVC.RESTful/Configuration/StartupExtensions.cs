@@ -132,8 +132,9 @@ namespace AspNetCore.MVC.RESTful.Configuration
                 opts.AddPolicy(CorsAllowLocalhost, builder =>
                 {
                     builder
-                        .AllowAnyOrigin()
-                        .AllowAnyHeader();
+                        .WithOrigins("http://localhost:4200")
+                        .WithExposedHeaders("X-Pagination")
+                        ;
                 });
             });
 

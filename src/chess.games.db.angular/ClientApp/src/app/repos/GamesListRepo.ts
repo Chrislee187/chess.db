@@ -67,6 +67,8 @@ export class GamesListRepo {
             });
 
             // TODO: Unpack X-Pagination header and store in GamesList
+            var xpagination = response.headers.get("X-Pagination");
+            console.log("XPagination: ", xpagination);
             const result = new GamesList(games, currentPage, nextPage, previousPage);
             return result;
           }
