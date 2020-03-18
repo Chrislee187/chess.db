@@ -35,27 +35,28 @@ export class GamesListRepo {
           return throwError(errorResponse);;
         }),
         map((response: any) => {
+
           if (response.status === 200) {
             const games = response.body.value.map(d => {
               return this.mapToChessGameItem(d);
             });
-            let currentPageUrl = response.body._links[0].href;
+            const currentPageUrl = response.body._links[0].href;
             return new GamesList(games, currentPageUrl, this.getPaginationFromHeader(response));
           }
 
-          return new GamesList();
+          return GamesList.empty;
         })
       );
   }
   
   private getPaginationFromHeader(response: any): Pagination {
-    let paginationJson = response.headers.get("X-Pagination");
+    const paginationJson = response.headers.get("X-Pagination");
 
     return paginationJson
       ? Pagination.parseJson(paginationJson)
       : Pagination.default;
   }
-  
+
   private mapToChessGameItem(d: any): ChessGameItem {
     return {
       white: d.White,

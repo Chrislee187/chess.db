@@ -23,6 +23,7 @@ var GamesList = /** @class */ (function () {
             ? currentPageUrl.replace("page=" + this.currentPage, "page=" + newPage)
             : "";
     };
+    GamesList.empty = new GamesList([], "", null);
     return GamesList;
 }());
 exports.GamesList = GamesList;

@@ -12,6 +12,6 @@ export class GameListTableBodyComponent {
   @Input() list: GamesList;
 
   constructor() {
-     this.list = new GamesList([]);
+     this.list = GamesList.empty;
   }
 }

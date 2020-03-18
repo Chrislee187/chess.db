@@ -7,6 +7,6 @@ export class GamesListBuilder {
   private defaultGame: ChessGameItem = new ChessGameBuilder().build();
 
   public build(): GamesList {
-    return new GamesList([this.defaultGame]);
+    return new GamesList([this.defaultGame], "", null);
   }
 }

@@ -58,15 +58,17 @@ describe('chess-game-list component', () => {
       expect(component.paginating).toBeFalsy();
     }));
 
-    it('should show error', async(() => {
+  it('should show error', async(() => {
+    const errorMessage = "500 Forced error from test";
+
       spyOn(chessGameService, "loadGames").and
         .returnValue(throwError(
-          { message: "500 An error occured" }));
+          { message: errorMessage }));
 
       component.load("");
 
       expect(component.apiError).toBeTruthy();
-      expect(component.errorMessage).toBe("500 An error occured");
+    expect(component.errorMessage).toBe(errorMessage);
       expect(component.games).toBeFalsy();
       expect(component.paginating).toBeFalsy();
     }));

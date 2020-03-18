@@ -2,6 +2,9 @@ import { ChessGameItem } from "./ChessGameItem";
 import { Pagination } from "./Pagination";
 
 export class GamesList {
+
+  public static empty: GamesList = new GamesList([], "", null);
+
   public pageSize: number;
   public totalPages: number;
   public currentPage: number;
