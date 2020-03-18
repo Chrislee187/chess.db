@@ -12,13 +12,15 @@ var Pagination = /** @class */ (function () {
     Pagination.parseJson = function (json) {
         return new Pagination(JSON.parse(json));
     };
+    Pagination.prototype.sortFieldFor = function (fieldName) {
+        return false;
+    };
     Pagination.prototype.toUrlQueryParams = function () {
         var urlParams = "?page-size=" + this.pageSize;
         urlParams += "&page=" + this.currentPage;
         if (this.sortFields.length > 0) {
             var orderByParams = "";
             orderByParams = this.sortFields
-                .map(function (x) { return x; })
                 .reduce(function (g, field) {
                 g += "" + field.fieldName + (field.ascending ? "" : " desc") + ",";
                 return g;

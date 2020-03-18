@@ -4,6 +4,7 @@ var GamesList = /** @class */ (function () {
     function GamesList(games, currentPageUrl, pagination) {
         this.games = games;
         this.currentPageUrl = currentPageUrl;
+        this.pagination = pagination;
         if (pagination) {
             this.currentPage = pagination.currentPage;
             this.nextPageUrl = pagination.nextPageUrl;

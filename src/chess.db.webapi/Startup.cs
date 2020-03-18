@@ -47,10 +47,11 @@ namespace chess.db.webapi
                         new OrderByPropertyMappingService<GameDto, Game>(
                             new Dictionary<string, OrderByPropertyMappingValue>(StringComparer.OrdinalIgnoreCase)
                             {
-                                { "White", new OrderByPropertyMappingValue(new List<string>() { "White.Lastname" } ) },
-                                { "Black", new OrderByPropertyMappingValue(new List<string>() { "Black.Lastname" } ) },
-                                { "Event", new OrderByPropertyMappingValue(new List<string>() { "Event.Name" } ) },
-                                { "Site", new OrderByPropertyMappingValue(new List<string>() { "Site.Name" } ) }
+                                { "White", new OrderByPropertyMappingValue(new List<string>() { $"{nameof(Game.White)}.{nameof(Player.LastName)}"})} ,
+                                { "Black", new OrderByPropertyMappingValue(new List<string>() { $"{nameof(Game.Black)}.{nameof(Player.LastName)}"})},
+                                { "Event", new OrderByPropertyMappingValue(new List<string>() { $"{nameof(Game.Event)}.{nameof(Event.Name)}" } ) },
+                                { "Site", new OrderByPropertyMappingValue(new List<string>() { $"{nameof(Game.Site)}.{nameof(Site.Name)}" } ) },
+                                { "Moves", new OrderByPropertyMappingValue(new List<string>() { nameof(Game.MoveText) } ) }
                             })
                     )
                 .AddTransient(typeof(IEntityUpdater<,>), typeof(EntityUpdater<,>))

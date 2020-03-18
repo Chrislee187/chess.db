@@ -13,6 +13,8 @@
         <thead *ngIf="!apiError"
                game-list-table-header
                class="thead-dark"
+               [sortFields]="list?.pagination?.sortFields"
+               (reSortEvent)="sort($event)"
         ></thead>
         <tbody *ngIf="games && games.length > 0"
                game-list-table-body

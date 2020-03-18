@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { GameListTableHeaderCellComponent } from "./game-list-table-header-cell.component";
 
-describe('GameListTableHeaderCellComponent', () => {
+describe("GameListTableHeaderCellComponent", () => {
   let component: GameListTableHeaderCellComponent;
   let fixture: ComponentFixture<GameListTableHeaderCellComponent>;
 
@@ -16,10 +16,11 @@ describe('GameListTableHeaderCellComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(GameListTableHeaderCellComponent);
     component = fixture.componentInstance;
+    component.title = "Test title";
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

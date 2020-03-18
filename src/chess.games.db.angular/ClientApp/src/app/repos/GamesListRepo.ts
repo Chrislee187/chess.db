@@ -1,33 +1,31 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Observable, throwError, of } from "rxjs";
+import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
+import { Observable, throwError } from "rxjs";
 import { ChessGameItem } from "../models/ChessGameItem";
 import { catchError, map } from "rxjs/operators"
 import { GamesList } from "../models/GamesList";
 import { Pagination } from "../models/Pagination";
+import { SortField } from "../models/SortField";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class GamesListRepo {
   constructor(private httpClient: HttpClient) { }
 
-  public loadGames(url: string, pagination?: Pagination): Observable<GamesList> {
+  loadGames(url: string, pagination?: Pagination): Observable<GamesList> {
 
     if (!url) url = "http://localhost:5000/api/games";
 
-    if (url.indexOf("?") === -1) {
-      if (!pagination) {
-        pagination = Pagination.default;
-      }
-      url += pagination.toUrlQueryParams();
-    }
+    pagination = pagination || Pagination.default;
+
+    url = this.buildUrl(pagination, url);
 
     return this.httpClient
       .get(url,
         {
-          observe: 'response',
-          responseType: 'json'
+          observe: "response",
+          responseType: "json"
         })
       .pipe(
         catchError((errorResponse: HttpErrorResponse) => {
@@ -41,20 +39,40 @@ export class GamesListRepo {
               return this.mapToChessGameItem(d);
             });
             const currentPageUrl = response.body._links[0].href;
-            return new GamesList(games, currentPageUrl, this.getPaginationFromHeader(response));
+            let sortFields = SortField.fromUrl(currentPageUrl);
+            let pagination = this.getPaginationFromHeader(response, sortFields);
+
+            let list = new GamesList(games, currentPageUrl, pagination);
+            return list;
           }
 
           return GamesList.empty;
         })
       );
   }
-  
-  private getPaginationFromHeader(response: any): Pagination {
-    const paginationJson = response.headers.get("X-Pagination");
 
-    return paginationJson
-      ? Pagination.parseJson(paginationJson)
-      : Pagination.default;
+    private buildUrl(pagination: Pagination, url: string) {
+        if (pagination) {
+            let i = url.indexOf("?");
+            if (i > -1) {
+                url = url.substr(0, i);
+            }
+            url += pagination.toUrlQueryParams();
+        }
+        return url;
+    }
+
+  private getPaginationFromHeader(response: any, sortFields: SortField[]): Pagination {
+    const paginationJson = response.headers.get("X-Pagination");
+    console.log(paginationJson);
+    if (paginationJson) {
+      let parsed = Pagination.parseJson(paginationJson);
+      parsed.sortFields = sortFields;
+      return parsed;
+
+    }
+    else
+      return Pagination.default;
   }
 
   private mapToChessGameItem(d: any): ChessGameItem {
@@ -69,4 +87,5 @@ export class GamesListRepo {
       moves: d.Moves
     };
   }
+
 }

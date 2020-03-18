@@ -1,1 +1,11 @@
-{{ title }}
+<span *ngIf="sortFieldName === null">
+  {{ title }}
+</span>
+<span *ngIf="sortFieldName !== null">
+  <a (click)="sortBy(sortFieldName)">
+    {{ title }}
+    <span *ngIf="ascending !== null" class="ml-1">
+      <i class="fa fa-{{ ascending ? 'sort-up' : 'sort-down'}}"></i>
+    </span>
+  </a>
+</span>

@@ -1,9 +1,8 @@
 import { ChessGameItem } from "../models/ChessGameItem";
-import { GamesList } from "../models/GamesList";
 
 export class ChessGameBuilder {
 
-  public build(): ChessGameItem {
+  build(): ChessGameItem {
     let game: ChessGameItem = {
       white: "white",
       black: "black",

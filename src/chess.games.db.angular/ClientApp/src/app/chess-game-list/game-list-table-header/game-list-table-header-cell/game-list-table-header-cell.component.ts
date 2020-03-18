@@ -1,15 +1,48 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, OnChanges, Input, Output, EventEmitter, SimpleChanges } from "@angular/core";
+import { SortField } from "../../../models/SortField";
 
 @Component({
-  selector: '[game-list-table-header-cell]',
-  templateUrl: './game-list-table-header-cell.component.html',
-  styleUrls: ['./game-list-table-header-cell.component.css']
+  selector: "[game-list-table-header-cell]",
+  templateUrl: "./game-list-table-header-cell.component.html",
+  styleUrls: ["./game-list-table-header-cell.component.css"]
 })
-export class GameListTableHeaderCellComponent implements OnInit {
+export class GameListTableHeaderCellComponent implements OnInit, OnChanges {
   @Input() title: string;
-  constructor() { }
+  @Input() sortFieldName: string;
+  @Input() sortFields: SortField[];
+  @Input() ascending?: boolean = null;
+
+  @Output() reSortEvent = new EventEmitter<SortField>();
 
   ngOnInit() {
+    if (!this.sortFieldName) {
+      this.sortFieldName = this.title.toLocaleLowerCase();
+    }
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!this.sortFields) return;
+
+    let sf = this.sortFields.filter(f => f.fieldName.toLocaleLowerCase() === this.sortFieldName.toLocaleLowerCase());
+
+    if (sf.length > 0) {
+      this.ascending = sf[0].ascending;
+    } else {
+      this.ascending = null;
+    }
+  }
+
+  sortBy(field: string) {
+    let sortAscending = this.ascending;
+    if (sortAscending === null) {
+      sortAscending = true;
+    } else { 
+      sortAscending = !sortAscending;
+    }
+
+    this.reSortEvent.next({
+      fieldName: field,
+      ascending: sortAscending
+    });
+  }
 }

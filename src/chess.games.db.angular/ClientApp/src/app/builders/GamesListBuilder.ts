@@ -4,9 +4,9 @@ import { GamesList } from "../models/GamesList";
 
 export class GamesListBuilder {
 
-  private defaultGame: ChessGameItem = new ChessGameBuilder().build();
+  private defaultGame = new ChessGameBuilder().build();
 
-  public build(): GamesList {
+  build(): GamesList {
     return new GamesList([this.defaultGame], "", null);
   }
 }

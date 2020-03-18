@@ -1,14 +1,14 @@
 import { SortField } from "./SortField";
 
 export class Pagination implements IPagination {
-  public currentPage: number;
-  public pageSize: number;
-  public totalPages: number;
-  public nextPageUrl?: string;
-  public previousPageUrl?: string;
-  public sortFields: SortField[];
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+  nextPageUrl?: string;
+  previousPageUrl?: string;
+  sortFields: SortField[];
 
-  static default: Pagination = new Pagination({
+  static default = new Pagination({
     currentPage: 1,
     pageSize: 10,
     totalPages: 0,
@@ -30,6 +30,10 @@ export class Pagination implements IPagination {
     this.sortFields = pagination.sortFields;
   }
 
+  sortFieldFor?(fieldName: string) {
+    return false;
+  }
+
   toUrlQueryParams?(): string {
 
     let urlParams = `?page-size=${this.pageSize}`;
@@ -39,7 +43,6 @@ export class Pagination implements IPagination {
     if (this.sortFields.length > 0) {
       let orderByParams = "";
       orderByParams = this.sortFields
-        .map(x => x)
         .reduce((g: string, field: SortField) => {
           g += `${field.fieldName}${field.ascending ? "" : " desc"},`;
           return g;

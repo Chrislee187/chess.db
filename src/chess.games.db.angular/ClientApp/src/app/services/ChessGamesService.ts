@@ -5,7 +5,7 @@ import { GamesList } from "../models/GamesList";
 import { Pagination as PaginationParams } from "../models/Pagination";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class ChessGamesService {
   constructor(private gamesListRepo: GamesListRepo) { }

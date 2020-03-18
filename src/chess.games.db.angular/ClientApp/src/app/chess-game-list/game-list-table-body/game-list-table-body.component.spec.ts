@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { GameListTableBodyComponent } from "./game-list-table-body.component";
 
-describe('GameListTableBodyComponent', () => {
+describe("GameListTableBodyComponent", () => {
   let component: GameListTableBodyComponent;
   let fixture: ComponentFixture<GameListTableBodyComponent>;
 
@@ -19,7 +19,7 @@ describe('GameListTableBodyComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

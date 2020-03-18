@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  selector: "app-home",
+  templateUrl: "./home.component.html",
+  styleUrls: ["./home.component.css"]
 })
 export class HomeComponent {
 
-  public gamesCount:number = 9999;
-  public playersCount:number = 1234;
-  public sitesCount:number = 9873;
-  public eventsCount:number = 4321;
+  gamesCount = 9999;
+  playersCount = 1234;
+  sitesCount = 9873;
+  eventsCount = 4321;
 }

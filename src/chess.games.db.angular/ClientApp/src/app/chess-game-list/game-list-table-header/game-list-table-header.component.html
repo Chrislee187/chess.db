@@ -1,10 +1,44 @@
 <tr>
-  <th game-list-table-header-cell title="White" class="col-player"></th>
-  <th game-list-table-header-cell title="Black" class="col-player"></th>
-  <th game-list-table-header-cell title="" class="col-result"></th>
-  <th game-list-table-header-cell title="Event" class="col-event"></th>
-  <th game-list-table-header-cell title="#" class="col-round"></th>
-  <th game-list-table-header-cell title="Site" class="col-site"></th>
-  <th game-list-table-header-cell title="Date" class="col-date"></th>
-  <th game-list-table-header-cell title="Moves" class="col-moves"></th>
+  <th title="White"
+      game-list-table-header-cell
+      [sortFields]="sortFields"
+      (reSortEvent)="sortBy($event)"
+      class="col-player"></th>
+  <th title="Black"
+      game-list-table-header-cell
+      [sortFields]="sortFields"
+      (reSortEvent)="sortBy($event)"
+      class="col-player"></th>
+  <th title="?"
+      game-list-table-header-cell
+      sortFieldName="result"
+      [sortFields]="sortFields"
+      (reSortEvent)="sortBy($event)"
+      class="col-result"></th>
+  <th title="Event"
+      game-list-table-header-cell
+      [sortFields]="sortFields"
+      (reSortEvent)="sortBy($event)"
+      class="col-event"></th>
+  <th title="#" 
+      game-list-table-header-cell
+      sortFieldName="round"
+      [sortFields]="sortFields"
+      (reSortEvent)="sortBy($event)"
+      class="col-round"></th>
+  <th title="Site"
+      game-list-table-header-cell
+      [sortFields]="sortFields"
+      (reSortEvent)="sortBy($event)"
+      class="col-site"></th>
+  <th title="Date"
+      game-list-table-header-cell
+      [sortFields]="sortFields"
+      (reSortEvent)="sortBy($event)"
+      class="col-date"></th>
+  <th title="Moves"
+      game-list-table-header-cell
+      [sortFields]="sortFields"
+      (reSortEvent)="sortBy($event)"
+      class="col-moves"></th>
 </tr>

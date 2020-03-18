@@ -3,20 +3,20 @@ import { Pagination } from "./Pagination";
 
 export class GamesList {
 
-  public static empty: GamesList = new GamesList([], "", null);
+  static empty = new GamesList([], "", null);
 
-  public pageSize: number;
-  public totalPages: number;
-  public currentPage: number;
-  public nextPageUrl: string;
-  public previousPageUrl: string;
-  public firstPageUrl: string;
-  public lastPageUrl: string;
+  pageSize: number;
+  totalPages: number;
+  currentPage: number;
+  nextPageUrl: string;
+  previousPageUrl: string;
+  firstPageUrl: string;
+  lastPageUrl: string;
 
   constructor(
     public games: Array<ChessGameItem>,
     public currentPageUrl: string,
-    pagination: Pagination
+    public pagination: Pagination
   ) {
 
     if (pagination) {
