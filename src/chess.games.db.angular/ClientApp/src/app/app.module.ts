@@ -43,8 +43,7 @@ import { GameListTableHeaderCellComponent } from "./chess-game-list/game-list-ta
     ])
   ],
   providers: [
-    ChessGameService,
-    GamesListRepo
+
   ],
   bootstrap: [AppComponent]
 })

@@ -5,9 +5,10 @@ import { ChessGameItem } from "../models/ChessGameItem";
 import { catchError, map } from "rxjs/operators"
 import { GamesList } from "../models/GamesList";
 import { Pagination } from "../models/Pagination";
-import { SortField } from "../models/SortField";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class GamesListRepo {
   constructor(private httpClient: HttpClient) { }
 

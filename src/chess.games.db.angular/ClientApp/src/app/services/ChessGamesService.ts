@@ -4,7 +4,9 @@ import { GamesListRepo } from "../repos/GamesListRepo";
 import { GamesList } from "../models/GamesList";
 import { Pagination as PaginationParams } from "../models/Pagination";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ChessGamesService {
   constructor(private gamesListRepo: GamesListRepo) { }
 
