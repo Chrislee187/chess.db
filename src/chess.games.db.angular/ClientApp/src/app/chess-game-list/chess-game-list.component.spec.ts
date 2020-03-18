@@ -67,10 +67,10 @@ describe('chess-game-list component', () => {
 
       component.load("");
 
-      expect(component.apiError).toBeTruthy();
-    expect(component.errorMessage).toBe(errorMessage);
-      expect(component.games).toBeFalsy();
-      expect(component.paginating).toBeFalsy();
+      expect(component.apiError).toBeTruthy("apiError");
+      expect(component.errorMessage).toBe(errorMessage);
+      expect(component.games).toBeFalsy("games");
+      expect(component.paginating).toBeFalsy("paginating");
     }));
 
 });

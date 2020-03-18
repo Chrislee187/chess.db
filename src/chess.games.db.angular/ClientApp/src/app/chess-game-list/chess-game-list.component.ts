@@ -35,25 +35,23 @@ export class ChessGameListComponent implements OnInit {
   load(url: string): void {
     this.paginating = true;
     this.chessGameService.loadGames(url)
-      .subscribe(
-        (data: GamesList) => {
+      .subscribe({
+        next: data => {
           if (data) {
             this.list = data;
             this.games = data.games;
-
           }
-
-          this.loadFinished(null);
+          this.paginating = false;
         },
-        (error: HttpErrorResponse) => {
+        error: error => {
           console.log("ErRoR: ", error);
-          this.loadFinished(error); 
+          this.setError(error);
+          this.paginating = false;
         }
-        );
+    });
   }
 
-  loadFinished(error: HttpErrorResponse | null): void {
-    this.paginating = false;
+  setError(error: HttpErrorResponse | null): void {
     this.apiError = error !== null ;
     this.errorMessage = error && error.message;
   }
