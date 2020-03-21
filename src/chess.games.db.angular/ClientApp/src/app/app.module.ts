@@ -8,8 +8,6 @@ import { RouterModule } from "@angular/router";
 import { AppComponent } from "./app.component";
 import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 import { HomeComponent } from "./home/home.component";
-import { CounterComponent } from "./counter/counter.component";
-import { FetchDataComponent } from "./fetch-data/fetch-data.component";
 import { ChessGameListComponent } from "./chess-game-list/chess-game-list.component";
 import { GameListTableHeaderComponent } from "./chess-game-list/game-list-table-header/game-list-table-header.component";
 import { GameListTableFooterComponent } from "./chess-game-list/game-list-table-footer/game-list-table-footer.component";
@@ -21,8 +19,6 @@ import { GameListTableHeaderCellComponent } from "./chess-game-list/game-list-ta
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
     ChessGameListComponent,
     GameListTableHeaderComponent,
     GameListTableFooterComponent,
@@ -34,15 +30,11 @@ import { GameListTableHeaderCellComponent } from "./chess-game-list/game-list-ta
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      { path: "", component: HomeComponent, pathMatch: "full" },
-      { path: "counter", component: CounterComponent },
-      { path: "fetch-data", component: FetchDataComponent },
+      { path: "", component: HomeComponent, pathMatch: "full", },
       { path: "chess-games", component: ChessGameListComponent},
     ])
   ],
-  providers: [
-
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

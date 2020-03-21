@@ -16,18 +16,19 @@
                [sortFields]="list?.pagination?.sortFields"
                (reSortEvent)="sort($event)"
         ></thead>
-        <tbody *ngIf="games && games.length > 0"
+        <tbody *ngIf="hasGames"
                game-list-table-body
                [list]="list"
                [apiError]="apiError"
                [errorMessage]="errorMessage"
         ></tbody>
-        <tfoot *ngIf="games && games.length > 0"
+        <tfoot *ngIf="hasGames"
                game-list-table-footer
                [list]="list"
                [apiError]="apiError"
                [paginating]="paginating"
-               (loadEvent)="load($event)"></tfoot>
+               (setPageEvent)="setPage($event)">
+        </tfoot>
       </table>
     </div>
   </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, Input, Output, EventEmitter, SimpleChanges } from "@angular/core";
+import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from "@angular/core";
 import { SortField } from "../../../models/SortField";
 
 @Component({
@@ -20,10 +20,10 @@ export class GameListTableHeaderCellComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (!this.sortFields) return;
 
-    let sf = this.sortFields.filter(f => f.fieldName.toLocaleLowerCase() === this.sortFieldName.toLocaleLowerCase());
+    const sf = this.sortFields.filter(f => f.fieldName.toLocaleLowerCase() === this.sortFieldName.toLocaleLowerCase());
 
     if (sf.length > 0) {
       this.ascending = sf[0].ascending;

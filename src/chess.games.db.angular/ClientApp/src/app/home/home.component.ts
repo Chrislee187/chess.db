@@ -1,14 +1,38 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
+import { DashboardService } from "../services/DashboardService";
 
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
   styleUrls: ["./home.component.css"]
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
 
-  gamesCount = 9999;
-  playersCount = 1234;
-  sitesCount = 9873;
-  eventsCount = 4321;
+  gamesCount: number;
+  playersCount: number;
+  sitesCount: number;
+  eventsCount: number;
+
+  constructor(private dashboardService: DashboardService) { }
+
+
+  ngOnInit(): void {
+    this.load();
+  }
+
+  load(): void {
+    this.dashboardService.dashboardSummary()
+      .subscribe({
+        next: data => {
+          this.gamesCount = data.gamesCount;
+          this.playersCount = data.playersCount;
+          this.sitesCount = data.sitesCount;
+          this.eventsCount = data.eventsCount;
+
+        },
+        error: error => {
+          console.log("ErRoR: ", error);
+        }
+      });
+  }
 }

@@ -1,5 +1,4 @@
 import { ChessGameBuilder } from "./ChessGameBuilder";
-import { ChessGameItem } from "../models/ChessGameItem";
 import { GamesList } from "../models/GamesList";
 
 export class GamesListBuilder {

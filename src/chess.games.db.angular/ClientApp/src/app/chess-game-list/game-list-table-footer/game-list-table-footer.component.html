@@ -6,7 +6,7 @@
             [ngClass]="{ disabled : list.currentPage === 1 || paginating}">
           <a class="page-link"
              aria-label="Previous"
-             (click)="load(list.firstPageUrl)">
+             (click)="loadTable(LoadDirectionEnum.FirstPage)">
             <span aria-hidden="true">&lt;&lt;</span>
           </a>
         </li>
@@ -14,7 +14,7 @@
             [ngClass]="{ disabled : !list.previousPageUrl || paginating}">
           <a class="page-link"
              aria-label="Previous"
-             (click)="load(list.previousPageUrl)">
+             (click)="loadTable(LoadDirectionEnum.PreviousPage)">
             <span aria-hidden="true">&lt;</span>
           </a>
         </li>
@@ -34,7 +34,7 @@
             [ngClass]="{ disabled : !list.nextPageUrl || paginating}">
           <a class="page-link"
              aria-label="Next"
-             (click)="load(list.nextPageUrl)">
+             (click)="loadTable(LoadDirectionEnum.NextPage)">
             <span aria-hidden="true">&gt;</span>
           </a>
         </li>
@@ -42,7 +42,7 @@
             [ngClass]="{ disabled : !list.nextPageUrl || paginating}">
           <a class="page-link"
              aria-label="Next"
-             (click)="load(list.lastPageUrl)">
+             (click)="loadTable(LoadDirectionEnum.LastPage)">
             <span aria-hidden="true">&gt;&gt;</span>
           </a>
         </li>

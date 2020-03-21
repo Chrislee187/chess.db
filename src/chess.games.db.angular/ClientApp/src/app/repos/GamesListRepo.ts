@@ -1,25 +1,27 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
-import { ChessGameItem } from "../models/ChessGameItem";
 import { catchError, map } from "rxjs/operators"
+import { ChessGameItem } from "../models/ChessGameItem";
 import { GamesList } from "../models/GamesList";
 import { Pagination } from "../models/Pagination";
 import { SortField } from "../models/SortField";
+import { BaseRepo } from "./BaseRepo";
 
 @Injectable({
   providedIn: "root"
 })
-export class GamesListRepo {
-  constructor(private httpClient: HttpClient) { }
+export class GamesListRepo extends BaseRepo{
+
+  static rootUrl: string = "http://localhost:5000/api/games";
+
+  constructor(protected httpClient: HttpClient) { super(httpClient, GamesListRepo.rootUrl)}
 
   loadGames(url: string, pagination?: Pagination): Observable<GamesList> {
 
-    if (!url) url = "http://localhost:5000/api/games";
-
     pagination = pagination || Pagination.default;
 
-    url = this.buildUrl(pagination, url);
+    url = this.addPaginationToUrl(pagination, url);
 
     return this.httpClient
       .get(url,
@@ -39,10 +41,10 @@ export class GamesListRepo {
               return this.mapToChessGameItem(d);
             });
             const currentPageUrl = response.body._links[0].href;
-            let sortFields = SortField.fromUrl(currentPageUrl);
-            let pagination = this.getPaginationFromHeader(response, sortFields);
+            const sortFields = SortField.fromUrl(currentPageUrl);
+            pagination = this.getPaginationFromHeader(response, sortFields);
 
-            let list = new GamesList(games, currentPageUrl, pagination);
+            const list = new GamesList(games, currentPageUrl, pagination);
             return list;
           }
 
@@ -51,28 +53,27 @@ export class GamesListRepo {
       );
   }
 
-    private buildUrl(pagination: Pagination, url: string) {
-        if (pagination) {
-            let i = url.indexOf("?");
-            if (i > -1) {
-                url = url.substr(0, i);
-            }
-            url += pagination.toUrlQueryParams();
-        }
-        return url;
+  private addPaginationToUrl(pagination: Pagination, url: string) {
+    if (pagination) {
+      const i = url.indexOf("?");
+      if (i > -1) {
+        url = url.substr(0, i);
+      }
+      url += pagination.toUrlQueryParams();
     }
+    return url;
+  }
 
   private getPaginationFromHeader(response: any, sortFields: SortField[]): Pagination {
     const paginationJson = response.headers.get("X-Pagination");
-    console.log(paginationJson);
+
     if (paginationJson) {
-      let parsed = Pagination.parseJson(paginationJson);
+      const parsed = Pagination.parseJson(paginationJson);
       parsed.sortFields = sortFields;
       return parsed;
-
-    }
-    else
+    } else {
       return Pagination.default;
+    }
   }
 
   private mapToChessGameItem(d: any): ChessGameItem {
@@ -83,9 +84,8 @@ export class GamesListRepo {
       result: d.Result,
       site: d.Site,
       event: d.Event,
-      date: d.Date,
+      date: d.Date, 
       moves: d.Moves
     };
   }
-
 }

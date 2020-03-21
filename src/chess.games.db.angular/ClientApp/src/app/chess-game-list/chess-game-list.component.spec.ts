@@ -47,7 +47,7 @@ describe("chess-game-list component", () => {
       spyOn(chessGameService, "loadGames").and
         .returnValue(of(new GamesListBuilder().build()));
 
-      component.load("");
+      component.loadTable("");
 
       expect(component.games).not.toBeUndefined();
       expect(component.games.length).toBeGreaterThanOrEqual(1);
@@ -63,7 +63,7 @@ describe("chess-game-list component", () => {
         .returnValue(throwError(
           { message: errorMessage }));
 
-      component.load("");
+      component.loadTable("");
 
       expect(component.apiError).toBeTruthy("apiError");
       expect(component.errorMessage).toBe(errorMessage);

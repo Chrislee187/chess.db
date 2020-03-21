@@ -28,5 +28,7 @@ namespace AspNetCore.MVC.RESTful.Repositories
         
         void Delete(TEntity entity);
         bool Save();
+
+        int Count();
     }
 }

@@ -1,6 +1,11 @@
 import { SortField } from "./SortField";
 
 export class Pagination implements IPagination {
+
+  static parseJson(json: string): Pagination {
+    return new Pagination(JSON.parse(json));
+  }
+
   currentPage: number;
   pageSize: number;
   totalPages: number;
@@ -17,10 +22,6 @@ export class Pagination implements IPagination {
     sortFields: [{ fieldName: "White", ascending: true }]
   });
 
-  static parseJson(json: string): Pagination {
-    return new Pagination(JSON.parse(json));
-  }
-
   constructor(pagination: Pagination) {
     this.currentPage = pagination.currentPage;
     this.pageSize = pagination.pageSize;
@@ -28,10 +29,6 @@ export class Pagination implements IPagination {
     this.nextPageUrl = pagination.nextPageUrl;
     this.previousPageUrl = pagination.previousPageUrl;
     this.sortFields = pagination.sortFields;
-  }
-
-  sortFieldFor?(fieldName: string) {
-    return false;
   }
 
   toUrlQueryParams?(): string {
@@ -54,6 +51,7 @@ export class Pagination implements IPagination {
     return urlParams;
   }
 }
+
 export interface IPagination {
   currentPage: number;
   pageSize: number;

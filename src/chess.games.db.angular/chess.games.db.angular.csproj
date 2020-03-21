@@ -24,19 +24,44 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\models\DashboardSummary.ts" />
+    <None Remove="ClientApp\src\app\repos\BaseRepo.ts" />
+    <None Remove="ClientApp\src\app\repos\EventsRepo.ts" />
     <None Remove="ClientApp\src\app\repos\GamesList.ts" />
     <None Remove="ClientApp\src\app\repos\GamesListRepo.ts" />
     <None Remove="ClientApp\src\app\repos\Pagination.ts" />
+    <None Remove="ClientApp\src\app\repos\PlayersRepo.ts" />
+    <None Remove="ClientApp\src\app\repos\SitesRepo.ts" />
     <None Remove="ClientApp\src\app\repos\SortField.ts" />
     <None Remove="ClientApp\src\app\services\ChessGamesService.ts" />
+    <None Remove="ClientApp\src\app\services\DashboardService.ts" />
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\models\DashboardSummary.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\GamesList.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\repos\BaseRepo.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\repos\SitesRepo.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\repos\EventsRepo.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\repos\PlayersRepo.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\repos\GamesListRepo.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\Pagination.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\SortField.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\DashboardService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\ChessGamesService.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ClientApp\src\app\repos\SitesRepo.js">
+      <DependentUpon>SitesRepo.ts</DependentUpon>
+    </None>
+    <None Update="ClientApp\src\app\repos\EventsRepo.js">
+      <DependentUpon>EventsRepo.ts</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

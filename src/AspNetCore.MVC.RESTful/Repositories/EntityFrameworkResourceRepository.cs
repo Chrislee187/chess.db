@@ -51,7 +51,11 @@ namespace AspNetCore.MVC.RESTful.Repositories
         public void Delete(TEntity entity) => DbContext.Set<TEntity>().Remove(entity);
         
         public bool Save() => (DbContext.SaveChanges() >= 0);
-        
+
+        public int Count()
+            => DbContext.Set<TEntity>()
+                .Count();
+
         private IQueryable<TEntity> Reduce(
             IQueryable<TEntity> resources, 
             IEntityFilter<TEntity> filter, 
