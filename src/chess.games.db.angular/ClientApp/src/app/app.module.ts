@@ -5,7 +5,8 @@ import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { MatTableModule } from '@angular/material/table';
-
+import { MatPaginatorModule } from '@angular/material';
+import { MatSortModule } from '@angular/material';
 import { AppComponent } from "./app.component";
 import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 import { HomeComponent } from "./home/home.component";
@@ -36,10 +37,12 @@ import { PlayerListComponent } from "./player-list/player-list.component";
     RouterModule.forRoot([
       { path: "", component: HomeComponent, pathMatch: "full", },
       { path: "chess-games", component: ChessGameListComponent},
-      { path: "player-list", component: PlayerListComponent},
+      { path: "player-list", component: PlayerListComponent}
     ]),
     BrowserAnimationsModule,
-    MatTableModule
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   providers: [],
   bootstrap: [AppComponent]

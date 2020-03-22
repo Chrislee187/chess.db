@@ -14,7 +14,6 @@ namespace chess.db.webapi.Controllers
     [Route("api/games")]
     public class GamesController : ResourceControllerBase<GameDto, Game, Guid>
     {
-        private readonly IGamesRepository _gamesRepository;
         private const string GameRouteName = "GetGame";
         private const string GamesRouteName = "GetGames";
 
@@ -24,7 +23,6 @@ namespace chess.db.webapi.Controllers
             IEntityUpdater<Game, Guid> entityUpdater)
             : base(mapper, gamesRepository, entityUpdater, orderByPropertyMappingService)
         {
-            _gamesRepository = gamesRepository;
         }
 
         [HttpGet(Name = GamesRouteName)]

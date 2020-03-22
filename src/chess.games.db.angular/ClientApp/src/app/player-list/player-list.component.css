@@ -1,0 +1,22 @@
+.mat-column-firstName {
+  width: 33%;
+}
+
+.mat-column-middleName {
+  width: 33%;
+}
+
+.mat-column-lastName {
+  width: 33%;
+}
+.mat-paginator {
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.mat-table {
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+

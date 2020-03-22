@@ -1,3 +1,4 @@
+<p>Hand Coded Table</p>
 <div class="container">
   <div>
     <div id="filters" *ngIf="!apiError">
@@ -14,14 +15,12 @@
                game-list-table-header
                class="thead-dark"
                [sortFields]="list?.pagination?.sortFields"
-               (reSortEvent)="sort($event)"
-        ></thead>
+               (reSortEvent)="sort($event)"></thead>
         <tbody *ngIf="hasGames"
                game-list-table-body
                [list]="list"
                [apiError]="apiError"
-               [errorMessage]="errorMessage"
-        ></tbody>
+               [errorMessage]="errorMessage"></tbody>
         <tfoot *ngIf="hasGames"
                game-list-table-footer
                [list]="list"
