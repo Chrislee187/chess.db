@@ -4,6 +4,7 @@ import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
+import { MatTableModule } from '@angular/material/table';
 
 import { AppComponent } from "./app.component";
 import { NavMenuComponent } from "./nav-menu/nav-menu.component";
@@ -13,6 +14,8 @@ import { GameListTableHeaderComponent } from "./chess-game-list/game-list-table-
 import { GameListTableFooterComponent } from "./chess-game-list/game-list-table-footer/game-list-table-footer.component";
 import { GameListTableBodyComponent } from "./chess-game-list/game-list-table-body/game-list-table-body.component";
 import { GameListTableHeaderCellComponent } from "./chess-game-list/game-list-table-header/game-list-table-header-cell/game-list-table-header-cell.component";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PlayerListComponent } from "./player-list/player-list.component";
 
 @NgModule({
   declarations: [
@@ -23,7 +26,8 @@ import { GameListTableHeaderCellComponent } from "./chess-game-list/game-list-ta
     GameListTableHeaderComponent,
     GameListTableFooterComponent,
     GameListTableBodyComponent,
-    GameListTableHeaderCellComponent
+    GameListTableHeaderCellComponent,
+    PlayerListComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
@@ -32,7 +36,10 @@ import { GameListTableHeaderCellComponent } from "./chess-game-list/game-list-ta
     RouterModule.forRoot([
       { path: "", component: HomeComponent, pathMatch: "full", },
       { path: "chess-games", component: ChessGameListComponent},
-    ])
+      { path: "player-list", component: PlayerListComponent},
+    ]),
+    BrowserAnimationsModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]
