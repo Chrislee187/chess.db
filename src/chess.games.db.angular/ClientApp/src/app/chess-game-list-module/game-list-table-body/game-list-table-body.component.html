@@ -2,7 +2,7 @@
 <tr *ngFor="let g of list.games">
   <td class="text-truncate" title="{{ g.white }}">{{ g.white }}</td>
   <td class="text-truncate" title="{{ g.black }}">{{ g.black }}</td>
-  <td class="text-truncate" title="{{ g.result }}">{{ g.result == "1-0" ? "w" : g.result == "0-1" ? "b" : "½" }}</td>
+  <td class="text-truncate" title="{{ g.result }}">{{ g.result | chessResult }}</td>
   <td class="text-truncate" title="{{ g.event }}">{{ g.event }}</td>
   <td class="text-truncate">{{ g.round }}</td>
   <td class="text-truncate" title="{{ g.site }}">{{ g.site }}</td>

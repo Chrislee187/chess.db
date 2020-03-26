@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { GameListTableBodyComponent } from "./game-list-table-body.component";
+import { ChessResultPipe } from "../chess-result.pipe";
 
 describe("GameListTableBodyComponent", () => {
   let component: GameListTableBodyComponent;
@@ -8,7 +9,7 @@ describe("GameListTableBodyComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GameListTableBodyComponent ]
+      declarations: [ GameListTableBodyComponent, ChessResultPipe ]
     })
     .compileComponents();
   }));

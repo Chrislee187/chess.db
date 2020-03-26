@@ -10,19 +10,17 @@ import { GameListTableHeaderCellComponent } from
 import { GameListTableBodyComponent } from "./game-list-table-body/game-list-table-body.component";
 import { GameListTableFooterComponent } from "./game-list-table-footer/game-list-table-footer.component";
 import { GameListTableHeaderComponent } from "./game-list-table-header/game-list-table-header.component";
+import { ChessResultPipe } from "./chess-result.pipe";
 
 @NgModule({
   declarations: [
 
     ChessGameListComponent,
-//    NavMenuComponent,
-//    HomeComponent,
-//    ,
     GameListTableHeaderComponent,
     GameListTableFooterComponent,
     GameListTableBodyComponent,
-    GameListTableHeaderCellComponent
-//    PlayerListComponent
+    GameListTableHeaderCellComponent,
+    ChessResultPipe
   ],
   imports: [
     CommonModule,
@@ -30,7 +28,7 @@ import { GameListTableHeaderComponent } from "./game-list-table-header/game-list
     FormsModule,
     RouterModule.forChild([
       { path: "chess-games", component: ChessGameListComponent }
-      ])
+    ])
   ],
   exports: [ChessGameListComponent],
   providers: [],

@@ -4,7 +4,6 @@ import { BaseRepo } from "./BaseRepo";
 import { Player } from "../player-list/player-list.component";
 import { Pagination } from "../models/Pagination";
 import { SortField } from "../models/SortField";
-import { GamesList } from "../models/GamesList";
 import { Observable, throwError  } from "rxjs";
 import { catchError, map  } from "rxjs/operators";
 

@@ -12,6 +12,8 @@ import { HomeComponent } from "./home/home.component";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlayerListComponent } from "./player-list/player-list.component";
 import { ChessListModule } from "./chess-game-list-module/chess-game-list.module";
+import { ChessResultPipe } from "./chess-game-list-module/chess-result.pipe";
+
 
 @NgModule({
   declarations: [

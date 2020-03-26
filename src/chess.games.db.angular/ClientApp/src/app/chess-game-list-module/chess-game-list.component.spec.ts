@@ -11,6 +11,7 @@ import { HttpClientTestingModule } from "@angular/common/http/testing"
 import { GamesListBuilder } from "../builders/GamesListBuilder";
 import { GameListTableHeaderCellComponent } from
   "./game-list-table-header/game-list-table-header-cell/game-list-table-header-cell.component";
+import { ChessResultPipe } from "./chess-result.pipe";
 
 let component: ChessGameListComponent;
 let fixture: ComponentFixture<ChessGameListComponent>;
@@ -25,7 +26,7 @@ describe("chess-game-list component", () => {
             GameListTableHeaderComponent,
             GameListTableHeaderCellComponent,
             GameListTableBodyComponent,
-            GameListTableFooterComponent
+            GameListTableFooterComponent, ChessResultPipe
           ],
           imports: [
             BrowserModule,
