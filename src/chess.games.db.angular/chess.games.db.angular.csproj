@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\chess-game-list-module\chess-game-list.module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\DashboardSummary.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\GamesList.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\repos\BaseRepo.ts" />
