@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { PlayersRepo } from "../repos/PlayersRepo";
-import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { PlayersDataSource } from "./PlayersDataSource";
@@ -9,9 +8,6 @@ import { tap } from "rxjs/operators";
 import { merge } from "rxjs";
 import { SortField } from "../models/SortField";
 
-/**
- * @title Basic use of `<table mat-table>`
- */
 @Component({
   selector: "player-list",
   styleUrls: ["player-list.component.css"],
@@ -29,7 +25,8 @@ export class PlayerListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: true }) matPaginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) matSorter: MatSort;
 
-  constructor(private playersRepo: PlayersRepo) {  }
+  constructor(private playersRepo: PlayersRepo) {
+  }
 
 
   ngOnInit(): void {

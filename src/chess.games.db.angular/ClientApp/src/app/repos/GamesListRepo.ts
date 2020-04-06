@@ -17,9 +17,9 @@ export class GamesListRepo extends BaseRepo{
 
   constructor(protected httpClient: HttpClient) { super(httpClient, GamesListRepo.rootUrl)}
 
-  loadGames(url: string, pagination?: Pagination): Observable<GamesList> {
+  loadGames(url: string, pagination: Pagination): Observable<GamesList> {
 
-    pagination = pagination || Pagination.default;
+//    pagination = pagination || Pagination.default();
 
     url = this.addPaginationToUrl(pagination, url);
 
@@ -62,7 +62,7 @@ export class GamesListRepo extends BaseRepo{
       parsed.sortFields = sortFields;
       return parsed;
     } else {
-      return Pagination.default;
+      return Pagination.default(sortFields);
     }
   }
 

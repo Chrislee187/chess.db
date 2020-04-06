@@ -40,9 +40,6 @@ export class GameListTableHeaderCellComponent implements OnInit, OnChanges {
       sortAscending = !sortAscending;
     }
 
-    this.reSortEvent.next({
-      fieldName: field,
-      ascending: sortAscending
-    });
+    this.reSortEvent.next(new SortField(field,sortAscending));
   }
 }
