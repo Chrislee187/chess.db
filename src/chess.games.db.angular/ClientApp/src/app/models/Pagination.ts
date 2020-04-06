@@ -13,14 +13,16 @@ export class Pagination implements IPagination {
   previousPageUrl?: string;
   sortFields: SortField[];
 
-  static default = new Pagination({
-    currentPage: 1,
-    pageSize: 10,
-    totalPages: 0,
-    nextPageUrl: "",
-    previousPageUrl: "",
-    sortFields: [{ fieldName: "White", ascending: true }]
-  });
+  static default(sortFields: SortField[]): Pagination {
+    return new Pagination({
+      currentPage: 1,
+      pageSize: 10,
+      totalPages: 0,
+      nextPageUrl: "",
+      previousPageUrl: "",
+      sortFields: sortFields
+    });
+  }
 
   constructor(pagination: Pagination) {
     this.currentPage = pagination.currentPage;
@@ -38,8 +40,7 @@ export class Pagination implements IPagination {
 
 
     if (this.sortFields.length > 0) {
-      let orderByParams = "";
-      orderByParams = this.sortFields
+      const orderByParams = this.sortFields
         .reduce((g: string, field: SortField) => {
           g += `${field.fieldName}${field.ascending ? "" : " desc"},`;
           return g;

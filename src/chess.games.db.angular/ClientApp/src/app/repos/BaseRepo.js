@@ -21,6 +21,16 @@ var BaseRepo = /** @class */ (function () {
             return +response.body;
         }));
     };
+    BaseRepo.prototype.addPaginationToUrl = function (pagination, url) {
+        if (pagination) {
+            var i = url.indexOf("?");
+            if (i > -1) {
+                url = url.substr(0, i);
+            }
+            url += pagination.toUrlQueryParams();
+        }
+        return url;
+    };
     return BaseRepo;
 }());
 exports.BaseRepo = BaseRepo;

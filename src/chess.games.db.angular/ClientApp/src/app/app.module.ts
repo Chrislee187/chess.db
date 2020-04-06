@@ -6,6 +6,7 @@ import { RouterModule } from "@angular/router";
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material';
 import { MatSortModule } from '@angular/material';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AppComponent } from "./app.component";
 import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 import { HomeComponent } from "./home/home.component";
@@ -34,7 +35,8 @@ import { ChessResultPipe } from "./chess-game-list-module/chess-result.pipe";
     BrowserAnimationsModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

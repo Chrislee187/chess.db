@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
 import { catchError, map } from "rxjs/operators"
+import { Pagination } from "../models/Pagination";
 
 export class BaseRepo {
 
@@ -22,6 +23,18 @@ export class BaseRepo {
           return +response.body;
         })
       );
+  }
+
+
+  protected addPaginationToUrl(pagination: Pagination, url: string) {
+    if (pagination) {
+      const i = url.indexOf("?");
+      if (i > -1) {
+        url = url.substr(0, i);
+      }
+      url += pagination.toUrlQueryParams();
+    }
+    return url;
   }
 
 }

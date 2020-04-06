@@ -31,4 +31,8 @@ export class SortField {
 
   constructor(public fieldName: string, public ascending: boolean) {
   }
+
+  public get matSortDirection(): string {
+    return this.ascending ? "asc" : "desc";
+  }
 }

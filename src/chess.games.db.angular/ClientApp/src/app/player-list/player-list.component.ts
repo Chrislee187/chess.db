@@ -1,8 +1,13 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { PlayersRepo } from "../repos/PlayersRepo";
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { PlayersDataSource } from "./PlayersDataSource";
+import { Pagination } from "../models/Pagination";
+import { tap } from "rxjs/operators";
+import { merge } from "rxjs";
+import { SortField } from "../models/SortField";
 
 /**
  * @title Basic use of `<table mat-table>`
@@ -12,30 +17,46 @@ import { MatSort } from '@angular/material/sort';
   styleUrls: ["player-list.component.css"],
   templateUrl: "player-list.component.html",
 })
-export class PlayerListComponent implements OnInit {
+export class PlayerListComponent implements OnInit, AfterViewInit {
+  private pagination: Pagination = Pagination.default([new SortField("lastName", true)]);
 
   displayedColumns: string[] = ["firstName", "middleName", "lastName"];
 
-  public players: MatTableDataSource<Player>; // Player
+  dataSource: PlayersDataSource;
+
+  pageSize: number = this.pagination.pageSize;
+
   @ViewChild(MatPaginator, { static: true }) matPaginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) matSorter: MatSort;
 
   constructor(private playersRepo: PlayersRepo) {  }
 
-  ngOnInit(): void {
 
-    this.playersRepo.load().subscribe({
-      next: data => {
-        this.players = new MatTableDataSource<Player>(data);
-        this.players.paginator = this.matPaginator;
-        this.players.sort = this.matSorter;
-      },
-      error: error => {
-        console.log("ErRoR: ", error);
-      }
-    });
+  ngOnInit(): void {
+    this.dataSource = new PlayersDataSource(this.playersRepo);
+    this.dataSource.loadPlayers(this.pagination);
+  }
+
+  ngAfterViewInit() {
+   this.matSorter.sortChange.subscribe(() => this.matPaginator.pageIndex = 0);
+
+    merge(this.matSorter.sortChange, this.matPaginator.page)
+      .pipe(
+        tap(() => this.loadPlayersPage())
+      )
+      .subscribe();
+  }
+
+  loadPlayersPage() {
+    this.pagination.pageSize = this.matPaginator.pageSize;
+    this.pagination.currentPage = this.matPaginator.pageIndex + 1;
+
+    this.pagination.sortFields = [new SortField(this.matSorter.active, this.matSorter.direction === 'asc')];
+
+    this.dataSource.loadPlayers(this.pagination);
   }
 }
+
 
 export interface Player {
   firstName: string;

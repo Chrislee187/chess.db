@@ -1,9 +1,14 @@
 <p>Angular Materials Table</p>
 <div class="container">
-  <table mat-table matSort
-         [dataSource]="players"
+  <div *ngIf="dataSource.loading$ | async"><mat-spinner></mat-spinner></div>
+  <table mat-table
+         matSort
+         [matSortActive]="pagination.sortFields[0].fieldName"
+         [matSortDirection]="pagination.sortFields[0]?.matSortDirection"
+         matSortDisableClear ="true"
+         [dataSource]="dataSource"
          class="mat-elevation-z8 ">
-
+    <mat-spinner></mat-spinner>
     <!--- Note that these columns can be defined in any order.
     The actual rendered columns are set as a property on the row definition" -->
     <!-- Position Column -->
@@ -31,6 +36,10 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
-  <mat-paginator [pageSizeOptions]="[5, 10, 200]" showFirstLastButtons></mat-paginator>
+  <mat-paginator
+                 [length]="dataSource?.playersCount$ | async"
+                 [pageSizeOptions]="[5, 10, 100]"
+                 [pageSize]="pageSize"
+                 showFirstLastButtons></mat-paginator>
 
 </div>

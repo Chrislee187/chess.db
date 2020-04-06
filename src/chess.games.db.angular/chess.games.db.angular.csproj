@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\models\DashboardSummary.ts" />
+    <None Remove="ClientApp\src\app\player-list\PlayersDataSource.ts" />
     <None Remove="ClientApp\src\app\repos\BaseRepo.ts" />
     <None Remove="ClientApp\src\app\repos\EventsRepo.ts" />
     <None Remove="ClientApp\src\app\repos\GamesList.ts" />
@@ -41,6 +42,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\chess-game-list-module\chess-game-list.module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\DashboardSummary.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\GamesList.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\player-list\PlayersDataSource.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\repos\BaseRepo.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\repos\SitesRepo.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\repos\EventsRepo.ts" />

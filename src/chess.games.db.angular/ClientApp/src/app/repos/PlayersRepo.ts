@@ -3,7 +3,6 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { BaseRepo } from "./BaseRepo";
 import { Player } from "../player-list/player-list.component";
 import { Pagination } from "../models/Pagination";
-import { SortField } from "../models/SortField";
 import { Observable, throwError  } from "rxjs";
 import { catchError, map  } from "rxjs/operators";
 
@@ -16,8 +15,11 @@ export class PlayersRepo extends BaseRepo {
 
   constructor(protected httpClient: HttpClient) { super(httpClient, PlayersRepo.rootUrl) }
 
-  load(): Observable<any> {
+  load(pagination?: Pagination): Observable<Player[]> {
     let url = PlayersRepo.rootUrl;
+
+    url = this.addPaginationToUrl(pagination, url);
+
     return this.httpClient
       .get(url,
         {

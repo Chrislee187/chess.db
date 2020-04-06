@@ -26,7 +26,7 @@ export class ChessGameListComponent implements OnInit {
     // TODO: Move to config
     const rootUrl = "http://localhost:5000/api/games";
 
-    this.loadTable(rootUrl, Pagination.default);
+    this.loadTable(rootUrl, Pagination.default([new SortField("White", true)]));
   }
 
   loadTable(url: string, pagination?: Pagination): void {

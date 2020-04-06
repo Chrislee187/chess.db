@@ -53,16 +53,6 @@ export class GamesListRepo extends BaseRepo{
       );
   }
 
-  private addPaginationToUrl(pagination: Pagination, url: string) {
-    if (pagination) {
-      const i = url.indexOf("?");
-      if (i > -1) {
-        url = url.substr(0, i);
-      }
-      url += pagination.toUrlQueryParams();
-    }
-    return url;
-  }
 
   private getPaginationFromHeader(response: any, sortFields: SortField[]): Pagination {
     const paginationJson = response.headers.get("X-Pagination");

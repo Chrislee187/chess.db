@@ -12,12 +12,21 @@ var Pagination = /** @class */ (function () {
     Pagination.parseJson = function (json) {
         return new Pagination(JSON.parse(json));
     };
+    Pagination.default = function (sortFields) {
+        return new Pagination({
+            currentPage: 1,
+            pageSize: 10,
+            totalPages: 0,
+            nextPageUrl: "",
+            previousPageUrl: "",
+            sortFields: sortFields
+        });
+    };
     Pagination.prototype.toUrlQueryParams = function () {
         var urlParams = "?page-size=" + this.pageSize;
         urlParams += "&page=" + this.currentPage;
         if (this.sortFields.length > 0) {
-            var orderByParams = "";
-            orderByParams = this.sortFields
+            var orderByParams = this.sortFields
                 .reduce(function (g, field) {
                 g += "" + field.fieldName + (field.ascending ? "" : " desc") + ",";
                 return g;
@@ -26,14 +35,6 @@ var Pagination = /** @class */ (function () {
         }
         return urlParams;
     };
-    Pagination.default = new Pagination({
-        currentPage: 1,
-        pageSize: 10,
-        totalPages: 0,
-        nextPageUrl: "",
-        previousPageUrl: "",
-        sortFields: [{ fieldName: "White", ascending: true }]
-    });
     return Pagination;
 }());
 exports.Pagination = Pagination;
