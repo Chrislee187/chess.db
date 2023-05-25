@@ -19,10 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\chess.db.webapi\chess.db.webapi.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="SampleDatabase\ChessDB.sqlite">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

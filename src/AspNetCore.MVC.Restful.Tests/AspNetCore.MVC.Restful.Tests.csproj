@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AspNetCore.MVC.RESTful\AspNetCore.MVC.RESTful.csproj" />
     <ProjectReference Include="..\chess.games.db\chess.games.db.csproj" />
   </ItemGroup>
 
