@@ -1,18 +1,25 @@
 ﻿
 
 using Chess.Games.Data;
+using Chess.Games.Data.Entities;
+using Chess.Games.Data.Repos;
 
 await using (ChessGamesDbContext context = new ChessGamesDbContext())
 {
     await context.Database.EnsureCreatedAsync();
 }
 
+using var ctx = new ChessGamesDbContext();
+var repo = new EventRepo(ctx);
+
+repo.Add(new EventEntity() { Name=$"Test Event at {DateTimeOffset.Now}"});
+repo.Save();
 GetEvents();
 
 void GetEvents()
 {
-    using var ctx = new ChessGamesDbContext();
-    var evts = ctx.Events.ToList();
+
+    var evts = repo.Get().OrderBy(e => e.Name);
 
     foreach (var eventEntity in evts)
     {

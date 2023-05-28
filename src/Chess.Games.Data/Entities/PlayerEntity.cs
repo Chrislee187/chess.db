@@ -1,6 +1,8 @@
-﻿namespace Chess.Games.Data.Entities;
+﻿using EasyEF.Entities;
 
-public class PlayerEntity : Entity
+namespace Chess.Games.Data.Entities;
+
+public record PlayerEntity : Entity
 {
     public string Name { get; set; }
 }

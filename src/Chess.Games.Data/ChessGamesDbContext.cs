@@ -15,8 +15,10 @@ namespace Chess.Games.Data
             // var sqlServerDev = "Server=localhost;Database=ChessGames;Trusted_Connection=True;";
             // var sqlServerVS = "(localdb)\\v11.0;Integrated Security=true";
             // var sqlServerVS2 = "Data Source = (localdb)\\MSSQLLocalDb;Initial Catalog=ChessGames";
-            var sqlServerDev2 = "Server=localhost;Database=ChessGames;Trusted_Connection=True;Encrypt=false";
-            optionsBuilder.UseSqlServer(sqlServerDev2);
+            var sqlServerDev2 = "Server=localhost;Database=ChessMatch;Trusted_Connection=True;Encrypt=false";
+            optionsBuilder
+                .UseSqlServer(sqlServerDev2)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,12 +26,23 @@ namespace Chess.Games.Data
             modelBuilder.Entity<GameEntity>()
                 .HasOne<PlayerEntity>(o => o.Black)
                 .WithMany()
-                .OnDelete(DeleteBehavior.NoAction)
-                ;
+                .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<GameEntity>()
                 .HasOne<PlayerEntity>(o => o.White)
                 .WithMany()
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<GameEntity>()
+                .HasOne<SiteEntity>(o => o.Site)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<GameEntity>()
+                .HasOne<EventEntity>(o => o.Event)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
+
 }

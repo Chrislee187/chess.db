@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Chess.Games.Data.Entities;
+namespace EasyEF.Entities;
 
 [PrimaryKey("Id")]
-public abstract class Entity
+public abstract record Entity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 }

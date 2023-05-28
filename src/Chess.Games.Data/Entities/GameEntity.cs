@@ -1,13 +1,15 @@
-﻿namespace Chess.Games.Data.Entities;
+﻿using EasyEF.Entities;
 
-public class GameEntity : Entity
+namespace Chess.Games.Data.Entities;
+
+public record GameEntity : Entity
 {
     public string SourceEventText { get; set; }
-    public EventEntity EventEntity { get; set; }
+    public EventEntity Event { get; set; }
     public Guid EventId { get; set; }
 
     public string SourceSiteText { get; set; }
-    public SiteEntity SiteEntity { get; set; }
+    public SiteEntity Site { get; set; }
     public Guid SiteId { get; set; }
 
     public string SourceWhitePlayerText{ get; set; }
