@@ -63,7 +63,7 @@ Nf2 42. g4 Bd3 43. Re6 1/2-1/2
         if (args.Length == 0)
         {
             games = PgnGame.ReadAllGamesFromString(WikiSamplePgnText);
-            _logger.LogInformation("No file find, use Wiki Sample PGN");
+            _logger.LogInformation("No file find, using Wiki Sample PGN text from https://en.wikipedia.org/wiki/Portable_Game_Notation#Example");
         }
         else
         {

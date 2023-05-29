@@ -13,9 +13,9 @@ using Microsoft.Extensions.Logging.Console;
 using var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
-        AddLogging(services);
-
         AddConfig(services);
+
+        AddLogging(services);
 
         services.AddScoped<DbContext, ChessGamesDbContext>();
 
@@ -41,6 +41,7 @@ void AddLogging(IServiceCollection serviceCollection)
         {
             o.SingleLine = true;
             o.UseUtcTimestamp = true;
+            o.IncludeScopes = true;
             o.TimestampFormat = "HH:mm:ss:ffffff ";
         });
         bld.AddDebug();
@@ -51,7 +52,7 @@ void AddConfig(IServiceCollection serviceCollection)
 {
     var configuration = new ConfigurationBuilder()
         .SetBasePath(Directory.GetCurrentDirectory())
-        .AddJsonFile("appsettings.json", optional: true)
+        .AddJsonFile("appsettings.json", optional: false)
         .AddEnvironmentVariables()
         .Build();
 

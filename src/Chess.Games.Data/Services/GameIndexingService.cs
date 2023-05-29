@@ -11,16 +11,19 @@ public class GameIndexingService : IGameIndexingService
     {
         _gameRepository = gameRepository;
     }
-    public bool TryAdd(GameEntity game)
+    public bool TryAdd(GameEntity game, out GameEntity? existing)
     {
-        if (_gameRepository.Exists(game.SourceEventText, game.SourceSiteText, game.SourceWhitePlayerText,
-                game.SourceBlackPlayerText, game.Round))
+        existing = _gameRepository.FirstOrDefault(g => g.SourceEventText == game.SourceEventText
+                                                       && g.SourceSiteText == game.SourceSiteText
+                                                       && g.SourceWhitePlayerText == game.SourceWhitePlayerText
+                                                       && g.SourceBlackPlayerText == game.SourceBlackPlayerText
+                                                       && g.Round == game.Round);
+        if (existing == null)
         {
             return false;
         }
 
         _gameRepository.Add(game);
-
         return true;
     }
 }
@@ -28,5 +31,5 @@ public class GameIndexingService : IGameIndexingService
 
 public interface IGameIndexingService
 {
-    public bool TryAdd(GameEntity game);
+    public bool TryAdd(GameEntity game, out GameEntity? existing);
 }

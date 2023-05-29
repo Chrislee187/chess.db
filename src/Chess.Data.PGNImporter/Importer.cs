@@ -60,16 +60,17 @@ public class Importer : IImporter
                 SourceMoveText = pgnGame.MoveText
             };
 
-            _logger.LogInformation("{gameCount} : Checking for game: {White} vs {Black}, {Event} Round {Round}", ++gameCount, pgnGame.White, pgnGame.Black, pgnGame.Event, pgnGame.Round);
-            if (_gameIndex.TryAdd(game))
+            _logger.LogInformation("Import game {gameCount} : {White} vs {Black}, {Event} Round {Round}",
+                       ++gameCount, pgnGame.White, pgnGame.Black, pgnGame.Event, pgnGame.Round);
+            if (_gameIndex.TryAdd(game, out var existing))
             {
-                _logger.LogInformation("...adding game to DB");
+                _logger.LogInformation("...importing game");
                 added.Add(game);
-                _eventRepo.Save(); // NOTE: This is the "unit-of-work" commit call (DbContext.SaveChanges())
+                _eventRepo.Save(); // NOTE: This is the "unit-of-work" commit call to DbContext.SaveChanges()
             }
             else
             {
-                _logger.LogInformation("...game already exists in DB");
+                _logger.LogInformation("...game already imported. {GameId}", existing!.Id);
             }
         }
 
