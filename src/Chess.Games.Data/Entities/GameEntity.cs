@@ -25,4 +25,6 @@ public record GameEntity : Entity
     public GameResult Result { get; set; }
 
     public string SourceMoveText { get; set; }
+    public string LanMoveText { get; set; }
+    public int LanMoveTextHash { get; set; }
 }

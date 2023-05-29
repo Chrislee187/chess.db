@@ -5,9 +5,11 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>PgnImport</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="chess.engine" Version="1.1.3.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="pgn-reader" Version="1.0.1" />
   </ItemGroup>
