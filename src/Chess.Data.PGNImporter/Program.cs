@@ -1,4 +1,5 @@
-﻿using Chess.Data.PGNImporter;
+﻿using System.Linq.Expressions;
+using Chess.Data.PGNImporter;
 using Chess.Games.Data;
 using Chess.Games.Data.Repos;
 using Chess.Games.Data.Services;
@@ -7,8 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
-using var _host = Host.CreateDefaultBuilder(args)
+using var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         AddLogging(services);
@@ -26,16 +28,21 @@ using var _host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-UpdateDatabase();
+MigrateDatabase();
 
-var app = _host.Services.GetRequiredService<Startup>();
-app.Execute();
+var app = host.Services.GetRequiredService<Startup>();
+app.Execute(args);
 
 void AddLogging(IServiceCollection serviceCollection)
 {
     serviceCollection.AddLogging(bld =>
     {
-        bld.AddConsole();
+        bld.AddSimpleConsole(o =>
+        {
+            o.SingleLine = true;
+            o.UseUtcTimestamp = true;
+            o.TimestampFormat = "HH:mm:ss:ffffff ";
+        });
         bld.AddDebug();
     });
 }
@@ -49,13 +56,6 @@ void AddConfig(IServiceCollection serviceCollection)
         .Build();
 
     serviceCollection.AddSingleton<IConfigurationRoot>(configuration);
-}
-
-void UpdateDatabase()
-{
-    var dbContext = _host.Services.GetRequiredService<DbContext>();
-    dbContext.Database.EnsureCreated();
-    dbContext.Database.Migrate();
 }
 
 void AddRepos(IServiceCollection serviceCollection)
@@ -72,5 +72,13 @@ void AddServices(IServiceCollection serviceCollection)
     serviceCollection.AddSingleton<ISiteIndexingService, SiteIndexingService>();
     serviceCollection.AddSingleton<IPlayerIndexingService, PlayerIndexingService>();
     serviceCollection.AddSingleton<IGameIndexingService, GameIndexingService>();
+    serviceCollection.AddSingleton<IImporter, Importer>();
+}
+
+void MigrateDatabase()
+{
+    var dbContext = host.Services.GetRequiredService<DbContext>();
+    dbContext.Database.EnsureCreated();
+    dbContext.Database.Migrate();
 }
 

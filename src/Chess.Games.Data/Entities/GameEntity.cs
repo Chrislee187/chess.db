@@ -20,7 +20,7 @@ public record GameEntity : Entity
     public PlayerEntity Black { get; set; }
     public Guid BlackId { get; set; }
     
-    public DateTimeOffset Date { get; set; }
+    public DateTime Date { get; set; }
     public int Round { get; set; }
     public GameResult Result { get; set; }
 

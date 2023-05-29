@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using Chess.Games.Data.Entities;
 using Chess.Games.Data.Repos;
 using Chess.Games.Data.Services;
@@ -11,6 +12,7 @@ namespace Chess.Data.PGNImporter;
 public class Startup 
 {
     private readonly ILogger<Startup> _logger;
+    private readonly IImporter _importer;
     private IEventIndexingService _eventIndex;
     private readonly ISiteIndexingService _siteIndex;
     private readonly IPlayerIndexingService _playerIndex;
@@ -18,7 +20,7 @@ public class Startup
     private IEventRepository _eventRepo;
 
 
-    private const string PgnText = @"
+    private const string WikiSamplePgnText = @"
 [Event ""F/S Return Match""]
 [Site ""Belgrade, Serbia JUG""]
 [Date ""1992.11.04""]
@@ -38,94 +40,38 @@ Nf2 42. g4 Bd3 43. Re6 1/2-1/2
 ";
     public Startup(
         ILogger<Startup> logger,
-        IEventRepository eventRepo,
-        IEventIndexingService eventIndex,
-        ISiteIndexingService siteIndex,
-        IPlayerIndexingService playerIndex,
-        IGameIndexingService gameIndex)
+        IImporter importer)
     {
-        _eventRepo = eventRepo;
-        _eventIndex = eventIndex;
-        _siteIndex = siteIndex;
-        _playerIndex = playerIndex;
-        _gameIndex = gameIndex;
         _logger = logger;
+        _importer = importer;
     }
 
-    public void Execute()
+    public void Execute(string[] args)
     {
-        var games = PgnReader.PgnGame.ReadAllGamesFromString(PgnText);
-
-        foreach (var pgnGame in games)
+        var assemblyName = Assembly.GetExecutingAssembly().GetName();
+        var v = assemblyName.Version;
+        if (v is null)
         {
-            Console.WriteLine($"{pgnGame.Event} {pgnGame.White} vs {pgnGame.Black} Round {pgnGame.Round}");
-
-            var evt = _eventIndex.TryAdd(pgnGame.Event);
-            var site = _siteIndex.TryAdd(pgnGame.Site);
-            var black = _playerIndex.TryAdd(pgnGame.Black);
-            var white = _playerIndex.TryAdd(pgnGame.White);
-            int.TryParse(pgnGame.Round, out int round);
-
-            
-            var game = new GameEntity
-            {
-                SourceEventText = pgnGame.Event,
-                Event = evt,
-                // EventId = default,
-                SourceSiteText = pgnGame.Site,
-                Site = site,
-                // SiteId = default,
-                SourceWhitePlayerText = pgnGame.White,
-                White = white,
-                // WhiteId = default,
-                SourceBlackPlayerText = pgnGame.Black,
-                Black = black,
-                // BlackId = default,
-                Date = default,
-                Round = round,
-                Result = PgnGameResultToGameResult(pgnGame.Result),
-                SourceMoveText = pgnGame.MoveText
-            };
-
-            if (_gameIndex.TryAdd(game))
-            {
-                _eventRepo.Save(); // NOTE: This is the unit-of-work commit call (DbContext.SaveChanges())
-
-            }
-
-
-            // ImportGame(pgnGame);
-
-
-            // Check game doesnt already exist
-            // Add game to Cosmos
-            // If game does exist?
+            _logger.LogInformation("{Name} version unavailable", assemblyName.Name);
+        }
+        else
+        {
+            _logger.LogInformation("{Name} v{ver}", assemblyName.Name, v.ToString());
         }
 
-    }
-
-    private GameResult PgnGameResultToGameResult(PgnGameResult pgnGameResult) =>
-        pgnGameResult switch
+        IEnumerable<PgnGame>? games;
+        if (args.Length == 0)
         {
-            PgnGameResult.Draw => GameResult.Draw,
-            PgnGameResult.WhiteWins => GameResult.WhiteWins,
-            PgnGameResult.BlackWins => GameResult.BlackWins,
-            _ => GameResult.Unknown
-        };
+            games = PgnGame.ReadAllGamesFromString(WikiSamplePgnText);
+            _logger.LogInformation("No file find, use Wiki Sample PGN");
+        }
+        else
+        {
+            games = PgnGame.ReadAllGamesFromFile(args[0]);
+            _logger.LogInformation("Importing games from {PgnFile}...", args[0]);
+        }
 
-
-    // private void ImportGame(PgnGame pgnGame)
-    // {
-    // var pgonGame = new PgonGame(pgnGame);
-    //
-    // IChessIndexRepository index = new SqlChessIndexRepo(_services.GetRequiredService<ChessMatchDbContext>());
-    // if (!index.TryGetEvent(pgonGame.Event, out var evt))
-    // {
-    //     evt = index.AddEvent(pgonGame.Event);
-    // }
-    //
-    // pgonGame.Event = evt.Name;
-    // pgonGame.EventUid = evt.Uid;
-    // }
+        _importer.ImportGames(games);
+    }
 
 }

@@ -1,14 +1,11 @@
 ﻿using Chess.Games.Data.Entities;
 using Chess.Games.Data.Repos;
-using EasyEF.Entities;
 
 namespace Chess.Games.Data.Services;
 
 public class GameIndexingService : IGameIndexingService
 {
     private readonly IGameRepository _gameRepository;
-
-    private IDictionary<string, GameEntity>? _index = null;
 
     public GameIndexingService(IGameRepository gameRepository)
     {

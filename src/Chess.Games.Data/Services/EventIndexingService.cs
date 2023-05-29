@@ -30,6 +30,7 @@ public class EventIndexingService : IEventIndexingService
             Name = eventText
         };
         _eventRepository.Add(entity);
+        _index.Add(entity.Name, entity);
 
         return entity;
     }

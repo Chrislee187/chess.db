@@ -27,6 +27,7 @@ public class SiteIndexingService : ISiteIndexingService
             Name = eventText
         };
         _siteRepository.Add(entity);
+        _index.Add(entity.Name, entity);
 
         return entity;
     }

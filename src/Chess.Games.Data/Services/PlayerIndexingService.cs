@@ -26,6 +26,7 @@ public class PlayerIndexingService : IPlayerIndexingService
         {
             Name = eventText
         };
+        _index.Add(entity.Name, entity);
         _playerRepository.Add(entity);
 
         return entity;
