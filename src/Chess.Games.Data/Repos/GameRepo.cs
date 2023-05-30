@@ -1,12 +1,11 @@
 ﻿using Chess.Games.Data.Entities;
 using EasyEF.Repos;
-using Microsoft.EntityFrameworkCore;
 
 namespace Chess.Games.Data.Repos;
 
 public class GameRepo : EfRepositoryBase<GameEntity>, IGameRepository
 {
-    public GameRepo(DbContext dbContext) : base(dbContext)
+    public GameRepo(ChessGamesDbContext dbContext) : base(dbContext)
     {
     }
 

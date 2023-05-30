@@ -1,14 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using board.engine;
-using board.engine.Board;
-using chess.engine;
-using chess.engine.Entities;
-using chess.engine.Game;
-using Chess.Games.Data.Entities;
-using Chess.Games.Data.Repos;
-using Chess.Games.Data.Services;
-using Microsoft.Extensions.Hosting;
+﻿using System.Reflection;
 using Microsoft.Extensions.Logging;
 using PgnReader;
 
@@ -18,12 +8,6 @@ public class Startup
 {
     private readonly ILogger<Startup> _logger;
     private readonly IImporter _importer;
-    private IEventIndexingService _eventIndex;
-    private readonly ISiteIndexingService _siteIndex;
-    private readonly IPlayerIndexingService _playerIndex;
-    private readonly IGameIndexingService _gameIndex;
-    private IEventRepository _eventRepo;
-
 
     private const string WikiSamplePgnText = @"
 [Event ""F/S Return Match""]

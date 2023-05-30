@@ -1,5 +1,4 @@
-﻿using System;
-using PgnReader;
+﻿using PgnReader;
 
 namespace chess.games.db.pgnimporter.Extensions
 {

@@ -1,24 +1,51 @@
 ﻿using Chess.Games.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Chess.Games.Data
 {
     public class ChessGamesDbContext : DbContext
     {
-        public DbSet<EventEntity> Events { get; set; }
-        public DbSet<SiteEntity> Sites { get; set; }
-        public DbSet<PlayerEntity> Players { get; set; }
-        public DbSet<GameEntity> Games { get; set; }
+        public static bool EnableLogging;
+        private IConfigurationRoot _config;
+        private ILogger<ChessGamesDbContext> _logger;
+
+        public virtual DbSet<EventEntity> Events { get; set; }
+        public virtual DbSet<SiteEntity> Sites { get; set; }
+        public virtual DbSet<PlayerEntity> Players { get; set; }
+        public virtual DbSet<GameEntity> Games { get; set; }
+
+        public ChessGamesDbContext()
+        {
+            _logger = NullLogger<ChessGamesDbContext>.Instance;
+        }
+
+        public ChessGamesDbContext(
+            DbContextOptions<ChessGamesDbContext> options, 
+            IConfigurationRoot config,
+            ILogger<ChessGamesDbContext> logger)
+            : base(options)
+        {
+            _logger = logger;
+            if(bool.TryParse(config["Database:ChessMatches:EfLogging"], out bool enableLogging))
+            {
+                EnableLogging = enableLogging;
+            }
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // var sqlServerDev = "Server=localhost;Database=ChessGames;Trusted_Connection=True;";
-            // var sqlServerVS = "(localdb)\\v11.0;Integrated Security=true";
-            // var sqlServerVS2 = "Data Source = (localdb)\\MSSQLLocalDb;Initial Catalog=ChessGames";
-            var sqlServerDev2 = "Server=localhost;Database=ChessMatch;Trusted_Connection=True;Encrypt=false";
+            var sqlServerDev2 = "name=Database:ChessMatches:ConnectionString";
             optionsBuilder
                 .UseSqlServer(sqlServerDev2)
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
+
+            if (EnableLogging)
+            {
+                optionsBuilder.LogTo((m) => _logger.LogInformation(m), new [] {DbLoggerCategory.Migrations.Name});
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

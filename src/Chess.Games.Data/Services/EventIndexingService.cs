@@ -1,8 +1,5 @@
-﻿using System.Dynamic;
-using Chess.Games.Data.Entities;
+﻿using Chess.Games.Data.Entities;
 using Chess.Games.Data.Repos;
-using EasyEF.Entities;
-using EasyEF.Repos;
 
 namespace Chess.Games.Data.Services;
 

@@ -103,7 +103,7 @@ public class Importer : IImporter
             var result = gameReplay.Move(turn.White.San);
             lanMoveList.Add(result.Lan);
 
-            // TODO: this can be a UNIQUE key for this exact board position and state
+            // TODO: this can be used as a UNIQUE key for this exact board position and state
             var serialized = GetSerializedBoardState(gameReplay);
 
             if (turn.Black != null)
@@ -164,6 +164,11 @@ public class Importer : IImporter
 
     private static Guid EncodePiecesIntoGuid(List<byte> pieces)
     {
+        if (pieces.Count != 32)
+        {
+            byte[] padding = new byte[32 - pieces.Count];
+            pieces.AddRange(padding);
+        }
         var malformedGuid = pieces.Aggregate("", (s, a) => s + a.ToString("x"));
 
         var pseudoGuid = malformedGuid[0..8] + "-"

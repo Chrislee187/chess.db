@@ -18,7 +18,7 @@ public class GameIndexingService : IGameIndexingService
                                                        && g.SourceWhitePlayerText == game.SourceWhitePlayerText
                                                        && g.SourceBlackPlayerText == game.SourceBlackPlayerText
                                                        && g.Round == game.Round);
-        if (existing == null)
+        if (existing != null)
         {
             return false;
         }

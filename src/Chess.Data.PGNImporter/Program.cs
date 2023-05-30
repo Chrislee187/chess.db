@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Chess.Data.PGNImporter;
+﻿using Chess.Data.PGNImporter;
 using Chess.Games.Data;
 using Chess.Games.Data.Repos;
 using Chess.Games.Data.Services;
@@ -8,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 
 using var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
@@ -17,7 +15,10 @@ using var host = Host.CreateDefaultBuilder(args)
 
         AddLogging(services);
 
-        services.AddScoped<DbContext, ChessGamesDbContext>();
+        services.AddDbContext<ChessGamesDbContext>(opts =>
+        {
+            opts.UseSqlServer("name=Databases:MatchesDb");
+        });
 
         AddRepos(services);
 
@@ -54,6 +55,7 @@ void AddConfig(IServiceCollection serviceCollection)
         .SetBasePath(Directory.GetCurrentDirectory())
         .AddJsonFile("appsettings.json", optional: false)
         .AddEnvironmentVariables()
+        // TODO: Add env specific settings support
         .Build();
 
     serviceCollection.AddSingleton<IConfigurationRoot>(configuration);
@@ -78,7 +80,7 @@ void AddServices(IServiceCollection serviceCollection)
 
 void MigrateDatabase()
 {
-    var dbContext = host.Services.GetRequiredService<DbContext>();
+    var dbContext = host.Services.GetRequiredService<ChessGamesDbContext>();
     dbContext.Database.EnsureCreated();
     dbContext.Database.Migrate();
 }
