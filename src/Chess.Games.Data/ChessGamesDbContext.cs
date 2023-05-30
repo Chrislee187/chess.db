@@ -3,25 +3,31 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Data;
 
 namespace Chess.Games.Data
 {
     public class ChessGamesDbContext : DbContext
     {
-        public static bool EnableLogging;
-        private IConfigurationRoot _config;
-        private ILogger<ChessGamesDbContext> _logger;
+        private readonly bool _enableLogging;
+        private readonly bool _insensitiveLogging;
+        private readonly ILogger<ChessGamesDbContext> _logger;
 
-        public virtual DbSet<EventEntity> Events { get; set; }
-        public virtual DbSet<SiteEntity> Sites { get; set; }
-        public virtual DbSet<PlayerEntity> Players { get; set; }
-        public virtual DbSet<GameEntity> Games { get; set; }
+        public virtual DbSet<EventEntity>? Events { get; set; }
+        public virtual DbSet<SiteEntity>? Sites { get; set; }
+        public virtual DbSet<PlayerEntity>? Players { get; set; }
+        public virtual DbSet<GameEntity>? Games { get; set; }
+
+        private readonly string _conString = "Server=localhost;Database=ChessMatch;Trusted_Connection=True;Encrypt=false;";
 
         public ChessGamesDbContext()
         {
             _logger = NullLogger<ChessGamesDbContext>.Instance;
         }
-
+        public ChessGamesDbContext(DbContextOptions<ChessGamesDbContext> options, ILogger<ChessGamesDbContext>? logger = null) : base(options)
+        {
+            _logger ??= NullLogger<ChessGamesDbContext>.Instance;
+        }
         public ChessGamesDbContext(
             DbContextOptions<ChessGamesDbContext> options, 
             IConfigurationRoot config,
@@ -31,20 +37,34 @@ namespace Chess.Games.Data
             _logger = logger;
             if(bool.TryParse(config["Database:ChessMatches:EfLogging"], out bool enableLogging))
             {
-                EnableLogging = enableLogging;
+                _enableLogging = enableLogging;
             }
+            // TODO: Should only be enabled on DEV envs.
+            if (bool.TryParse(config["Database:ChessMatches:InsensitiveLogging"], out bool insensitiveLogging))
+            {
+                _insensitiveLogging = insensitiveLogging;
+            }
+            _conString = "name=Database:ChessMatches:ConnectionString";
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var sqlServerDev2 = "name=Database:ChessMatches:ConnectionString";
-            optionsBuilder
-                .UseSqlServer(sqlServerDev2)
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
-
-            if (EnableLogging)
+            if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.LogTo((m) => _logger.LogInformation(m), new [] {DbLoggerCategory.Migrations.Name});
+                optionsBuilder
+                    .UseSqlServer(_conString)
+                    .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
+
+                if (_enableLogging)
+                {
+                    optionsBuilder.LogTo((m) => _logger.LogInformation(m),
+                        new[] { DbLoggerCategory.Database.Command.Name });
+                }
+
+                if (_insensitiveLogging)
+                {
+                    optionsBuilder.EnableSensitiveDataLogging(_insensitiveLogging);
+                }
             }
         }
 

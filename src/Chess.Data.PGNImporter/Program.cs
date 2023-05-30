@@ -58,7 +58,7 @@ void AddConfig(IServiceCollection serviceCollection)
         // TODO: Add env specific settings support
         .Build();
 
-    serviceCollection.AddSingleton<IConfigurationRoot>(configuration);
+    serviceCollection.AddSingleton(configuration);
 }
 
 void AddRepos(IServiceCollection serviceCollection)
