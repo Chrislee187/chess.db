@@ -71,11 +71,12 @@ void AddRepos(IServiceCollection serviceCollection)
 
 void AddServices(IServiceCollection serviceCollection)
 {
-    serviceCollection.AddSingleton<IEventIndexingService, EventIndexingService>();
-    serviceCollection.AddSingleton<ISiteIndexingService, SiteIndexingService>();
-    serviceCollection.AddSingleton<IPlayerIndexingService, PlayerIndexingService>();
-    serviceCollection.AddSingleton<IGameIndexingService, GameIndexingService>();
-    serviceCollection.AddSingleton<IImporter, Importer>();
+    serviceCollection.AddScoped<IEventIndexingService, EventIndexingService>();
+    serviceCollection.AddScoped<ISiteIndexingService, SiteIndexingService>();
+    serviceCollection.AddScoped<IPlayerIndexingService, PlayerIndexingService>();
+    serviceCollection.AddScoped<IGameIndexingService, GameIndexingService>();
+    serviceCollection.AddScoped<IImporter, Importer>();
+    serviceCollection.AddScoped<IChessBoardStateSerializer, ChessBoardStateSerializer>();
 }
 
 void MigrateDatabase()

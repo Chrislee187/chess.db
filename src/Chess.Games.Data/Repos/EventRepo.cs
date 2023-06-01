@@ -9,7 +9,7 @@ public class EventRepo : EfRepositoryBase<EventEntity>, IEventRepository
     {
     }
 
-    public IEnumerable<EventEntity> GetAll() => Query;
+    public IEnumerable<EventEntity> GetAll() => Get();
 }
 
 public interface IEventRepository : ILinqRepository<EventEntity>

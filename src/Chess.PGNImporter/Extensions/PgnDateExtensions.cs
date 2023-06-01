@@ -1,6 +1,6 @@
 ﻿using PgnReader;
 
-namespace chess.games.db.pgnimporter.Extensions
+namespace Chess.PGNImporter.Extensions
 {
     public static class PgnDateExtensions
     {
@@ -16,7 +16,7 @@ namespace chess.games.db.pgnimporter.Extensions
         {
             if (v.HasValue && v != 0)
             {
-                return v.ToString();
+                return v.ToString()!;
             }
 
             return def;

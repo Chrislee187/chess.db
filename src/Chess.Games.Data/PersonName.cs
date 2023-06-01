@@ -27,7 +27,7 @@ public class PersonName
 
         try
         {
-            string lastname;
+            var lastname = text;
             if (text.Contains(','))
             {
                 (firstname, middleName, lastname) = ParseReversedName(text);
@@ -35,10 +35,6 @@ public class PersonName
             else if (text.Contains(' '))
             {
                 (firstname, middleName, lastname) = ParseName(text);
-            }
-            else
-            {
-                lastname = text;
             }
 
             personName = new PersonName(firstname, middleName, lastname);
@@ -54,6 +50,8 @@ public class PersonName
 
     private static (string? firstname, string? middleName, string? lastname) ParseName(string text)
     {
+        ArgumentException.ThrowIfNullOrEmpty(text);
+
         string? firstname = null;
         string? middleName = null;
         string lastname;

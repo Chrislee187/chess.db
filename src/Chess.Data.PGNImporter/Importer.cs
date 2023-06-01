@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using board.engine.Board;
+﻿using board.engine.Board;
 using board.engine;
 using chess.engine.Entities;
 using chess.engine.Game;
@@ -21,15 +20,15 @@ public class Importer : IImporter
     private readonly IGameIndexingService _gameIndex;
     private readonly IEventRepository _eventRepo;
 
-    private readonly ChessPiece4BitEncoder _pieceEncoder = new();
-    private readonly ChessBoardStateSerializer _boardSerializer = new();
+    private readonly IChessBoardStateSerializer _boardSerializer;
     public Importer(
         ILogger<Importer> logger,
         IEventRepository eventRepo,
         IEventIndexingService eventIndex,
         ISiteIndexingService siteIndex,
         IPlayerIndexingService playerIndex,
-        IGameIndexingService gameIndex)
+        IGameIndexingService gameIndex,
+        IChessBoardStateSerializer boardSerializer)
     {
         _eventRepo = eventRepo;
         _eventIndex = eventIndex;
@@ -37,6 +36,7 @@ public class Importer : IImporter
         _playerIndex = playerIndex;
         _gameIndex = gameIndex;
         _logger = logger;
+        _boardSerializer = boardSerializer;
     }
 
     public IEnumerable<GameEntity> ImportGames(IEnumerable<PgnGame> games)
@@ -75,7 +75,7 @@ public class Importer : IImporter
         var site = _siteIndex.TryAdd(pgnGame.Site);
         var black = _playerIndex.TryAdd(pgnGame.Black);
         var white = _playerIndex.TryAdd(pgnGame.White);
-        int.TryParse(pgnGame.Round, out int round);
+        int.TryParse(pgnGame.Round, out var round);
         var matchDate = pgnGame.Date.ToDateTime();
 
         var game = new GameEntity
@@ -112,7 +112,7 @@ public class Importer : IImporter
             lanMoveList.Add(result.Lan);
 
             // TODO: this can be used as a UNIQUE key for this exact board position and state
-            var serialized = _boardSerializer.GetSerializedBoardState(gameReplay.Board, gameReplay.BoardState);
+            // var serialized = _boardSerializer.GetSerializedBoardState(gameReplay.Board, gameReplay.BoardState);
 
             if (turn.Black != null)
             {

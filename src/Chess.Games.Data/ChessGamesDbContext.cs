@@ -34,12 +34,12 @@ namespace Chess.Games.Data
             : base(options)
         {
             _logger = logger;
-            if(bool.TryParse(config["Database:ChessMatches:EfLogging"], out bool enableLogging))
+            if(bool.TryParse(config["Database:ChessMatches:EfLogging"], out var enableLogging))
             {
                 _enableLogging = enableLogging;
             }
             // TODO: Should only be enabled on DEV envs.
-            if (bool.TryParse(config["Database:ChessMatches:InsensitiveLogging"], out bool insensitiveLogging))
+            if (bool.TryParse(config["Database:ChessMatches:InsensitiveLogging"], out var insensitiveLogging))
             {
                 _insensitiveLogging = insensitiveLogging;
             }

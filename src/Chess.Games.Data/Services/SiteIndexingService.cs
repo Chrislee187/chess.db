@@ -7,7 +7,7 @@ public class SiteIndexingService : ISiteIndexingService
 {
     private readonly ISiteRepository _siteRepository;
 
-    private IDictionary<string, SiteEntity>? _index = null;
+    private IDictionary<string, SiteEntity>? _index;
 
     public SiteIndexingService(ISiteRepository eventRepository)
     {

@@ -4,7 +4,7 @@ using Chess.Games.Data;
 using Chess.Games.Data.Entities;
 using Chess.Games.Data.Repos;
 
-await using (ChessGamesDbContext context = new ChessGamesDbContext())
+await using (var context = new ChessGamesDbContext())
 {
     await context.Database.EnsureCreatedAsync();
 }

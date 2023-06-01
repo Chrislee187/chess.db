@@ -7,7 +7,7 @@ public class EventIndexingService : IEventIndexingService
 {
     private readonly IEventRepository _eventRepository;
 
-    private IDictionary<string, EventEntity>? _index = null;
+    private IDictionary<string, EventEntity>? _index;
 
     public EventIndexingService(IEventRepository eventRepository)
     {

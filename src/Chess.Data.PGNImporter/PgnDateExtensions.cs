@@ -18,9 +18,9 @@ namespace Chess.Data.PGNImporter
 
         private static string DefaultDateValue(int? v, string def)
         {
-            if (v.HasValue && v != 0)
+            if (v.HasValue && v.Value != 0)
             {
-                return v.ToString();
+                return v.ToString()!;
             }
 
             return def;

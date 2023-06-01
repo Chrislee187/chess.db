@@ -1,6 +1,6 @@
 ﻿using PgnReader;
 
-namespace chess.games.db.pgnimporter.Extensions
+namespace Chess.PGNImporter.Extensions
 {
     public static class PgnGameResultExtensions
     {

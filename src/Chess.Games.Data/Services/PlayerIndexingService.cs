@@ -7,7 +7,7 @@ public class PlayerIndexingService : IPlayerIndexingService
 {
     private readonly IPlayerRepository _playerRepository;
 
-    private IDictionary<string, PlayerEntity>? _index = null;
+    private IDictionary<string, PlayerEntity>? _index;
 
     public PlayerIndexingService(IPlayerRepository eventRepository)
     {

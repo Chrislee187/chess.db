@@ -5,7 +5,13 @@ using chess.engine.Game;
 
 namespace Chess.Data.PGNImporter;
 
-public class ChessBoardStateSerializer
+public interface IChessBoardStateSerializer
+{
+    (long boardMask, Guid pieceMask, bool whiteCanCastle, bool blackCanCastle) 
+        GetSerializedBoardState(LocatedItem<ChessPieceEntity>[,] board, IBoardState<ChessPieceEntity> boardState);
+}
+
+public class ChessBoardStateSerializer : IChessBoardStateSerializer
 {
     private readonly ChessPiece4BitEncoder _pieceEncoder = new();
     
@@ -44,6 +50,7 @@ public class ChessBoardStateSerializer
             for (var rank = 0; rank <= 7; rank++)
             {
                 var piece = gameReplayBoard[rank, file];
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract - Chess Library needs updating to use nullability contracts correctly
                 boardMaskBits.Set(idx++, piece != null);
 
                 if (piece != null)

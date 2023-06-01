@@ -3,26 +3,30 @@ using EasyEF.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyEF.Repos;
-
+/// <summary>
+/// Base class for concrete repo's for EF entities
+/// </summary>
+/// <typeparam name="TEntity"></typeparam>
 public abstract class EfRepositoryBase<TEntity> : ILinqRepository<TEntity> where TEntity : Entity
 {
     // TODO: Add Async counterparts to interface
-    protected readonly DbContext DbContext;
+    private readonly DbContext _dbContext;
     private readonly DbSet<TEntity> _entitySet;
 
-    protected IQueryable<TEntity> Query => _entitySet;
+    // NOTE: This is deliberately protected to avoid
 
     protected EfRepositoryBase(DbContext dbContext)
     {
-        DbContext = dbContext;
-        _entitySet = DbContext.Set<TEntity>();
+        _dbContext = dbContext;
+        _entitySet = _dbContext.Set<TEntity>();
 
     }
-    
+    public bool Save() => _dbContext.SaveChanges() >= 0;
+
     public void Add(params TEntity[] entities) => _entitySet.AddRange(entities);
     public bool Exists(Guid id) => Get(id) != null;
     
-    public TEntity? Get(Guid id) => DbContext.Find<TEntity>(id);
+    public TEntity? Get(Guid id) => _dbContext.Find<TEntity>(id);
     public IQueryable<TEntity> Get() => _entitySet;
     public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> expr)
         => _entitySet.Where(expr);
@@ -30,81 +34,79 @@ public abstract class EfRepositoryBase<TEntity> : ILinqRepository<TEntity> where
     public void Update(params TEntity[] entities) => _entitySet.UpdateRange(entities);
 
     public void Delete(params TEntity[] entities) => _entitySet.RemoveRange(entities);
-
-    public bool Save() => DbContext.SaveChanges() >= 0;
-
+    
     public int Count(Expression<Func<TEntity, bool>>? expr)
         => expr == null
-            ? Query.Count()
-            : Query.Count(expr);
+            ? Get().Count()
+            : Get().Count(expr);
     public long LongCount(Expression<Func<TEntity, bool>>? expr)
         => expr == null
-            ? Query.LongCount()
-            : Query.LongCount(expr);
+            ? Get().LongCount()
+            : Get().LongCount(expr);
 
     public TEntity First(Expression<Func<TEntity, bool>>? expr)
         => expr == null
-            ? Query.First()
-            : Query.First(expr);
+            ? Get().First()
+            : Get().First(expr);
 
     public TEntity? FirstOrDefault(Expression<Func<TEntity, bool>>? expr)
         => expr == null
-            ? Query.FirstOrDefault()
-            : Query.FirstOrDefault(expr);
+            ? Get().FirstOrDefault()
+            : Get().FirstOrDefault(expr);
 
     public TEntity Single(Expression<Func<TEntity, bool>>? expr)
         => expr == null
-            ? Query.Single()
-            : Query.Single(expr);
+            ? Get().Single()
+            : Get().Single(expr);
 
     public TEntity? SingleOrDefault(Expression<Func<TEntity, bool>>? expr)
         => expr == null
-            ? Query.SingleOrDefault()
-            : Query.SingleOrDefault(expr);
+            ? Get().SingleOrDefault()
+            : Get().SingleOrDefault(expr);
 
 
     public TEntity Last(Expression<Func<TEntity, bool>>? expr)
         => expr == null
-            ? Query.Last()
-            : Query.Last(expr);
+            ? Get().Last()
+            : Get().Last(expr);
 
     public TEntity? LastOrDefault(Expression<Func<TEntity, bool>>? expr)
         => expr == null
-            ? Query.LastOrDefault()
-            : Query.LastOrDefault(expr);
+            ? Get().LastOrDefault()
+            : Get().LastOrDefault(expr);
 
     public TEntity? Min(Expression<Func<TEntity, TEntity>>? expr)
         => expr == null
-            ? Query.Min()
-            : Query.Min(expr);
+            ? Get().Min()
+            : Get().Min(expr);
 
 
     public TEntity? Max(Expression<Func<TEntity, TEntity>>? expr)
         => expr == null
-            ? Query.Max()
-            : Query.Max(expr);
+            ? Get().Max()
+            : Get().Max(expr);
 
     public double Average(Expression<Func<TEntity, int>> expr)
-        => Query.Average(expr);
+        => Get().Average(expr);
     public double Average(Expression<Func<TEntity, double>> expr)
-        => Query.Average(expr);
+        => Get().Average(expr);
     public float Average(Expression<Func<TEntity, float>> expr)
-        => Query.Average(expr);
+        => Get().Average(expr);
     public decimal Average(Expression<Func<TEntity, decimal>> expr)
-        => Query.Average(expr);
+        => Get().Average(expr);
     public double Average(Expression<Func<TEntity, long>> expr)
-        => Query.Average(expr);
+        => Get().Average(expr);
 
 
     public int Sum(Expression<Func<TEntity, int>> expr)
-        => Query.Sum(expr);
+        => Get().Sum(expr);
     public double Sum(Expression<Func<TEntity, double>> expr)
-        => Query.Sum(expr);
+        => Get().Sum(expr);
     public float Sum(Expression<Func<TEntity, float>> expr)
-        => Query.Sum(expr);
+        => Get().Sum(expr);
     public decimal Sum(Expression<Func<TEntity, decimal>> expr)
-        => Query.Sum(expr);
+        => Get().Sum(expr);
     public long Sum(Expression<Func<TEntity, long>> expr)
-        => Query.Sum(expr);
+        => Get().Sum(expr);
 
 }

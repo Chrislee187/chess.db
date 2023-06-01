@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace Chess.Games.Data.Repos;
+﻿namespace Chess.Games.Data.Repos;
 
 public class PagedList<T> : List<T>
 {
@@ -11,8 +9,7 @@ public class PagedList<T> : List<T>
     public bool HasPrevious => (CurrentPage > 1);
     public bool HasNext => (CurrentPage < TotalPages);
 
-    public PagedList(
-        [NotNull] IQueryable<T> items, int pageSize, int currentPage)
+    public PagedList(IQueryable<T> items, int pageSize, int currentPage)
     {
         TotalCount = items.Count();
         PageSize = pageSize;
