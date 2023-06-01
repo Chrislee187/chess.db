@@ -22,6 +22,7 @@ public class Importer : IImporter
     private readonly IEventRepository _eventRepo;
 
     private readonly ChessPiece4BitEncoder _pieceEncoder = new();
+    private readonly ChessBoardStateSerializer _boardSerializer = new();
     public Importer(
         ILogger<Importer> logger,
         IEventRepository eventRepo,
@@ -111,7 +112,7 @@ public class Importer : IImporter
             lanMoveList.Add(result.Lan);
 
             // TODO: this can be used as a UNIQUE key for this exact board position and state
-            var serialized = GetSerializedBoardState(gameReplay);
+            var serialized = _boardSerializer.GetSerializedBoardState(gameReplay.Board, gameReplay.BoardState);
 
             if (turn.Black != null)
             {
@@ -125,54 +126,6 @@ public class Importer : IImporter
 
         // TODO: Check that the movetext doesn't already exist in a game somewhere to try and catch and dupe misses on the events/player names etc.
         // TODO: Check pgnGame final check state matches gameReplay
-    }
-
-    private (long boardMask, Guid pieceMask, bool whiteCanCastle, bool blackCanCastle) GetSerializedBoardState(ChessGame gameReplay)
-    {
-        var serializedBoard = SerializeBoardKey(gameReplay.Board);
-        var whiteKing = gameReplay.BoardState
-            .GetItems((int)Colours.White, (int)ChessPieceName.King).Single();
-        var blackKing = gameReplay.BoardState
-            .GetItems((int)Colours.Black, (int)ChessPieceName.King).Single();
-        var whiteCanCastle = !whiteKing.Item.LocationHistory.Any();
-        var blackCanCastle = !blackKing.Item.LocationHistory.Any();
-
-        return (serializedBoard.boardMask, serializedBoard.pieceMask, whiteCanCastle, blackCanCastle);
-    }
-
-    private (long boardMask, Guid pieceMask) SerializeBoardKey(LocatedItem<ChessPieceEntity>[,] gameReplayBoard)
-    {
-        var boardMaskBits = new BitArray(64);
-        var idx = 0;
-        var pieces = new List<byte>();
-
-        // Go top to bottom, right to left
-        for (int file = 7; file >= 0; file--)
-        {
-            for (int rank = 0; rank <= 7; rank++)
-            {
-                var piece = gameReplayBoard[rank, file];
-                boardMaskBits.Set(idx++, piece != null);
-
-                if (piece != null)
-                {
-                    var pieceValue = _pieceEncoder.EncodePieceInto4Bits(piece.Item);
-                    pieces.Add(pieceValue);
-                }
-            }
-        }
-
-        var boardMask = EncodeBoardMaskIntoLong(boardMaskBits);
-        var pieceMask = _pieceEncoder.Encode4BitPiecesIntoGuid(pieces);
-
-        return (boardMask, pieceMask);
-    }
-
-    private static long EncodeBoardMaskIntoLong(BitArray boardMaskBits)
-    {
-        var array = new byte[8];
-        boardMaskBits.CopyTo(array, 0);
-        return BitConverter.ToInt64(array, 0);
     }
 
     private GameResult PgnGameResultToGameResult(PgnGameResult pgnGameResult) =>
