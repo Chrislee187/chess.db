@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using System.Data;
 
 namespace Chess.Games.Data
 {
@@ -54,18 +53,19 @@ namespace Chess.Games.Data
                 optionsBuilder
                     .UseSqlServer(_conString)
                     .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
-
-                if (_enableLogging)
-                {
-                    optionsBuilder.LogTo((m) => _logger.LogInformation(m),
-                        new[] { DbLoggerCategory.Database.Command.Name });
-                }
-
-                if (_insensitiveLogging)
-                {
-                    optionsBuilder.EnableSensitiveDataLogging(_insensitiveLogging);
-                }
             }
+
+            if (_enableLogging)
+            {
+                optionsBuilder.LogTo((m) => _logger.LogInformation(m),
+                    new[] { DbLoggerCategory.Database.Command.Name });
+            }
+
+            if (_insensitiveLogging)
+            {
+                optionsBuilder.EnableSensitiveDataLogging(_insensitiveLogging);
+            }
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

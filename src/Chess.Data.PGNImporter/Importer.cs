@@ -21,6 +21,7 @@ public class Importer : IImporter
     private readonly IGameIndexingService _gameIndex;
     private readonly IEventRepository _eventRepo;
 
+    private readonly ChessPiece4BitEncoder _pieceEncoder = new();
     public Importer(
         ILogger<Importer> logger,
         IEventRepository eventRepo,
@@ -43,38 +44,15 @@ public class Importer : IImporter
         var added = new List<GameEntity>();
         foreach (var pgnGame in games)
         {
-            var evt = _eventIndex.TryAdd(pgnGame.Event);
-            var site = _siteIndex.TryAdd(pgnGame.Site);
-            var black = _playerIndex.TryAdd(pgnGame.Black);
-            var white = _playerIndex.TryAdd(pgnGame.White);
-            int.TryParse(pgnGame.Round, out int round);
-            var matchDate = pgnGame.Date.ToDateTime();
-
-            var game = new GameEntity
-            {
-                SourceEventText = pgnGame.Event,
-                Event = evt,
-                SourceSiteText = pgnGame.Site,
-                Site = site,
-                SourceWhitePlayerText = pgnGame.White,
-                White = white,
-                SourceBlackPlayerText = pgnGame.Black,
-                Black = black,
-                Date = matchDate,
-                Round = round,
-                Result = PgnGameResultToGameResult(pgnGame.Result),
-                SourceMoveText = pgnGame.MoveText
-            };
-
             _logger.LogInformation("Import game {gameCount} : {White} vs {Black}, {Event} Round {Round}",
-                       ++gameCount, pgnGame.White, pgnGame.Black, pgnGame.Event, pgnGame.Round);
+                ++gameCount, pgnGame.White, pgnGame.Black, pgnGame.Event, pgnGame.Round);
+
+            var game = CreatePotentialGameEntity(pgnGame);
+
             if (_gameIndex.TryAdd(game, out var existing))
             {
-                _logger.LogInformation("...validating game");
-
                 ValidateGame(pgnGame, game);
-
-
+                
                 _logger.LogInformation("...importing game");
                 added.Add(game);
                 _eventRepo.Save(); // NOTE: This is the "unit-of-work" commit call to DbContext.SaveChanges()
@@ -90,8 +68,37 @@ public class Importer : IImporter
         return added;
     }
 
+    private GameEntity CreatePotentialGameEntity(PgnGame pgnGame)
+    {
+        var evt = _eventIndex.TryAdd(pgnGame.Event);
+        var site = _siteIndex.TryAdd(pgnGame.Site);
+        var black = _playerIndex.TryAdd(pgnGame.Black);
+        var white = _playerIndex.TryAdd(pgnGame.White);
+        int.TryParse(pgnGame.Round, out int round);
+        var matchDate = pgnGame.Date.ToDateTime();
+
+        var game = new GameEntity
+        {
+            SourceEventText = pgnGame.Event,
+            Event = evt,
+            SourceSiteText = pgnGame.Site,
+            Site = site,
+            SourceWhitePlayerText = pgnGame.White,
+            White = white,
+            SourceBlackPlayerText = pgnGame.Black,
+            Black = black,
+            Date = matchDate,
+            Round = round,
+            Result = PgnGameResultToGameResult(pgnGame.Result),
+            SourceMoveText = pgnGame.MoveText
+        };
+        return game;
+    }
+
     private void ValidateGame(PgnGame pgnGame, GameEntity gameEntity)
     {
+        _logger.LogInformation("...validating game");
+
         var checkDetectionService = AppContainer.GetService<ICheckDetectionService>();
         var engineProvider = AppContainer.GetService<IBoardEngineProvider<ChessPieceEntity>>();
         var entityFactory = AppContainer.GetService<IBoardEntityFactory<ChessPieceEntity>>();
@@ -145,39 +152,20 @@ public class Importer : IImporter
             for (int rank = 0; rank <= 7; rank++)
             {
                 var piece = gameReplayBoard[rank, file];
-                boardMaskBits.Set(idx++, piece == null ? false : true);
+                boardMaskBits.Set(idx++, piece != null);
 
                 if (piece != null)
                 {
-                    var pieceValue = EncodePieceInto4Bits(piece);
+                    var pieceValue = _pieceEncoder.EncodePieceInto4Bits(piece.Item);
                     pieces.Add(pieceValue);
                 }
             }
         }
 
         var boardMask = EncodeBoardMaskIntoLong(boardMaskBits);
-        var pieceMask = EncodePiecesIntoGuid(pieces);
-
+        var pieceMask = _pieceEncoder.Encode4BitPiecesIntoGuid(pieces);
 
         return (boardMask, pieceMask);
-    }
-
-    private static Guid EncodePiecesIntoGuid(List<byte> pieces)
-    {
-        if (pieces.Count != 32)
-        {
-            byte[] padding = new byte[32 - pieces.Count];
-            pieces.AddRange(padding);
-        }
-        var malformedGuid = pieces.Aggregate("", (s, a) => s + a.ToString("x"));
-
-        var pseudoGuid = malformedGuid[0..8] + "-"
-                                             + malformedGuid[8..12] + "-"
-                                             + malformedGuid[12..16] + "-"
-                                             + malformedGuid[16..20] + "-"
-                                             + malformedGuid[20..];
-        var pieceMask = Guid.Parse(pseudoGuid);
-        return pieceMask;
     }
 
     private static long EncodeBoardMaskIntoLong(BitArray boardMaskBits)
@@ -185,27 +173,6 @@ public class Importer : IImporter
         var array = new byte[8];
         boardMaskBits.CopyTo(array, 0);
         return BitConverter.ToInt64(array, 0);
-    }
-
-    private static byte EncodePieceInto4Bits(LocatedItem<ChessPieceEntity> l)
-    {
-        var piece = l.Item.Piece;
-        byte pieceValue = piece switch
-        {
-            ChessPieceName.Pawn => 1,
-            ChessPieceName.Rook => 2,
-            ChessPieceName.Bishop => 3,
-            ChessPieceName.Knight => 4,
-            ChessPieceName.Queen => 5,
-            ChessPieceName.King => 6,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        if (l.Item.Player == Colours.Black)
-        {
-            pieceValue += 8;
-        }
-
-        return pieceValue;
     }
 
     private GameResult PgnGameResultToGameResult(PgnGameResult pgnGameResult) =>

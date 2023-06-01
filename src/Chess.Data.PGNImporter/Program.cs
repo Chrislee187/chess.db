@@ -17,7 +17,7 @@ using var host = Host.CreateDefaultBuilder(args)
 
         services.AddDbContext<ChessGamesDbContext>(opts =>
         {
-            opts.UseSqlServer("name=Databases:MatchesDb");
+            opts.UseSqlServer("name=Database:ChessMatches:ConnectionString");
         });
 
         AddRepos(services);
