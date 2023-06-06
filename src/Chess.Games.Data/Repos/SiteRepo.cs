@@ -3,7 +3,7 @@ using EasyEF.Repos;
 
 namespace Chess.Games.Data.Repos;
 
-public class SiteRepo : EfRepositoryBase<SiteEntity>, ISiteRepository
+public class SiteRepo : EasyEFRepositoryBase<SiteEntity>, ISiteRepository
 {
     public SiteRepo(ChessGamesDbContext dbContext) : base(dbContext)
     {

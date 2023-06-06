@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\readme.md = ..\readme.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chess.PGNImporter", "Chess.PGNImporter\Chess.PGNImporter.csproj", "{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chess.Games.Data", "Chess.Games.Data\Chess.Games.Data.csproj", "{5935FF1D-3E48-44FB-9BEF-204CF32A8FF8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyEF", "EasyEF\EasyEF.csproj", "{4DF85E90-F252-402C-883C-D1C6C20C75A5}"
@@ -20,8 +18,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chess.Data.PGNImporter.Unit.Tests", "Chess.Data.PGNImporter.Unit.Tests\Chess.Data.PGNImporter.Unit.Tests.csproj", "{9AAEC76F-E363-4323-B78E-859409A5FA9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chess.Data.WebAPI.Controllers", "Chess.Data.WebAPI.Controllers\Chess.Data.WebAPI.Controllers.csproj", "{1A81ABD0-687E-433B-B3F5-B83457E05792}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chess.Data.WebAPI.Minimal", "Chess.Data.WebAPI.Minimal\Chess.Data.WebAPI.Minimal.csproj", "{830659E1-7AB5-4D34-B352-ADC726302953}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,18 +29,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Debug|x64.Build.0 = Debug|Any CPU
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Debug|x86.Build.0 = Debug|Any CPU
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Release|x64.ActiveCfg = Release|Any CPU
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Release|x64.Build.0 = Release|Any CPU
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Release|x86.ActiveCfg = Release|Any CPU
-		{A00E74FF-AB3D-4566-8DC5-3184E29C8CA5}.Release|x86.Build.0 = Release|Any CPU
 		{5935FF1D-3E48-44FB-9BEF-204CF32A8FF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5935FF1D-3E48-44FB-9BEF-204CF32A8FF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5935FF1D-3E48-44FB-9BEF-204CF32A8FF8}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -105,18 +89,6 @@ Global
 		{1A81ABD0-687E-433B-B3F5-B83457E05792}.Release|x64.Build.0 = Release|Any CPU
 		{1A81ABD0-687E-433B-B3F5-B83457E05792}.Release|x86.ActiveCfg = Release|Any CPU
 		{1A81ABD0-687E-433B-B3F5-B83457E05792}.Release|x86.Build.0 = Release|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Debug|x64.Build.0 = Debug|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Debug|x86.Build.0 = Debug|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Release|Any CPU.Build.0 = Release|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Release|x64.ActiveCfg = Release|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Release|x64.Build.0 = Release|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Release|x86.ActiveCfg = Release|Any CPU
-		{830659E1-7AB5-4D34-B352-ADC726302953}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

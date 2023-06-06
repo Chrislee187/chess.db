@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "chess.games.db.pgnimporter": {
-      "commandName": "Project",
-      "commandLineArgs": " .\\SampleFiles\\sample.pgn"
-    }
-  }
-}
