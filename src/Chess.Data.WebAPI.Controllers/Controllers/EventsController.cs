@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Chess.Data.WebAPI.Controllers.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
+
+
 public partial class EventsController : EasyEfController<EventEntity>
 {
 

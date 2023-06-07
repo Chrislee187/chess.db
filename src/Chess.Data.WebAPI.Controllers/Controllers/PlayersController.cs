@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Chess.Data.WebAPI.Controllers.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
 public class PlayersController : EasyEfController<PlayerEntity>
 {
 

@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyEF.Controllers;
-
+[ApiController]
+[Route("api/[controller]")]
 public abstract class EasyEfController<TEntity> : ControllerBase where TEntity : Entity
 {
     private readonly ILinqRepository<TEntity> _repository;
