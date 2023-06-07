@@ -1,3 +1,5 @@
+using Chess.Data.WebAPI.Controllers.Setup;
+
 namespace Chess.Data.WebAPI.Controllers;
 
 public class Program

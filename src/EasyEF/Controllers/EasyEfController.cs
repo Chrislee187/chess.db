@@ -21,7 +21,14 @@ public abstract class EasyEfController<TEntity> : ControllerBase where TEntity :
 
     // GET api/<Entity>/5
     [HttpGet("{id}")]
-    public IResult Get(Guid id) => Results.Ok(_repository.Get(id));
+    public IResult Get(Guid id)
+    {
+        var entity = _repository.Get(id);
+
+        return entity != null
+            ? Results.Ok(entity)
+            : Results.NotFound();
+    }
 
     // POST api/<Entity>
     [HttpPost]
@@ -49,11 +56,11 @@ public abstract class EasyEfController<TEntity> : ControllerBase where TEntity :
         var e = Activator.CreateInstance(typeof(TEntity)) as TEntity;
         e.Id = id;
         _repository.Delete(e);
-        return SaveChanges(Results.NotFound(), null);
+        return SaveChanges(Results.NotFound());
     }
 
     private IResult SaveChanges(
-        IResult failResult, IResult? successResult)
+        IResult failResult, IResult? successResult = null)
     {
         successResult ??= Results.Ok();
         try

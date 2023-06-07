@@ -3,6 +3,33 @@ using EasyEF.Entities;
 
 namespace EasyEF.Repos;
 
+public interface IAsyncLinqRepository<TEntity> where TEntity : Entity
+{
+    Task<bool> SaveAsync();
+    Task<TEntity?> GetAsync(Guid id);
+    IAsyncEnumerable<TEntity> GetAsync(Expression<Func<TEntity, bool>>? expr = null);
+    Task<bool> ExistsAsync(Guid id);
+    Task<int> CountAsync(Expression<Func<TEntity, bool>>? expr);
+    Task<long> LongCountAsync(Expression<Func<TEntity, bool>>? expr);
+    Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>>? expr);
+    Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>>? expr);
+    Task<TEntity?> SingleOrDefaultAsync(Expression<Func<TEntity, bool>>? expr);
+    Task<TEntity> LastAsync(Expression<Func<TEntity, bool>>? expr);
+    Task<TEntity?> LastOrDefaultAsync(Expression<Func<TEntity, bool>>? expr);
+    Task<TEntity?> MinAsync(Expression<Func<TEntity, TEntity>>? expr);
+    Task<TEntity?> MaxAsync(Expression<Func<TEntity, TEntity>>? expr);
+    Task<double> AverageAsync(Expression<Func<TEntity, int>> expr);
+    Task<double> AverageAsync(Expression<Func<TEntity, double>> expr);
+    Task<float> AverageAsync(Expression<Func<TEntity, float>> expr);
+    Task<decimal> AverageAsync(Expression<Func<TEntity, decimal>> expr);
+    Task<double> AverageAsync(Expression<Func<TEntity, long>> expr);
+    Task<int> SumAsync(Expression<Func<TEntity, int>> expr);
+    Task<double> SumAsync(Expression<Func<TEntity, double>> expr);
+    Task<float> SumAsync(Expression<Func<TEntity, float>> expr);
+    Task<decimal> SumAsync(Expression<Func<TEntity, decimal>> expr);
+    Task<long> SumAsync(Expression<Func<TEntity, long>> expr);
+}
+
 /// <summary>
 /// A Repository pattern based on LINQ and for use with Entity Framework.
 /// 
@@ -16,8 +43,7 @@ public interface ILinqRepository<TEntity> where TEntity : Entity
     bool Save();
 
     TEntity? Get(Guid id);
-    IQueryable<TEntity> Get();
-    IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> expr);
+    IQueryable<TEntity> Get(Expression<Func<TEntity, bool>>? expr = null);
     void Add(params TEntity[] entities);
 
     bool Exists(Guid id);
@@ -44,4 +70,6 @@ public interface ILinqRepository<TEntity> where TEntity : Entity
     float Sum(Expression<Func<TEntity, float>> expr);
     decimal Sum(Expression<Func<TEntity, decimal>> expr);
     long Sum(Expression<Func<TEntity, long>> expr);
+
+    long LongCount(Expression<Func<TEntity, bool>>? expr);
 }

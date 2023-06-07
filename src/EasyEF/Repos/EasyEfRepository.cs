@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyEF.Repos;
 
-public class EasyEfRepository<TEntity> : EasyEFRepositoryBase<TEntity> where TEntity : Entity
+public class EasyEfRepository<TEntity> : EasyEfRepositoryBase<TEntity> where TEntity : Entity
 {
     public EasyEfRepository(DbContext dbContext) : base(dbContext)
     {

@@ -3,7 +3,7 @@ using EasyEF.Repos;
 
 namespace Chess.Games.Data.Repos;
 
-public class PlayerRepo : EasyEFRepositoryBase<PlayerEntity>, IPlayerRepository
+public class PlayerRepo : EasyEfRepositoryBase<PlayerEntity>, IPlayerRepository
 {
     public PlayerRepo(ChessGamesDbContext dbContext) : base(dbContext)
     {

@@ -3,7 +3,7 @@ using EasyEF.Repos;
 
 namespace Chess.Games.Data.Repos;
 
-public class EventRepo : EasyEFRepositoryBase<EventEntity>, IEventRepository
+public class EventRepo : EasyEfRepositoryBase<EventEntity>, IEventRepository
 {
     public EventRepo(ChessGamesDbContext dbContext) : base(dbContext)
     {
