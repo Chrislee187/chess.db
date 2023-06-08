@@ -98,17 +98,14 @@ public class Importer : IImporter
 
     private void ValidateGame(PgnGame pgnGame, GameEntity gameEntity)
     {
-        _logger.LogInformation("...validating game");
+        _logger.LogInformation("...replaying game through chess engine to validate PGN...");
 
-        var checkDetectionService = AppContainer.GetService<ICheckDetectionService>();
-        var engineProvider = AppContainer.GetService<IBoardEngineProvider<ChessPieceEntity>>();
-        var entityFactory = AppContainer.GetService<IBoardEntityFactory<ChessPieceEntity>>();
-        var gameReplay = new ChessGame(engineProvider, entityFactory, checkDetectionService);
+        var game = AppContainer.GetService<ChessGame>();
 
         var lanMoveList = new List<string>();
         foreach (var turn in pgnGame.Turns)
         {
-            var result = gameReplay.Move(turn.White.San);
+            var result = game.Move(turn.White.San);
             lanMoveList.Add(result.Lan);
 
             // TODO: this can be used as a UNIQUE key for this exact board position and state
@@ -116,10 +113,11 @@ public class Importer : IImporter
 
             if (turn.Black != null)
             {
-                result = gameReplay.Move(turn.Black.San);
+                result = game.Move(turn.Black.San);
                 lanMoveList.Add(result.Lan);
             }
         }
+        _logger.LogInformation("... game successfully replayed. {Turns} turns found...", (int) (lanMoveList.Count / 2));
 
         gameEntity.LanMoveText = lanMoveList.Aggregate("", (s, a) => s + a);
         gameEntity.LanMoveTextHash = gameEntity.LanMoveText.GetHashCode();

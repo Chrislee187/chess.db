@@ -5,6 +5,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyEF.Controllers;
+
+/// <summary>
+/// Uses a pattern of directly using serialized EF entities to interact with the WebAPI.
+/// This is typically not best practice but this class is designed to specifically create simple,
+/// controllers for use directly with entities.
+///
+/// Creates a simple, very vaguely REST-like WebAPI over EF Core "entities".
+///
+/// For more typical "business" controllers for a web-app I would expect to use a DTO layer to decouple
+/// the WebAPI contracts from the DB Schema
+/// </summary>
+/// <typeparam name="TEntity"></typeparam>
+
 [ApiController]
 [Route("api/[controller]")]
 public abstract class EasyEfController<TEntity> : ControllerBase where TEntity : Entity

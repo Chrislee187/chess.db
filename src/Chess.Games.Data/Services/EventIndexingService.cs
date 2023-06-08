@@ -32,8 +32,9 @@ public class EventIndexingService : IEventIndexingService
         return entity;
     }
 
-    private IDictionary<string, EventEntity> GetIndex() => _index ??= _eventRepository.Get()
-        .ToDictionary(e => e.Name);
+    private IDictionary<string, EventEntity> GetIndex() =>
+        _index ??= _eventRepository.Get()
+            .ToDictionary(e => e.Name);
 }
 
 public interface IEventIndexingService

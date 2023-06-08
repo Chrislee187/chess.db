@@ -9,22 +9,22 @@ public class PlayerIndexingService : IPlayerIndexingService
 
     private IDictionary<string, PlayerEntity>? _index;
 
-    public PlayerIndexingService(IPlayerRepository eventRepository)
+    public PlayerIndexingService(IPlayerRepository repo)
     {
-        _playerRepository = eventRepository;
+        _playerRepository = repo;
     }
-    public PlayerEntity TryAdd(string eventText)
+    public PlayerEntity TryAdd(string player)
     {
         _index = GetIndex();
 
-        if (_index.TryGetValue(eventText, out var entity))
+        if (_index.TryGetValue(player, out var entity))
         {
             return entity;
         }
 
         entity = new PlayerEntity()
         {
-            Name = eventText
+            Name = player
         };
         _index.Add(entity.Name, entity);
         _playerRepository.Add(entity);
@@ -41,5 +41,5 @@ public class PlayerIndexingService : IPlayerIndexingService
 
 public interface IPlayerIndexingService
 {
-    public PlayerEntity TryAdd(string eventText);
+    public PlayerEntity TryAdd(string player);
 }

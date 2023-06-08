@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -10,11 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="bogus" Version="34.0.2" />
-    <PackageReference Include="chess.engine" Version="1.1.3.3" />
+    <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="moq" Version="4.18.4" />
-    <PackageReference Include="shouldly" Version="4.2.1" />
+    <PackageReference Include="Moq" Version="4.18.4" />
+    <PackageReference Include="Shouldly" Version="4.2.1" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,7 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Chess.Data.PGNImporter\Chess.Data.PGNImporter.csproj" />
+    <ProjectReference Include="..\Chess.Games.Data\Chess.Games.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Fakers\" />
   </ItemGroup>
 
 </Project>

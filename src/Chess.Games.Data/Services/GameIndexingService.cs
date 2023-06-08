@@ -19,11 +19,12 @@ public class GameIndexingService : IGameIndexingService
                                                        && g.SourceBlackPlayerText == game.SourceBlackPlayerText
                                                        && g.Round == game.Round);
         if (existing != null)
-        {
+        {    
             return false;
         }
 
         _gameRepository.Add(game);
+        // _gameRepository.Save();
         return true;
     }
 }

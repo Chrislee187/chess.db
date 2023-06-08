@@ -13,18 +13,18 @@ public class SiteIndexingService : ISiteIndexingService
     {
         _siteRepository = eventRepository;
     }
-    public SiteEntity TryAdd(string eventText)
+    public SiteEntity TryAdd(string site)
     {
         _index = GetIndex();
 
-        if (_index.TryGetValue(eventText, out var entity))
+        if (_index.TryGetValue(site, out var entity))
         {
             return entity;
         }
 
         entity = new SiteEntity()
         {
-            Name = eventText
+            Name = site
         };
         _siteRepository.Add(entity);
         _index.Add(entity.Name, entity);
@@ -40,5 +40,5 @@ public class SiteIndexingService : ISiteIndexingService
 
 public interface ISiteIndexingService
 {
-    public SiteEntity TryAdd(string eventText);
+    public SiteEntity TryAdd(string site);
 }
