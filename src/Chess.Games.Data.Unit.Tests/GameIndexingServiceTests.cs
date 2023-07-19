@@ -3,7 +3,6 @@ using Chess.Games.Data.Entities;
 using Chess.Games.Data.Repos;
 using Chess.Games.Data.Services;
 using Chess.Games.Data.Unit.Tests.Fakers;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using Shouldly;
 

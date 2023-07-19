@@ -1,4 +1,5 @@
 ﻿using Chess.Data.PGNImporter;
+using chess.engine.Game;
 using Chess.Games.Data;
 using Chess.Games.Data.Repos;
 using Chess.Games.Data.Services;
@@ -77,6 +78,7 @@ void AddServices(IServiceCollection serviceCollection)
     serviceCollection.AddScoped<IGameIndexingService, GameIndexingService>();
     serviceCollection.AddScoped<IImporter, Importer>();
     serviceCollection.AddScoped<IChessBoardStateSerializer, ChessBoardStateSerializer>();
+
 }
 
 void MigrateDatabase()

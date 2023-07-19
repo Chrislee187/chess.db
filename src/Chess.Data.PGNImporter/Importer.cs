@@ -20,15 +20,13 @@ public class Importer : IImporter
     private readonly IGameIndexingService _gameIndex;
     private readonly IEventRepository _eventRepo;
 
-    private readonly IChessBoardStateSerializer _boardSerializer;
     public Importer(
         ILogger<Importer> logger,
         IEventRepository eventRepo,
         IEventIndexingService eventIndex,
         ISiteIndexingService siteIndex,
         IPlayerIndexingService playerIndex,
-        IGameIndexingService gameIndex,
-        IChessBoardStateSerializer boardSerializer)
+        IGameIndexingService gameIndex)
     {
         _eventRepo = eventRepo;
         _eventIndex = eventIndex;
@@ -36,13 +34,13 @@ public class Importer : IImporter
         _playerIndex = playerIndex;
         _gameIndex = gameIndex;
         _logger = logger;
-        _boardSerializer = boardSerializer;
     }
 
     public IEnumerable<GameEntity> ImportGames(IEnumerable<PgnGame> games)
     {
         var gameCount = 0;
         var added = new List<GameEntity>();
+        int saveBatchSize = 50;
         foreach (var pgnGame in games)
         {
             _logger.LogInformation("Import game {gameCount} : {White} vs {Black}, {Event} Round {Round}",
@@ -56,7 +54,11 @@ public class Importer : IImporter
                 
                 _logger.LogInformation("...importing game");
                 added.Add(game);
-                _eventRepo.Save(); // NOTE: This is the "unit-of-work" commit call to DbContext.SaveChanges()
+
+                if(added.Count % saveBatchSize == 0)
+                {
+                    _eventRepo.Save(); 
+                }
             }
             else
             {
@@ -66,6 +68,7 @@ public class Importer : IImporter
 
         }
 
+        _eventRepo.Save(); // NOTE: This is the "unit-of-work" commit call to DbContext.SaveChanges()
         return added;
     }
 
@@ -100,7 +103,7 @@ public class Importer : IImporter
     {
         _logger.LogInformation("...replaying game through chess engine to validate PGN...");
 
-        var game = AppContainer.GetService<ChessGame>();
+        var game = ChessFactory.NewChessGame();
 
         var lanMoveList = new List<string>();
         foreach (var turn in pgnGame.Turns)
